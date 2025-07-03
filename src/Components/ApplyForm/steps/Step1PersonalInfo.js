@@ -32,17 +32,7 @@ const Step1PersonalInfo = ({ data, updateData }) => {
           />
         </div>
 
-        <div>
-          <label className="form-label">SSN</label>
-          <input
-            type="text"
-            name="ssn"
-            value={data.ssn || ''}
-            onChange={handleChange}
-            placeholder="123-45-6789"
-            className="input"
-          />
-        </div>
+       
 
         <div>
           <label className="form-label">Phone Number</label>
