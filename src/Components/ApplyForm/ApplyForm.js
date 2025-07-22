@@ -88,67 +88,48 @@ const ApplyForm = () => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
-  const handleSubmit = async () => {
-    try {
-      const cleanData = {
-        ...formData,
-        previousAddresses: Array.isArray(formData.previousAddresses)
-          ? formData.previousAddresses
-          : [],
-        previousEmployers: Array.isArray(formData.previousEmployers)
-          ? formData.previousEmployers
-          : [],
-        accidentRecords: Array.isArray(formData.accidentRecords)
-          ? formData.accidentRecords
-          : [],
-        trafficConvictions: Array.isArray(formData.trafficConvictions)
-          ? formData.trafficConvictions
-          : [],
-        disclosures: Array.isArray(formData.disclosures)
-          ? formData.disclosures
-          : [],
-        licenseHistory: Array.isArray(formData.licenseHistory)
-          ? formData.licenseHistory
-          : [],
-        references: Array.isArray(formData.references)
-          ? formData.references
-          : [],
-        drivingExperience: {
-          ...formData.drivingExperience,
-          courses: Array.isArray(formData.drivingExperience.courses)
-            ? formData.drivingExperience.courses
-            : [],
-          awards: Array.isArray(formData.drivingExperience.awards)
-            ? formData.drivingExperience.awards
-            : [],
-        },
-      };
 
-      console.log("Final payload:", cleanData);
-
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/api/send-pdf`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(cleanData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to send PDF");
+const handleSubmit = async () => {
+  try {
+    const cleanData = {
+      ...formData,
+      previousAddresses: Array.isArray(formData.previousAddresses) ? formData.previousAddresses : [],
+      previousEmployers: Array.isArray(formData.previousEmployers) ? formData.previousEmployers : [],
+      accidentRecords: Array.isArray(formData.accidentRecords) ? formData.accidentRecords : [],
+      trafficConvictions: Array.isArray(formData.trafficConvictions) ? formData.trafficConvictions : [],
+      disclosures: Array.isArray(formData.disclosures) ? formData.disclosures : [],
+      licenseHistory: Array.isArray(formData.licenseHistory) ? formData.licenseHistory : [],
+      references: Array.isArray(formData.references) ? formData.references : [],
+      drivingExperience: {
+        ...formData.drivingExperience,
+        courses: Array.isArray(formData.drivingExperience.courses) ? formData.drivingExperience.courses : [],
+        awards: Array.isArray(formData.drivingExperience.awards) ? formData.drivingExperience.awards : [],
       }
+    };
 
-      const data = await response.json();
-      console.log("Success:", data);
-      navigate("/success");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Submission failed. Please try again.");
+    console.log("Final payload:", cleanData);
+
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/send-pdf`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(cleanData),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to send PDF');
     }
-  };
+
+    const data = await response.json();
+    console.log('Success:', data);
+    navigate('/success');
+  } catch (error) {
+    console.error('Error:', error);
+    alert('Submission failed. Please try again.');
+  }
+};
+
 
   useEffect(() => {
     const saved = localStorage.getItem("driverApplicationData");
