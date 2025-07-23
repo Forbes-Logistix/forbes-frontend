@@ -67,15 +67,15 @@ const Step5DrivingExperience = ({ data, updateData }) => {
             Subject to FMCSRs (Federal Motor Carrier Safety Regulations)?
           </label>
           <select
-      className="input brown"
-      value={data.currentEmployer?.fmcsr || ''}
-      onChange={(e) => handleChange('current', 'fmcsr', e.target.value)}
-    >
-      <option value="">Select</option>
-      <option value="Y">Yes</option>
-      <option value="N">No</option>
-    </select>
-  </div>
+            className="input brown"
+            value={data.currentEmployer?.fmcsr || ''}
+            onChange={(e) => handleChange('current', 'fmcsr', e.target.value)}
+          >
+            <option value="">Select</option>
+            <option value="Y">Yes</option>
+            <option value="N">No</option>
+          </select>
+        </div>
 
         {/* DOT Drug/Alcohol Testing */}
         <div className="py-4">
@@ -94,7 +94,6 @@ const Step5DrivingExperience = ({ data, updateData }) => {
 
       {/* Previous Employers */}
       <div className="space-y-8">
-        
         {data.previousEmployers.map((employer, index) => (
           <div key={index} className="border rounded-2xl p-6 shadow bg-gray-50">
             <div className="mt-4">
@@ -108,7 +107,6 @@ const Step5DrivingExperience = ({ data, updateData }) => {
             <h4 className="text-md font-semibold mb-4 text-brown-700">Previous Employer {index + 1}</h4>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              
               <div>
                 <label className="form-label brown">Employer Name</label>
                 <input type="text" className="input brown" value={employer.employer || ''} onChange={(e) => handleChange(index, 'employer', e.target.value)} />
@@ -139,44 +137,42 @@ const Step5DrivingExperience = ({ data, updateData }) => {
               </div>
             </div>
 
-             {/* FMCSRs Question */}
-        <div className="py-4">
-          <label className="form-label brown">
-            Subject to FMCSRs (Federal Motor Carrier Safety Regulations)?
-          </label>
-          <select
-      className="input brown"
-      value={data.currentEmployer?.fmcsr || ''}
-      onChange={(e) => handleChange('current', 'fmcsr', e.target.value)}
-    >
-      <option value="">Select</option>
-      <option value="Y">Yes</option>
-      <option value="N">No</option>
-    </select>
-  </div>
+            {/* FMCSRs Question */}
+            <div className="py-4">
+              <label className="form-label brown">
+                Subject to FMCSRs (Federal Motor Carrier Safety Regulations)?
+              </label>
+              <select
+                className="input brown"
+                value={employer.fmcsr || ''}
+                onChange={(e) => handleChange(index, 'fmcsr', e.target.value)}
+              >
+                <option value="">Select</option>
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
 
-        {/* DOT Drug/Alcohol Testing */}
-        <div className="py-4">
-          <label className="form-label brown">DOT Drug/Alcohol Testing?</label>
-          <select
-            className="input brown"
-            value={data.currentEmployer?.dotDrugTest || ''}
-            onChange={(e) => handleChange('current', 'dotDrugTest', e.target.value)}
-          >
-            <option value="">Select</option>
-            <option value="Y">Yes</option>
-            <option value="N">No</option>
-          </select>
-        </div>
-      </div>
-
-            
+            {/* DOT Drug/Alcohol Testing */}
+            <div className="py-4">
+              <label className="form-label brown">DOT Drug/Alcohol Testing?</label>
+              <select
+                className="input brown"
+                value={employer.dotDrugTest || ''}
+                onChange={(e) => handleChange(index, 'dotDrugTest', e.target.value)}
+              >
+                <option value="">Select</option>
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
+          </div>
         ))}
 
         <button
           onClick={addPreviousEmployer}
           className="w-full px-6 py-3 bg-brown-700 text-white rounded-xl text-sm hover:bg-brown-800 transition-all shadow-lg flex items-center justify-center gap-2"
-          >
+        >
           + Add Previous Employer
         </button>
       </div>
