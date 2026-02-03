@@ -54,29 +54,43 @@ const ContactSection = () => {
        <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">
          Send Us a Message
        </h2>
-       <form className="space-y-6 text-left">
+       <form
+            action="https://formspree.io/f/mrelvopj"
+            method="POST"
+            className="space-y-6 text-left"
+>
+
          <div>
            <label className="block font-medium mb-1 text-gray-800">Your Name</label>
            <input
-             type="text"
-             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
-             placeholder="Enter your name"
+              name="name"
+              type="text"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
+              placeholder="Enter your name"
+/>
+
            />
          </div>
          <div>
            <label className="block font-medium mb-1 text-gray-800">Email Address</label>
            <input
-             type="email"
-             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
-             placeholder="Enter your email"
+              name="email"
+              type="email"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
+              placeholder="Enter your email"
+/>
+
            />
          </div>
          <div>
            <label className="block font-medium mb-1 text-gray-800">Message</label>
            <textarea
-             rows="5"
-             className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
-             placeholder="Type your message..."
+              name="message"
+              rows="5"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-black bg-white"
+              placeholder="Type your message..."
+/>
+
            />
          </div>
          <div className="text-center mt-10">
