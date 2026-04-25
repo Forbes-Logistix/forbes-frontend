@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -23,6 +22,7 @@ import {
   TestTubeDiagonal,
   PackageCheck,
 } from "lucide-react";
+import QuickApplyForm from "../components/QuickApplyForm";
 
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
@@ -80,12 +80,12 @@ export default function CareersClient() {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link
-              href="/apply"
+            <a
+              href="#quick-apply"
               className="bg-white text-black px-10 py-4 text-lg font-bold rounded-2xl hover:bg-black hover:text-white border border-white hover:scale-105 transition-all duration-300"
             >
               Apply Now
-            </Link>
+            </a>
             <a
               href={`tel:${RECRUITING_PHONE_TEL}`}
               className="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-white/60 px-10 py-4 text-lg font-bold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
@@ -93,6 +93,18 @@ export default function CareersClient() {
               <Phone aria-hidden className="w-5 h-5" /> Call Recruiting
             </a>
           </motion.div>
+        </div>
+      </section>
+
+      {/* ---------- QUICK APPLY ---------- */}
+      <section id="quick-apply" className="bg-white py-20 px-4 scroll-mt-28">
+        <div className="max-w-3xl mx-auto">
+          <QuickApplyForm
+            id="quick-apply-form"
+            variant="dark"
+            heading="Talk to recruiting"
+            subhead="Three fields. We'll call you."
+          />
         </div>
       </section>
 
@@ -115,7 +127,7 @@ export default function CareersClient() {
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                <OfferBullet icon={DollarSign}><span className="font-bold">Earn $90,000+ per year</span></OfferBullet>
+                <OfferBullet icon={DollarSign}><span className="font-bold">Strong, top-tier flatbed pay</span></OfferBullet>
                 <OfferBullet icon={Percent}><span className="font-bold">30% of line haul</span></OfferBullet>
                 <OfferBullet icon={CalendarDays}>
                   Available for dispatch? You earn at least <span className="font-bold">$1,000/week</span>
@@ -258,14 +270,14 @@ export default function CareersClient() {
               <span className="text-lg font-bold">Email Recruiting</span>
               <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
             </a>
-            <Link
-              href="/apply"
+            <a
+              href="#quick-apply"
               className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
             >
               <Check aria-hidden className="w-8 h-8 mb-3" />
               <span className="text-lg font-bold">Apply Now</span>
-              <span className="text-sm opacity-80 mt-1">Driver application</span>
-            </Link>
+              <span className="text-sm opacity-80 mt-1">Three-field callback form</span>
+            </a>
           </div>
         </div>
       </section>
