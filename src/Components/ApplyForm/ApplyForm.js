@@ -1,5 +1,7 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import Step1PersonalInfo from "./steps/Step1PersonalInfo";
 import Step2AddressHistory from "./steps/Step2AddressHistory";
 import Step3DOTMedical from "./steps/Step3DOTMedical";
@@ -11,7 +13,8 @@ import Step8LicenseHistory from "./steps/Step8LicenseHistory";
 import Step9Disclosures from "./steps/Step9Disclosures";
 import Step10References from "./steps/Step10References";
 import Step11Declaration from "./steps/Step11Declaration";
-import KineticImage from "../Assets/Kinetic-1.jpg";
+
+const KineticImage = "/assets/Kinetic-1.jpg";
 
 const steps = [
   Step1PersonalInfo,
@@ -28,7 +31,7 @@ const steps = [
 ];
 
 const ApplyForm = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     currentAddress: { address: "", city: "", state: "", zip: "" },
@@ -123,7 +126,7 @@ const handleSubmit = async () => {
 
     const data = await response.json();
     console.log('Success:', data);
-    navigate('/success');
+    router.push('/success');
   } catch (error) {
     console.error('Error:', error);
     alert('Submission failed. Please try again.');
