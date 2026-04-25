@@ -1,128 +1,103 @@
-import React, { useEffect, useState } from "react";
-import {
-  FaTruck,
-  FaMapMarkerAlt,
-  FaUsers,
-  FaCogs,
-  FaChartLine,
-  FaHandshake,
-} from "react-icons/fa";
+import React from "react";
 import { motion } from "framer-motion";
+import {
+  FiTruck,
+  FiHome,
+  FiPhoneCall,
+  FiDollarSign,
+  FiTool,
+  FiMapPin,
+} from "react-icons/fi";
+import Seo from "../Components/Seo/Seo";
 import operationsBgImage from "../Components/Assets/operationsBg.jpg";
 
 const sections = [
   {
-    title: "Mission & Philosophy",
-    icon: <FaHandshake />,
-    content: [
-      "Our mission is to empower drivers with safety and success, led by an expert team.",
-    ],
+    title: "Open-deck freight",
+    icon: <FiTruck />,
+    body:
+      "We run flatbeds and step-decks on open-deck loads across the Southeast. The freight is steady, the lanes are real, and the customers expect drivers who know how to secure a load.",
   },
   {
-    title: "Unique Market Position",
-    icon: <FaChartLine />,
-    content: [
-      "We combine big-company resources with a personal, driver-focused approach.",
-    ],
+    title: "Home most weekends",
+    icon: <FiHome />,
+    body:
+      "Our lanes are built so company drivers can be home most weekends. We do not sell you 'flexible scheduling' &mdash; we plan dispatch around real home time.",
   },
   {
-    title: "Fleet & Facility",
-    icon: <FaTruck />,
-    content: [
-      "Modern trucks, open-deck trailers, and a 25,000 sq. ft. terminal in Jackson, MS.",
-    ],
+    title: "Dispatch that picks up the phone",
+    icon: <FiPhoneCall />,
+    body:
+      "If you call dispatch, dispatch answers. No tickets, no chasing. We are a small enough company that the person you talk to has the authority to fix the problem.",
   },
   {
-    title: "Driver Support & Training",
-    icon: <FaUsers />,
-    content: [
-      "Comprehensive training and ongoing education for every driver.",
-    ],
+    title: "Weekly direct deposit, no surprises",
+    icon: <FiDollarSign />,
+    body:
+      "Settlements run weekly with direct deposit. The numbers match what you were quoted: 30% of line haul, $100 tarp pay, and a dispatch-floor of $1,000/week if you are available.",
   },
   {
-    title: "Dispatch & Logistics",
-    icon: <FaCogs />,
-    content: [
-      "Efficient dispatch, advanced logistics software, and reliable communication.",
-    ],
+    title: "Modern, maintained equipment",
+    icon: <FiTool />,
+    body:
+      "Modern tractors and well-kept open-deck trailers, serviced at our own shop in Jackson. If something breaks, we fix it. You should not be losing weeks to downtime.",
   },
   {
-    title: "Facility & Maintenance",
-    icon: <FaMapMarkerAlt />,
-    content: [
-      "Routine maintenance and inspections keep our fleet in top condition.",
-    ],
+    title: "Jackson, MS terminal",
+    icon: <FiMapPin />,
+    body:
+      "Our 3-acre terminal at 3180 Utica Ave includes a 25,000 sq ft warehouse and shop. Drop your trailer, park your truck, talk face-to-face with the people running the company.",
   },
 ];
 
 const OperationsPage = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const handleScroll = () => setScrollY(window.scrollY);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const getAnimationStyle = (index) => {
-    const phase = (scrollY / 100 + index) % 2;
-    const scale = 1 + 0.2 * Math.sin(phase * Math.PI);
-    return {
-      transform: `scale(${scale})`,
-      transition: "transform 0.4s ease-in-out",
-    };
-  };
-
   return (
     <div
       className="min-h-screen px-6 md:px-20 py-16 relative bg-cover bg-center bg-no-repeat"
       style={{ backgroundImage: `url(${operationsBgImage})` }}
     >
-      {/* Dark overlay */}
-      <div className="absolute inset-0 bg-black bg-opacity-60 z-0"></div>
+      <Seo
+        title="Operations &mdash; What it is like to drive for Forbes Logistix"
+        description="What the seat looks like at Forbes Logistix: open-deck freight in the Southeast, home most weekends, weekly direct deposit, dispatch that picks up the phone, modern equipment, Jackson MS terminal."
+        path="/operations"
+      />
+      <div className="absolute inset-0 bg-black bg-opacity-70 z-0" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-16">
-        </h2>
+        <div className="text-center mb-16 max-w-3xl mx-auto">
+          <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">
+            How we run
+          </p>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white tracking-tight mb-4">
+            What the seat actually looks like.
+          </h1>
+          <p className="text-lg text-white/80">
+            Forbes Logistix is built around the driver experience. Here is how that shows up day to day.
+          </p>
+        </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {sections.map((section, idx) => (
             <motion.div
-              key={idx}
-              className={`relative flex items-center gap-6 ${
-                idx % 2 === 1 ? "flex-row-reverse" : "flex-row"
-              }`}
-              initial={{ opacity: 0, y: 50 }}
+              key={section.title}
+              className="flex items-start gap-5 bg-white/10 border border-white/20 text-white rounded-2xl p-6 md:p-8 backdrop-blur-md"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: idx * 0.15 }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
               viewport={{ once: true, amount: 0.2 }}
             >
-              {/* Animated Icon */}
-              <div
-                className="w-20 h-20 rounded-full bg-black flex items-center justify-center shadow-lg border border-gray-300"
-                style={getAnimationStyle(idx)}
-              >
+              <div className="w-14 h-14 shrink-0 rounded-full bg-black flex items-center justify-center border border-white/20">
                 {React.cloneElement(section.icon, {
-                  className: "text-white text-4xl",
+                  className: "text-white text-2xl",
+                  "aria-hidden": true,
                 })}
               </div>
-
-              {/* Animated Content Box */}
-              <motion.div
-                className="flex-1 bg-white/10 border border-white/20 text-white rounded-xl p-6 md:p-8 backdrop-blur-md hover:shadow-xl transition-all duration-300 hover:scale-[1.02]"
-                whileHover={{ scale: 1.03 }}
-              >
-                <h3 className="text-xl font-semibold mb-3">
+              <div>
+                <h2 className="text-xl md:text-2xl font-bold tracking-tight mb-2">
                   {section.title}
-                </h3>
-                <div className="text-white/80 text-sm leading-relaxed">
-                  {section.content.map((para, i) => (
-                    <p key={i} className="mb-2">
-                      {para}
-                    </p>
-                  ))}
-                </div>
-              </motion.div>
+                </h2>
+                <p className="text-white/80 leading-relaxed">{section.body}</p>
+              </div>
             </motion.div>
           ))}
         </div>
