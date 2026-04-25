@@ -1,42 +1,35 @@
-// App.js
 import React from 'react';
-import {BrowserRouter, Route, Routes} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import Home from './Pages/Home';
 import AboutUs from './Pages/AboutUs';
-import './index.css';
 import Operations from './Pages/Operations.js';
 import Careers from './Pages/Careers.js';
 import Navbar from './Components/Navbar/Navbar';
 import ContactPage from './Pages/ContactPage.js';
-import ApplyForm from './Components/ApplyForm/ApplyForm.js'
-import './Components/ApplyForm/formStyles.css';
+import ApplyForm from './Components/ApplyForm/ApplyForm.js';
 import Footer from './Components/Footer/Footer.js';
 import Success from './Components/ApplyForm/Success';
-
+import './index.css';
+import './Components/ApplyForm/formStyles.css';
 
 function App() {
   return (
-    <>
+    <HelmetProvider>
       <BrowserRouter>
-        {/* *** ADDED STICKY WRAPPER HERE *** */}
-        
-        {/* *** END STICKY WRAPPER *** */}
-
-        {/* Routes remain below the sticky header */}
-
         <Navbar />
         <Routes>
-          <Route path = "/" element = {<Home />}></Route>
-          <Route path = "/aboutUs" element = {<AboutUs />}></Route>
-          <Route path = "/operations" element = {<Operations />}></Route>
-          <Route path = "/careers" element = {<Careers />}></Route>
-          <Route path = "/contactUs" element = {<ContactPage />}></Route>
-          <Route path = "/apply" element = {<ApplyForm />}></Route>
-          <Route path = "/success" element = {<Success />}></Route>
+          <Route path="/" element={<Home />} />
+          <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/operations" element={<Operations />} />
+          <Route path="/careers" element={<Careers />} />
+          <Route path="/contactUs" element={<ContactPage />} />
+          <Route path="/apply" element={<ApplyForm />} />
+          <Route path="/success" element={<Success />} />
         </Routes>
-        <Footer/>
+        <Footer />
       </BrowserRouter>
-    </>
+    </HelmetProvider>
   );
 }
 

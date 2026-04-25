@@ -1,35 +1,31 @@
 import React from "react";
 import { motion } from "framer-motion";
-import careersVideo from '../Components/Assets/careers.mp4';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import { FiPhone, FiMail, FiCheck } from "react-icons/fi";
+import Seo from "../Components/Seo/Seo";
+import careersVideo from "../Components/Assets/careers.mp4";
 
-const Button = ({ children, as, to, ...props }) => {
-  const commonClassName = "bg-black text-white px-12 py-4 text-lg rounded-xl shadow transition duration-300 w-64 border border-white hover:bg-white hover:text-black";
+const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
+const RECRUITING_PHONE_TEL = "+16013005529";
+const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
-  if (as === "link") {
-    return (
-      <Link to={to} className={commonClassName} {...props}>
-        {children}
-      </Link>
-    );
-  }
-
-  return (
-    <button className={commonClassName} {...props}>
-      {children}
-    </button>
-  );
-};
-
-const boxVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
-};
+const Bullet = ({ children }) => (
+  <li className="flex items-start gap-3 text-base md:text-lg leading-relaxed">
+    <FiCheck aria-hidden className="mt-1.5 shrink-0" />
+    <span>{children}</span>
+  </li>
+);
 
 const CareersPage = () => {
   return (
     <div className="bg-white text-black min-h-screen overflow-hidden">
-      {/* Hero Section */}
+      <Seo
+        title="Careers &mdash; Flatbed driving jobs at Forbes Logistix"
+        description="Hiring company drivers and owner-operators in the Southeast. $90,000+/year, 30% of line haul, $3,000 sign-on, $100 tarp pay, weekly direct deposit, home most weekends."
+        path="/careers"
+      />
+
+      {/* ---------- HERO ---------- */}
       <section className="relative w-full h-screen flex items-center justify-center">
         <video
           className="absolute inset-0 w-full h-full object-cover"
@@ -41,126 +37,200 @@ const CareersPage = () => {
         >
           <source src={careersVideo} type="video/mp4" />
         </video>
+        <div className="absolute inset-0 bg-black/70 z-10" />
 
-        {/* Black overlay */}
-        <div className="absolute inset-0 bg-black bg-opacity-80 z-10"></div>
-
-        <div className="relative z-20 text-center px-4 md:px-12 text-white font-bold tracking-widest">
+        <div className="relative z-20 text-center px-4 md:px-12 text-white max-w-4xl">
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-4xl md:text-5xl mb-6"
+            className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4"
           >
-            Drive Your Future with Forbes Logistix
+            Flatbed seats. Real pay. Real home time.
           </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="text-lg md:text-2xl text-white/90 mb-10"
+          >
+            Hiring company drivers and owner-operators across the Southeast.
+          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <div className="mt-10">
-              <Link to="/apply">
-                <Button
-                  className="px-12 py-6 text-2xl md:text-3xl bg-black rounded-xl hover:bg-white hover:text-black transition duration-300 ease-in-out hover:scale-105"
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Apply Now
-                </Button>
-              </Link>
+            <Link
+              to="/apply"
+              className="bg-white text-black px-10 py-4 text-lg font-bold rounded-2xl hover:bg-black hover:text-white border border-white hover:scale-105 transition-all duration-300"
+            >
+              Apply Now
+            </Link>
+            <a
+              href={`tel:${RECRUITING_PHONE_TEL}`}
+              className="inline-flex items-center justify-center bg-transparent text-white border border-white/60 px-10 py-4 text-lg font-bold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <FiPhone aria-hidden className="mr-2" /> Call Recruiting
+            </a>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ---------- COMPANY DRIVER OFFER ---------- */}
+      <section id="company-drivers" className="bg-black text-white py-20 px-4 scroll-mt-28">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">
+              For Company Drivers
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+              The offer, in plain numbers.
+            </h2>
+            <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
+              No fine print. No commission games. Here is what you earn and what you get.
+            </p>
+
+            <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4 mb-12">
+              <Bullet>
+                <span className="font-bold">Earn $90,000+ per year</span>
+              </Bullet>
+              <Bullet>
+                <span className="font-bold">30% of line haul</span>
+              </Bullet>
+              <Bullet>
+                Available for dispatch? You earn at least <span className="font-bold">$1,000 per week</span>
+              </Bullet>
+              <Bullet>
+                <span className="font-bold">$3,000 sign-on bonus</span>
+              </Bullet>
+              <Bullet>
+                <span className="font-bold">$100 tarp pay</span>
+              </Bullet>
+              <Bullet>Weekly direct deposit</Bullet>
+              <Bullet>Health insurance</Bullet>
+              <Bullet>Annual safety bonuses</Bullet>
+              <Bullet>Home most weekends</Bullet>
+              <Bullet>Modern, well-maintained equipment</Bullet>
+            </ul>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ---------- REQUIREMENTS ---------- */}
+      <section className="bg-white text-black py-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">
+              What we look for
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+              Qualified flatbed drivers.
+            </h2>
+            <p className="text-lg md:text-xl text-gray-700 max-w-2xl mb-10">
+              Our seats fit drivers who take the job seriously. If this is you, we want to talk.
+            </p>
+
+            <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4">
+              <Bullet>Valid Class A CDL</Bullet>
+              <Bullet>Clean MVR &mdash; no major violations</Bullet>
+              <Bullet>Pass DOT physical and drug screen</Bullet>
+              <Bullet>At least 23 years old</Bullet>
+              <Bullet>Verifiable OTR experience</Bullet>
+              <Bullet>Comfortable with tarping and securement</Bullet>
+            </ul>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ---------- OWNER-OPERATORS ---------- */}
+      <section id="owner-operators" className="bg-black text-white py-20 px-4 scroll-mt-28">
+        <div className="max-w-5xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">
+              For Owner-Operators
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+              Run your truck. Run with the Buffalo.
+            </h2>
+            <div className="text-lg md:text-xl text-white/80 max-w-3xl space-y-5 mb-10 leading-relaxed">
+              <p>
+                We work with owner-operators who take pride in their equipment and their reputation.
+                Modern freight, weekly settlements, and a dispatcher who picks up the phone.
+              </p>
+              <p>
+                Talk to us about lease terms and percentage. We will be straight with you about what the seat is worth.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4">
+              <a
+                href={`tel:${RECRUITING_PHONE_TEL}`}
+                className="inline-flex items-center justify-center bg-white text-black border border-white px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-black hover:text-white hover:scale-105 transition-all duration-300 shadow-xl"
+              >
+                <FiPhone aria-hidden className="mr-2" /> Talk to Recruiting
+              </a>
+              <a
+                href={`mailto:${RECRUITING_EMAIL}`}
+                className="inline-flex items-center justify-center bg-transparent text-white border border-white/60 px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+              >
+                <FiMail aria-hidden className="mr-2" /> Email Recruiting
+              </a>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Info Section */}
-      <section className="max-w-5xl mx-auto mt-20 mb-12 px-6 md:px-12 space-y-16 text-base md:text-lg leading-relaxed text-black relative">
-        {/*
-        <div className="bg-white p-10 md:p-14 border-l-8 border-black shadow-lg rounded-lg text-center">
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="mb-8"
-          >
-            At Forbes Logistix, we know that a great career is built on
-            <span className="font-semibold"> stability</span>, 
-            <span className="font-semibold"> respect</span>, and 
-            <span className="font-semibold"> opportunity</span>—and that's exactly what we
-            deliver. As a driver with us, you're more than just a number;
-            you're part of a team that values your hard work and rewards it
-            with competitive pay, industry-leading home time, and the latest
-            equipment to keep you moving safely and comfortably.
-          </motion.p>
+      {/* ---------- CTA STRIP ---------- */}
+      <section className="bg-white py-20 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Start the conversation.</h2>
+          <p className="text-lg text-gray-600 mb-10">Three ways to reach recruiting.</p>
 
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            Whether you're new to the industry or a seasoned pro, Forbes
-            Logistix is built to help you succeed. We also believe in investing
-            in the next generation—especially those looking for a strong career
-            path with real growth potential.
-          </motion.p>
-        </div>
-         */}
-
-        {/* Benefits */}
-        <div className="grid md:grid-cols-2 gap-10 text-black mt-10">
-          {[
-            {
-              title: "Maximize Your Earnings",
-              desc: "Commission-based pay—no caps, no limits. The harder you run, the more you earn."
-            },
-            {
-              title: "Home Time You Can Count On",
-              desc: "Flexible scheduling and predictable routes mean more time with your family."
-            },
-            {
-              title: "Drive the Best",
-              desc: "Our fleet is packed with top-of-the-line, tech-equipped trucks for comfort and safety."
-            },
-            {
-              title: "Real Growth Potential",
-              desc: "Training and career advancement opportunities to help you get ahead."
-            }
-          ].map(({title, desc}, i) => (
-            <motion.div
-              key={i}
-              className="bg-white rounded-xl shadow-md p-5 flex flex-col border border-black hover:shadow-lg transition-shadow duration-300"
-              variants={boxVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{ duration: 0.5, delay: i * 0.2 }}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a
+              href={`tel:${RECRUITING_PHONE_TEL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
             >
-              <h3 className="text-lg tracking-wide mb-2">{title}</h3>
-              <p className="text-sm leading-relaxed">{desc}</p>
-            </motion.div>
-          ))}
+              <FiPhone aria-hidden className="text-3xl mb-3" />
+              <span className="text-lg font-bold">Call Recruiting</span>
+              <span className="text-sm opacity-80 mt-1">{RECRUITING_PHONE_DISPLAY}</span>
+            </a>
+            <a
+              href={`mailto:${RECRUITING_EMAIL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <FiMail aria-hidden className="text-3xl mb-3" />
+              <span className="text-lg font-bold">Email Recruiting</span>
+              <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
+            </a>
+            <Link
+              to="/apply"
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <FiCheck aria-hidden className="text-3xl mb-3" />
+              <span className="text-lg font-bold">Apply Now</span>
+              <span className="text-sm opacity-80 mt-1">Driver application</span>
+            </Link>
+          </div>
         </div>
       </section>
-      
-      {/* Apply Section */}
-      <div className="relative z-20 bg-white py-20 flex flex-col items-center text-black font-sans px-4">
-        <h2 className="text-4xl font-bold mb-4 text-center">Ready to Drive With Us?</h2>
-        <p className="text-lg mb-8 max-w-xl text-center text-gray-700">
-        </p>
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.7 }}
-        >
-          <Button
-            onClick={() => window.location.href = "/apply"}
-            className="bg-black text-white px-10 py-5 text-xl rounded-xl shadow-lgtransition duration-300 ease-in-out hover:scale-105 font-bold"
-          >
-            Apply to be a Driver
-          </Button>
-        </motion.div>
-      </div>
     </div>
   );
 };

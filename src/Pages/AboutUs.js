@@ -1,43 +1,22 @@
 import React from "react";
 import { motion } from "framer-motion";
-import truckBg from "../Components/Assets/truckBg.jpg"; // Adjust path if needed
+import Seo from "../Components/Seo/Seo";
+import truckBg from "../Components/Assets/truckBg.jpg";
 
 const AboutPage = () => {
   return (
     <div className="text-black">
-      {/* Top Section - Fullscreen Heading */}
-      {/*<section className="min-h-screen bg-white flex flex-col justify-center items-center px-6">
-        <motion.h2
-          className="text-3xl md:text-5xl font-extrabold text-center tracking-wide max-w-4xl"
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          Forbes Logistix is a veteran-owned trucking company, focusing on flatbed
-          truckload operations, founded by a truck driver.
-        </motion.h2>
-
-        <motion.p
-          className="mt-6 text-xl italic text-gray-700 text-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3, duration: 0.6 }}
-        >
-          – let Zack wordsmith
-        </motion.p>
-      </section>*/}
-
-      {/* Bottom Section - Fullscreen About with Truck Background */}
+      <Seo
+        title="About Forbes Logistix &mdash; Veteran-owned flatbed carrier in Jackson, MS"
+        description="Veteran-owned, asset-based open-deck carrier headquartered in Jackson, MS. Founded by a former driver. 3-acre terminal with a 25,000 sq ft warehouse and shop."
+        path="/aboutUs"
+      />
       <section
         className="relative bg-cover bg-center bg-no-repeat min-h-screen flex items-center justify-center shadow-xl"
-        style={{
-          backgroundImage: `url(${truckBg})`,
-        }}
+        style={{ backgroundImage: `url(${truckBg})` }}
       >
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/60 "></div>
+        <div className="absolute inset-0 bg-black/60" />
 
-        {/* Content Box */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -45,9 +24,9 @@ const AboutPage = () => {
           viewport={{ once: true }}
           className="relative z-10 text-white max-w-3xl px-6 md:px-12 py-12 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-lg"
         >
-          <h2 className="text-2xl md:text-3xl font-extrabold mb-6 border-b border-white/30 pb-2 text-center">
+          <h1 className="text-2xl md:text-3xl font-extrabold mb-6 border-b border-white/30 pb-2 text-center">
             About Forbes Logistix
-          </h2>
+          </h1>
           <p className="text-sm md:text-base leading-relaxed text-white/90 mb-4">
             Forbes Logistix is a veteran-owned, asset-based carrier headquartered in Jackson, Mississippi.
             We specialize in open-deck transportation and operate in one of the most capacity-constrained

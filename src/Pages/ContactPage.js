@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { FiMapPin, FiMail, FiPhone, FiClock } from "react-icons/fi";
+import Seo from "../Components/Seo/Seo";
 import contactBg from "../Components/Assets/contactBg.jpg";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
@@ -96,23 +98,45 @@ const ContactSection = () => {
 
   return (
     <>
+      <Seo
+        title="Contact Forbes Logistix &mdash; Jackson, MS dispatch and recruiting"
+        description="Reach Forbes Logistix dispatch and recruiting. 3180 Utica Ave, Jackson, MS 39209. Phone (601) 300-5529. Open 24/7."
+        path="/contactUs"
+      />
       <section
         className="relative min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center px-6"
         style={{ backgroundImage: `url(${contactBg})` }}
       >
         <div className="absolute inset-0 bg-black/40"></div>
-        <div className="relative z-10 grid md:grid-cols-2 gap-10 max-w-5xl w-full text-center">
+        <div className="relative z-10 grid md:grid-cols-2 gap-10 max-w-5xl w-full">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="bg-white/20 border border-white/20 backdrop-blur-sm text-white rounded-2xl shadow-xl p-10"
           >
-            <h3 className="text-2xl font-semibold mb-4">Head Office</h3>
-            <p className="text-white/90 mb-1">3180 Utica Ave</p>
-            <p className="text-white/90 mb-1">Jackson, MS 39209</p>
-            <p className="text-white/90 mb-1">Email: contact@forbeslogistix.com</p>
-            <p className="text-white/90">Phone: (601) 300-5529</p>
+            <h3 className="text-2xl font-semibold mb-6 text-center">Head Office</h3>
+            <ul className="space-y-4">
+              <li className="flex items-start gap-3">
+                <FiMapPin aria-hidden className="mt-1 shrink-0" />
+                <div>
+                  <p className="text-white/90">3180 Utica Ave</p>
+                  <p className="text-white/90">Jackson, MS 39209</p>
+                </div>
+              </li>
+              <li className="flex items-start gap-3">
+                <FiMail aria-hidden className="mt-1 shrink-0" />
+                <a href="mailto:contact@forbeslogistix.com" className="text-white/90 hover:text-white underline-offset-2 hover:underline">
+                  contact@forbeslogistix.com
+                </a>
+              </li>
+              <li className="flex items-start gap-3">
+                <FiPhone aria-hidden className="mt-1 shrink-0" />
+                <a href="tel:+16013005529" className="text-white/90 hover:text-white underline-offset-2 hover:underline">
+                  (601) 300-5529
+                </a>
+              </li>
+            </ul>
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -120,10 +144,13 @@ const ContactSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="bg-white/20 border border-white/20 backdrop-blur-sm text-white rounded-2xl shadow-xl p-10"
           >
-            <h3 className="text-2xl font-semibold mb-4">Operating Hours</h3>
-            <p className="text-white/90 leading-relaxed">
-              Open 24 hours a day,<br />7 days a week,<br />365 days a year.
-            </p>
+            <h3 className="text-2xl font-semibold mb-6 text-center">Operating Hours</h3>
+            <div className="flex items-start gap-3 justify-center">
+              <FiClock aria-hidden className="mt-1 shrink-0" />
+              <p className="text-white/90 leading-relaxed">
+                Open 24 hours a day,<br />7 days a week,<br />365 days a year.
+              </p>
+            </div>
           </motion.div>
         </div>
       </section>

@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FiPhone, FiMail, FiFileText } from "react-icons/fi";
+import Seo from "../Components/Seo/Seo";
 import homeVideo from "../Components/Assets/homeVideo.mp4";
 
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
@@ -65,6 +66,11 @@ const Bullet = ({ children }) => (
 const HomePage = () => {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
+      <Seo
+        title="Forbes Logistix &mdash; Flatbed driving jobs in the Southeast"
+        description="Driver-founded flatbed carrier in Jackson, MS hiring company drivers and owner-operators. Real pay, modern equipment, home most weekends. Call (601) 300-5529."
+        path="/"
+      />
       {/* ---------- HERO ---------- */}
       <section className="relative min-h-screen">
         <video
