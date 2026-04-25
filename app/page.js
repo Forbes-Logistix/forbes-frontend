@@ -99,7 +99,7 @@ export default function HomePage() {
                 Driver Founded. Driver Focused.
               </p>
               <p className="text-lg md:text-xl mb-10 text-white/85 max-w-2xl mx-auto drop-shadow-md">
-                Flatbed driving jobs built around real pay, modern equipment, and home most weekends.
+                Flatbed driving jobs built around real pay, modern equipment, and home weekends.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -121,7 +121,7 @@ export default function HomePage() {
       {/* ---------- PROOF BAR ---------- */}
       <section className="relative z-20 bg-black text-white py-10 px-4 border-y border-white/10">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <ProofChip icon={House} label="Home Most Weekends" />
+          <ProofChip icon={House} label="Home Weekends" />
           <ProofChip icon={WalletCards} label="Weekly Direct Deposit" />
           <ProofChip icon={Truck} label="Modern Equipment" />
           <ProofChip icon={MapPinned} label="Southeast Opportunities" />
@@ -179,7 +179,7 @@ export default function HomePage() {
                 <OfferBullet icon={WalletCards}>Weekly direct deposit</OfferBullet>
                 <OfferBullet icon={HeartPulse}>Health insurance</OfferBullet>
                 <OfferBullet icon={ShieldCheck}>Annual safety bonuses</OfferBullet>
-                <OfferBullet icon={House}>Home most weekends</OfferBullet>
+                <OfferBullet icon={House}>Home weekends</OfferBullet>
                 <OfferBullet icon={Truck}>Small-company feel. Big-company professionalism.</OfferBullet>
               </ul>
 

@@ -9,7 +9,7 @@ export const metadata = {
     template: "%s",
   },
   description:
-    "Driver-founded flatbed carrier hiring company drivers and owner-operators across the Southeast. Real pay, home most weekends, modern equipment, and direct recruiting contact.",
+    "Driver-founded flatbed carrier hiring company drivers and owner-operators across the Southeast. Real pay, home weekends, modern equipment, and direct recruiting contact.",
   applicationName: "Forbes Logistix",
   openGraph: {
     type: "website",

@@ -19,10 +19,10 @@ const sections = [
       "We run flatbeds and step-decks on open-deck loads across the Southeast. Real freight, real lanes, customers who expect drivers who know how to secure a load.",
   },
   {
-    title: "Home most weekends",
+    title: "Home weekends",
     Icon: House,
     body:
-      "Our lanes are built so company drivers can be home most weekends. We do not sell flexible scheduling — we plan dispatch around real home time.",
+      "Our lanes are built so company drivers can be home weekends. We do not sell flexible scheduling — we plan dispatch around real home time.",
   },
   {
     title: "Dispatch that picks up the phone",

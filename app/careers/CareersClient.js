@@ -125,7 +125,7 @@ export default function CareersClient() {
                 <OfferBullet icon={WalletCards}>Weekly direct deposit</OfferBullet>
                 <OfferBullet icon={HeartPulse}>Health insurance</OfferBullet>
                 <OfferBullet icon={ShieldCheck}>Annual safety bonuses</OfferBullet>
-                <OfferBullet icon={House}>Home most weekends</OfferBullet>
+                <OfferBullet icon={House}>Home weekends</OfferBullet>
                 <OfferBullet icon={Truck}>Modern, well-maintained equipment</OfferBullet>
               </ul>
             </motion.div>
