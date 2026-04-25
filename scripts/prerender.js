@@ -41,6 +41,14 @@ function waitFor(url, timeoutMs = 30000) {
 }
 
 async function main() {
+  // Skip on Vercel and other CI builds where puppeteer's bundled Chromium
+  // can't launch without sysdeps. Local builds still prerender. A
+  // follow-up will swap to @sparticuz/chromium for Vercel-native prerender.
+  if (process.env.VERCEL || process.env.SKIP_PRERENDER) {
+    console.log("[prerender] skipped (Vercel/CI build); Helmet handles client-side metadata.");
+    return;
+  }
+
   const buildDir = path.resolve(__dirname, "..", "build");
   if (!fs.existsSync(buildDir)) {
     console.error("[prerender] build directory missing — run `npm run build` first");
