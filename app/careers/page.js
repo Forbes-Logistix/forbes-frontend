@@ -1,15 +1,18 @@
 import CareersClient from "./CareersClient";
 
+const TITLE = "Company Driver & Owner-Operator Jobs | Forbes Logistix";
+const DESCRIPTION =
+  "Company drivers: earn $90,000+ with 30% of line haul, $3,000 sign-on, $100 tarp pay, and home weekends. Owner-operators keep 90% of total billed revenue.";
+
 export const metadata = {
-  title: "Careers — Flatbed driving jobs at Forbes Logistix",
-  description:
-    "Hiring company drivers and owner-operators in the Southeast. $90,000+/year, 30% of line haul, $3,000 sign-on, $100 tarp pay, weekly direct deposit, home most weekends.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "https://www.forbeslogistix.com/careers" },
   openGraph: {
-    title: "Careers — Flatbed driving jobs at Forbes Logistix",
-    description:
-      "Hiring company drivers and owner-operators in the Southeast. $90,000+/year, 30% of line haul, $3,000 sign-on, $100 tarp pay, weekly direct deposit, home most weekends.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/careers",
+    images: [{ url: "/assets/photos/truck-loading.jpg" }],
   },
 };
 

@@ -1,15 +1,18 @@
 import ContactClient from "./ContactClient";
 
+const TITLE = "Recruiting Contact | Forbes Logistix";
+const DESCRIPTION =
+  "Call or email Forbes Logistix recruiting for company driver and owner-operator opportunities across the Southeast.";
+
 export const metadata = {
-  title: "Contact Forbes Logistix — Jackson, MS dispatch and recruiting",
-  description:
-    "Reach Forbes Logistix dispatch and recruiting. 3180 Utica Ave, Jackson, MS 39209. Phone (601) 300-5529. Open 24/7.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "https://www.forbeslogistix.com/contact" },
   openGraph: {
-    title: "Contact Forbes Logistix — Jackson, MS dispatch and recruiting",
-    description:
-      "Reach Forbes Logistix dispatch and recruiting. 3180 Utica Ave, Jackson, MS 39209. Phone (601) 300-5529. Open 24/7.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/contact",
+    images: [{ url: "/assets/photos/terminal.jpg" }],
   },
 };
 

@@ -1,7 +1,23 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { FiPhone, FiMail, FiFileText } from "react-icons/fi";
+import {
+  Phone,
+  Mail,
+  FileText,
+  House,
+  WalletCards,
+  Truck,
+  MapPinned,
+  DollarSign,
+  Award,
+  ShieldCheck,
+  HeartPulse,
+  Percent,
+  CalendarDays,
+  PhoneCall,
+} from "lucide-react";
 
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
@@ -12,29 +28,19 @@ const scrollToId = (id) => {
   if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
-const Button = ({ children, className = "", noColorHover = false, ...props }) => (
+const Button = ({ children, className = "", ...props }) => (
   <button
-    className={`
-      bg-black
-      text-white
-      px-8 py-4
-      text-lg font-semibold
-      rounded-2xl
-      shadow-xl
-      border border-white/20
-      transition-all duration-300 ease-in-out
-      ${noColorHover ? "hover:scale-105" : "hover:bg-white hover:text-black hover:scale-105"}
-      ${className}
-    `}
+    className={`bg-black text-white px-8 py-4 text-lg font-semibold rounded-2xl shadow-xl border border-white/20 transition-all duration-300 ease-in-out hover:bg-white hover:text-black hover:scale-105 ${className}`}
     {...props}
   >
     {children}
   </button>
 );
 
-const ProofChip = ({ children }) => (
-  <div className="flex items-center justify-center text-center px-4 py-3 border border-white/30 rounded-xl bg-white/5 backdrop-blur-sm text-sm md:text-base font-semibold tracking-wide uppercase">
-    {children}
+const ProofChip = ({ icon: Icon, label }) => (
+  <div className="flex items-center justify-center gap-2 text-center px-4 py-3 border border-white/30 rounded-xl bg-white/5 backdrop-blur-sm text-sm md:text-base font-semibold tracking-wide uppercase">
+    <Icon aria-hidden className="w-5 h-5 shrink-0" />
+    <span>{label}</span>
   </div>
 );
 
@@ -55,9 +61,9 @@ const AudienceCard = ({ title, blurb, targetId }) => (
   </motion.button>
 );
 
-const Bullet = ({ children }) => (
+const OfferBullet = ({ icon: Icon, children }) => (
   <li className="flex items-start gap-3 text-base md:text-lg leading-relaxed">
-    <span aria-hidden className="mt-2 inline-block w-2 h-2 rounded-full bg-white shrink-0" />
+    <Icon aria-hidden className="w-5 h-5 mt-1 shrink-0" />
     <span>{children}</span>
   </li>
 );
@@ -65,7 +71,7 @@ const Bullet = ({ children }) => (
 export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
-      {/* ---------- HERO ---------- */}
+      {/* ---------- HERO (buffalo video) ---------- */}
       <section className="relative min-h-screen">
         <video
           className="absolute inset-0 w-full h-full object-cover z-0"
@@ -73,10 +79,11 @@ export default function HomePage() {
           muted
           loop
           playsInline
+          poster="/assets/photos/truck-loading.jpg"
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black bg-opacity-60 z-10" />
+        <div className="absolute inset-0 bg-black/60 z-10" />
 
         <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
@@ -85,20 +92,27 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
-              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight">
+              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight drop-shadow-2xl">
                 Run with the Buffalo
               </h1>
-              <p className="text-2xl md:text-3xl mb-4 text-white/90 font-semibold">
+              <p className="text-2xl md:text-3xl mb-4 text-white/90 font-semibold drop-shadow-lg">
                 Driver Founded. Driver Focused.
               </p>
-              <p className="text-lg md:text-xl mb-10 text-white/80 max-w-2xl mx-auto">
-                Flatbed driving jobs built around real pay, modern equipment, and home most weekends.
+              <p className="text-lg md:text-xl mb-10 text-white/85 max-w-2xl mx-auto drop-shadow-md">
+                Flatbed driving jobs built around real pay, modern equipment, and home weekends.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button onClick={() => scrollToId("company-drivers")}>Company Drivers</Button>
                 <Button onClick={() => scrollToId("owner-operators")}>Owner-Operators</Button>
               </div>
+
+              <a
+                href={`tel:${RECRUITING_PHONE_TEL}`}
+                className="mt-6 inline-flex items-center justify-center gap-2 text-white/90 hover:text-white text-base font-medium underline-offset-4 hover:underline"
+              >
+                <Phone aria-hidden className="w-4 h-4" /> Call Recruiting · {RECRUITING_PHONE_DISPLAY}
+              </a>
             </motion.div>
           </div>
         </div>
@@ -107,10 +121,10 @@ export default function HomePage() {
       {/* ---------- PROOF BAR ---------- */}
       <section className="relative z-20 bg-black text-white py-10 px-4 border-y border-white/10">
         <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-          <ProofChip>Home Most Weekends</ProofChip>
-          <ProofChip>Weekly Direct Deposit</ProofChip>
-          <ProofChip>Modern Equipment</ProofChip>
-          <ProofChip>Southeast Opportunities</ProofChip>
+          <ProofChip icon={House} label="Home Weekends" />
+          <ProofChip icon={WalletCards} label="Weekly Direct Deposit" />
+          <ProofChip icon={Truck} label="Modern Equipment" />
+          <ProofChip icon={MapPinned} label="Southeast Opportunities" />
         </div>
       </section>
 
@@ -129,7 +143,7 @@ export default function HomePage() {
             />
             <AudienceCard
               title="Owner-Operators"
-              blurb="Bring your truck. Run with a small company that respects the seat."
+              blurb="Bring your truck. Keep 90% of total billed revenue. Run with a small company that respects the seat."
               targetId="owner-operators"
             />
           </div>
@@ -138,83 +152,140 @@ export default function HomePage() {
 
       {/* ---------- COMPANY DRIVERS ---------- */}
       <section id="company-drivers" className="relative z-20 bg-black text-white py-20 px-4 scroll-mt-28">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">For Company Drivers</p>
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-              Drive with Forbes. Get paid like it.
-            </h2>
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
-              Straight numbers. No commission games, no fine print.
-            </p>
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-center">
+          <div className="lg:col-span-3">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">For Company Drivers</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+                Drive with Forbes. Get paid like it.
+              </h2>
+              <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
+                Straight numbers. No fine print.
+              </p>
 
-            <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4 mb-12">
-              <Bullet><span className="font-bold">Earn $90,000+ per year</span></Bullet>
-              <Bullet><span className="font-bold">30% of line haul</span></Bullet>
-              <Bullet>Available for dispatch? You'll earn at least <span className="font-bold">$1,000/week</span></Bullet>
-              <Bullet><span className="font-bold">$3,000 sign-on bonus</span></Bullet>
-              <Bullet><span className="font-bold">$100 tarp pay</span></Bullet>
-              <Bullet>Health insurance</Bullet>
-              <Bullet>Annual safety bonuses</Bullet>
-              <Bullet>Small-company feel. Big-company professionalism.</Bullet>
-            </ul>
+              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10">
+                <OfferBullet icon={DollarSign}><span className="font-bold">Earn $90,000+ per year</span></OfferBullet>
+                <OfferBullet icon={Percent}><span className="font-bold">30% of line haul</span></OfferBullet>
+                <OfferBullet icon={CalendarDays}>
+                  Available for dispatch? You&apos;ll earn at least <span className="font-bold">$1,000/week</span>
+                </OfferBullet>
+                <OfferBullet icon={Award}><span className="font-bold">$3,000 sign-on bonus</span></OfferBullet>
+                <OfferBullet icon={ShieldCheck}><span className="font-bold">$100 tarp pay</span></OfferBullet>
+                <OfferBullet icon={WalletCards}>Weekly direct deposit</OfferBullet>
+                <OfferBullet icon={HeartPulse}>Health insurance</OfferBullet>
+                <OfferBullet icon={ShieldCheck}>Annual safety bonuses</OfferBullet>
+                <OfferBullet icon={House}>Home weekends</OfferBullet>
+                <OfferBullet icon={Truck}>Small-company feel. Big-company professionalism.</OfferBullet>
+              </ul>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button onClick={() => (window.location.href = "/apply")}>Apply Now</Button>
-              <a
-                href={`tel:${RECRUITING_PHONE_TEL}`}
-                className="inline-flex items-center justify-center bg-transparent text-white border border-white/40 px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
-              >
-                <FiPhone aria-hidden className="mr-2" /> Call Recruiting
-              </a>
-            </div>
-          </motion.div>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button onClick={() => (window.location.href = "/apply")}>Apply Now</Button>
+                <a
+                  href={`tel:${RECRUITING_PHONE_TEL}`}
+                  className="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-white/40 px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+                >
+                  <Phone aria-hidden className="w-5 h-5" /> Call Recruiting
+                </a>
+              </div>
+            </motion.div>
+          </div>
+
+          <div className="lg:col-span-2 relative aspect-[4/5] rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+            <Image
+              src="/assets/photos/truck-loading.jpg"
+              alt="Forbes Logistix Western Star tractor with open-deck trailer under covered loading area"
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover"
+              priority={false}
+            />
+          </div>
         </div>
       </section>
 
       {/* ---------- OWNER-OPERATORS ---------- */}
       <section id="owner-operators" className="relative z-20 bg-white text-black py-20 px-4 scroll-mt-28">
-        <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.6 }}
-          >
-            <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">For Owner-Operators</p>
-            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
-              Run your truck. Run with the Buffalo.
-            </h2>
-            <div className="text-lg md:text-xl text-gray-800 max-w-3xl space-y-5 mb-10 leading-relaxed">
-              <p>
-                We work with owner-operators who take pride in their equipment and their reputation.
-                Modern freight, weekly settlements, and a dispatcher who picks up the phone.
-              </p>
-              <p>
-                Talk to us about lease terms and percentage. We'll be straight with you about what the seat is worth.
-              </p>
-            </div>
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-center">
+          <div className="lg:col-span-2 relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl order-2 lg:order-1">
+            <Image
+              src="/assets/photos/truck-urban-load.jpg"
+              alt="Forbes Logistix flatbed delivering freight in an urban jobsite"
+              fill
+              sizes="(max-width: 1024px) 100vw, 40vw"
+              className="object-cover"
+            />
+          </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <a
-                href={`tel:${RECRUITING_PHONE_TEL}`}
-                className="inline-flex items-center justify-center bg-black text-white border border-black px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300 shadow-xl"
-              >
-                <FiPhone aria-hidden className="mr-2" /> Talk to Recruiting
-              </a>
-              <a
-                href={`mailto:${RECRUITING_EMAIL}`}
-                className="inline-flex items-center justify-center bg-white text-black border border-black px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-black hover:text-white hover:scale-105 transition-all duration-300"
-              >
-                <FiMail aria-hidden className="mr-2" /> Email Recruiting
-              </a>
-            </div>
-          </motion.div>
+          <div className="lg:col-span-3 order-1 lg:order-2">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.6 }}
+            >
+              <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">For Owner-Operators</p>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+                Run your truck. Run with the Buffalo.
+              </h2>
+
+              <p className="text-3xl md:text-4xl font-extrabold tracking-tight mb-6">
+                Keep <span className="underline decoration-4 decoration-black/80 underline-offset-4">90%</span> of total billed revenue.
+              </p>
+
+              <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-8 text-lg md:text-xl text-gray-800">
+                <OfferBullet icon={Percent}>90% of total billed revenue</OfferBullet>
+                <OfferBullet icon={CalendarDays}>Weekly settlements</OfferBullet>
+                <OfferBullet icon={Truck}>Real open-deck freight</OfferBullet>
+                <OfferBullet icon={PhoneCall}>Dispatcher who answers the phone</OfferBullet>
+              </ul>
+
+              <p className="text-base md:text-lg text-gray-700 mb-8 max-w-2xl">
+                Talk to recruiting about settlement details, equipment standards, and onboarding.
+              </p>
+
+              <div className="flex flex-col sm:flex-row gap-4">
+                <a
+                  href={`tel:${RECRUITING_PHONE_TEL}`}
+                  className="inline-flex items-center justify-center gap-2 bg-black text-white border border-black px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300 shadow-xl"
+                >
+                  <Phone aria-hidden className="w-5 h-5" /> Talk to Recruiting
+                </a>
+                <a
+                  href={`mailto:${RECRUITING_EMAIL}`}
+                  className="inline-flex items-center justify-center gap-2 bg-white text-black border border-black px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-black hover:text-white hover:scale-105 transition-all duration-300"
+                >
+                  <Mail aria-hidden className="w-5 h-5" /> Email Recruiting
+                </a>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- TERMINAL CREDIBILITY BAND ---------- */}
+      <section className="relative h-[50vh] min-h-[360px] overflow-hidden">
+        <Image
+          src="/assets/photos/terminal.jpg"
+          alt="Forbes Logistix terminal and shop in Jackson, Mississippi with company tractor parked outside"
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/60 flex items-center">
+          <div className="max-w-5xl mx-auto px-6 text-white">
+            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">Jackson, Mississippi</p>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl">
+              A real terminal, a real shop, a real company.
+            </h2>
+            <p className="text-lg md:text-xl text-white/85 max-w-2xl">
+              3-acre lot. 25,000 sq ft warehouse and shop. Asset-based, veteran-owned, and built around the seat.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -233,7 +304,7 @@ export default function HomePage() {
               one where drivers are paid fairly, respected, and never left in the dark.
             </p>
             <p className="text-3xl md:text-5xl font-extrabold tracking-tight mb-8">
-              I've been in your seat.
+              I&apos;ve been in your seat.
             </p>
             <footer className="text-base md:text-lg uppercase tracking-widest text-white/70 font-bold">
               &mdash; Chase Forbes, Founder
@@ -253,7 +324,7 @@ export default function HomePage() {
               href={`tel:${RECRUITING_PHONE_TEL}`}
               className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
             >
-              <FiPhone aria-hidden className="text-3xl mb-3" />
+              <Phone aria-hidden className="w-8 h-8 mb-3" />
               <span className="text-lg font-bold">Call Recruiting</span>
               <span className="text-sm opacity-80 mt-1">{RECRUITING_PHONE_DISPLAY}</span>
             </a>
@@ -261,7 +332,7 @@ export default function HomePage() {
               href={`mailto:${RECRUITING_EMAIL}`}
               className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
             >
-              <FiMail aria-hidden className="text-3xl mb-3" />
+              <Mail aria-hidden className="w-8 h-8 mb-3" />
               <span className="text-lg font-bold">Email Recruiting</span>
               <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
             </a>
@@ -269,7 +340,7 @@ export default function HomePage() {
               href="/apply"
               className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
             >
-              <FiFileText aria-hidden className="text-3xl mb-3" />
+              <FileText aria-hidden className="w-8 h-8 mb-3" />
               <span className="text-lg font-bold">Quick Apply</span>
               <span className="text-sm opacity-80 mt-1">Driver application</span>
             </a>

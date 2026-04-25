@@ -1,15 +1,18 @@
 import OperationsClient from "./OperationsClient";
 
+const TITLE = "Open-Deck Freight, Equipment & Driver Experience | Forbes Logistix";
+const DESCRIPTION =
+  "See how Forbes Logistix runs: flatbeds and step-decks, weekly settlements, direct dispatch, Jackson terminal support, and real home time.";
+
 export const metadata = {
-  title: "Operations — What it is like to drive for Forbes Logistix",
-  description:
-    "What the seat looks like at Forbes Logistix: open-deck freight in the Southeast, home most weekends, weekly direct deposit, dispatch that picks up the phone, modern equipment, Jackson MS terminal.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "https://www.forbeslogistix.com/operations" },
   openGraph: {
-    title: "Operations — What it is like to drive for Forbes Logistix",
-    description:
-      "What the seat looks like at Forbes Logistix: open-deck freight in the Southeast, home most weekends, weekly direct deposit, dispatch that picks up the phone, modern equipment, Jackson MS terminal.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/operations",
+    images: [{ url: "/assets/photos/truck-precast.jpg" }],
   },
 };
 

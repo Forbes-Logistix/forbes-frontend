@@ -5,11 +5,11 @@ import Footer from "./components/Footer";
 export const metadata = {
   metadataBase: new URL("https://www.forbeslogistix.com"),
   title: {
-    default: "Forbes Logistix — Flatbed driving jobs in the Southeast",
+    default: "Flatbed Driving Jobs in the Southeast | Forbes Logistix",
     template: "%s",
   },
   description:
-    "Driver-founded flatbed carrier in Jackson, MS hiring company drivers and owner-operators. Real pay, modern equipment, home most weekends.",
+    "Driver-founded flatbed carrier hiring company drivers and owner-operators across the Southeast. Real pay, home weekends, modern equipment, and direct recruiting contact.",
   applicationName: "Forbes Logistix",
   openGraph: {
     type: "website",

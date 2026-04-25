@@ -1,14 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { motion } from "framer-motion";
-import { FiMapPin, FiMail, FiPhone, FiClock } from "react-icons/fi";
+import { MapPin, Mail, Phone, Clock, FileText } from "lucide-react";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
-// Optional: if this env var is unset, the Turnstile widget is not rendered
-// and the form submits without a token. Backend skips verification when
-// TURNSTILE_SECRET is unset, so the two sides roll out together.
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
+const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
+const RECRUITING_PHONE_TEL = "+16013005529";
+const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
 export default function ContactClient() {
   const [f, setF] = useState({ name: "", email: "", message: "" });
@@ -38,9 +41,7 @@ export default function ContactClient() {
           "expired-callback": EXPIRED_NAME,
           "error-callback": ERROR_NAME,
         });
-      } catch {
-        // widget may already be rendered (e.g. React StrictMode) — ignore
-      }
+      } catch { /* widget may already be rendered */ }
     };
 
     if (document.getElementById(SCRIPT_ID)) {
@@ -97,38 +98,88 @@ export default function ContactClient() {
   const submitDisabled = s === "sending" || (!!TURNSTILE_SITE_KEY && !turnstileToken);
 
   return (
-    <>
-      <section
-        className="relative min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center px-6"
-        style={{ backgroundImage: `url(/assets/contactBg.jpg)` }}
-      >
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="relative z-10 grid md:grid-cols-2 gap-10 max-w-5xl w-full">
+    <div className="bg-white text-black">
+      {/* ---------- HERO: RECRUITING-FIRST ---------- */}
+      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+        <Image
+          src="/assets/photos/terminal.jpg"
+          alt="Forbes Logistix terminal and shop in Jackson, Mississippi with company tractor parked outside"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <div className="relative z-10 max-w-5xl w-full px-6 py-20 text-white">
+          <div className="text-center mb-10">
+            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">Recruiting</p>
+            <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
+              Talk to the people running the trucks.
+            </h1>
+            <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto">
+              Company drivers and owner-operators &mdash; reach Forbes Logistix recruiting directly.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl mx-auto">
+            <a
+              href={`tel:${RECRUITING_PHONE_TEL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Phone aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Call Recruiting</span>
+              <span className="text-sm opacity-80 mt-1">{RECRUITING_PHONE_DISPLAY}</span>
+            </a>
+            <a
+              href={`mailto:${RECRUITING_EMAIL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Mail aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Email Recruiting</span>
+              <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
+            </a>
+            <Link
+              href="/apply"
+              className="flex flex-col items-center justify-center bg-white text-black px-6 py-8 rounded-2xl border border-white shadow-xl hover:bg-black hover:text-white hover:scale-105 transition-all duration-300"
+            >
+              <FileText aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Apply Now</span>
+              <span className="text-sm opacity-80 mt-1">Driver application</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- TERMINAL DETAILS ---------- */}
+      <section className="bg-white py-20 px-4">
+        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="bg-white/20 border border-white/20 backdrop-blur-sm text-white rounded-2xl shadow-xl p-10"
+            viewport={{ once: true }}
+            className="bg-black text-white rounded-2xl shadow-xl p-10"
           >
-            <h1 className="text-2xl font-semibold mb-6 text-center">Head Office</h1>
+            <h2 className="text-2xl font-semibold mb-6">Jackson Terminal</h2>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <FiMapPin aria-hidden className="mt-1 shrink-0" />
+                <MapPin aria-hidden className="w-5 h-5 mt-1 shrink-0" />
                 <div>
                   <p className="text-white/90">3180 Utica Ave</p>
                   <p className="text-white/90">Jackson, MS 39209</p>
                 </div>
               </li>
               <li className="flex items-start gap-3">
-                <FiMail aria-hidden className="mt-1 shrink-0" />
-                <a href="mailto:contact@forbeslogistix.com" className="text-white/90 hover:text-white underline-offset-2 hover:underline">
-                  contact@forbeslogistix.com
+                <Phone aria-hidden className="w-5 h-5 mt-1 shrink-0" />
+                <a href={`tel:${RECRUITING_PHONE_TEL}`} className="text-white/90 hover:text-white underline-offset-2 hover:underline">
+                  {RECRUITING_PHONE_DISPLAY}
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <FiPhone aria-hidden className="mt-1 shrink-0" />
-                <a href="tel:+16013005529" className="text-white/90 hover:text-white underline-offset-2 hover:underline">
-                  (601) 300-5529
+                <Mail aria-hidden className="w-5 h-5 mt-1 shrink-0" />
+                <a href={`mailto:${RECRUITING_EMAIL}`} className="text-white/90 hover:text-white underline-offset-2 hover:underline break-all">
+                  {RECRUITING_EMAIL}
                 </a>
               </li>
             </ul>
@@ -136,12 +187,13 @@ export default function ContactClient() {
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/20 border border-white/20 backdrop-blur-sm text-white rounded-2xl shadow-xl p-10"
+            transition={{ duration: 0.6, delay: 0.15 }}
+            viewport={{ once: true }}
+            className="bg-black text-white rounded-2xl shadow-xl p-10"
           >
-            <h2 className="text-2xl font-semibold mb-6 text-center">Operating Hours</h2>
-            <div className="flex items-start gap-3 justify-center">
-              <FiClock aria-hidden className="mt-1 shrink-0" />
+            <h2 className="text-2xl font-semibold mb-6">Operating Hours</h2>
+            <div className="flex items-start gap-3">
+              <Clock aria-hidden className="w-5 h-5 mt-1 shrink-0" />
               <p className="text-white/90 leading-relaxed">
                 Open 24 hours a day,<br />7 days a week,<br />365 days a year.
               </p>
@@ -150,16 +202,21 @@ export default function ContactClient() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-b from-white py-24 px-6">
+      {/* ---------- GENERAL CONTACT FORM (demoted) ---------- */}
+      <section className="bg-gray-50 py-20 px-6">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="max-w-3xl mx-auto bg-white/70 backdrop-blur-md border border-black/10 shadow-xl rounded-2xl p-10"
+          className="max-w-3xl mx-auto"
         >
-          <h2 className="text-2xl md:text-3xl font-bold text-center mb-10">Send Us a Message</h2>
-          <form onSubmit={onS} className="space-y-6 text-left" noValidate>
+          <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3 text-center">General Contact</p>
+          <h2 className="text-2xl md:text-3xl font-bold text-center mb-3">Not a driver inquiry?</h2>
+          <p className="text-center text-gray-600 mb-10">
+            Use this form for shipper questions or general business. Drivers should use the recruiting contacts above.
+          </p>
+          <form onSubmit={onS} className="space-y-6 text-left bg-white border border-black/10 shadow-xl rounded-2xl p-10" noValidate>
             <div>
               <label className="block font-medium mb-1 text-gray-800">Your Name</label>
               <input
@@ -202,10 +259,12 @@ export default function ContactClient() {
               </div>
             )}
             {s === "ok" && (
-              <p className="text-green-700 font-medium text-center">Thanks — your message was sent.</p>
+              <p className="text-green-700 font-medium text-center">Thanks &mdash; your message was sent.</p>
             )}
             {s === "err" && (
-              <p className="text-red-600 font-medium text-center">Something went wrong. Please call (601) 300-5529.</p>
+              <p className="text-red-600 font-medium text-center">
+                Something went wrong. Please call {RECRUITING_PHONE_DISPLAY}.
+              </p>
             )}
             <div className="text-center mt-10">
               <button
@@ -219,6 +278,6 @@ export default function ContactClient() {
           </form>
         </motion.div>
       </section>
-    </>
+    </div>
   );
 }

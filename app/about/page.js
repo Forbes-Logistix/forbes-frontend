@@ -1,15 +1,18 @@
 import AboutClient from "./AboutClient";
 
+const TITLE = "About Forbes Logistix | Driver-Founded Open-Deck Carrier";
+const DESCRIPTION =
+  "Veteran-owned, asset-based open-deck carrier headquartered in Jackson, Mississippi with a terminal, warehouse, and shop built to support drivers and freight.";
+
 export const metadata = {
-  title: "About Forbes Logistix — Veteran-owned flatbed carrier in Jackson, MS",
-  description:
-    "Veteran-owned, asset-based open-deck carrier headquartered in Jackson, MS. Founded by a former driver. 3-acre terminal with a 25,000 sq ft warehouse and shop.",
+  title: TITLE,
+  description: DESCRIPTION,
   alternates: { canonical: "https://www.forbeslogistix.com/about" },
   openGraph: {
-    title: "About Forbes Logistix — Veteran-owned flatbed carrier in Jackson, MS",
-    description:
-      "Veteran-owned, asset-based open-deck carrier headquartered in Jackson, MS. Founded by a former driver. 3-acre terminal with a 25,000 sq ft warehouse and shop.",
+    title: TITLE,
+    description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/about",
+    images: [{ url: "/assets/photos/terminal.jpg" }],
   },
 };
 
