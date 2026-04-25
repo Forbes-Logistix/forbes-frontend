@@ -1,0 +1,110 @@
+@import url('https://fonts.googleapis.com/css2?family=Exo:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .form-title {
+    @apply text-3xl font-extrabold text-brown-800 mb-8 text-center tracking-wide;
+    animation: fadeInDown 0.8s ease forwards;
+  }
+  .form-section-title {
+    @apply text-2xl font-semibold text-brown-700 mb-6 border-b-4 border-brown-300 pb-2;
+    animation: fadeInLeft 0.7s ease forwards;
+  }
+  .form-label {
+    @apply block text-sm font-medium text-brown-600 mb-2 tracking-wide uppercase;
+  }
+  .form-note {
+    @apply text-xs text-brown-400 italic mt-1;
+  }
+  .input {
+    @apply w-full px-5 py-3 rounded-xl border border-brown-300 placeholder-brown-400
+      text-brown-900 font-medium shadow-sm
+      focus:outline-none focus:ring-4 focus:ring-brown-600 focus:border-brown-600
+      transition duration-300 ease-in-out;
+    background: #f9fafb;
+    box-shadow: 0 2px 6px rgba(101, 63, 38, 0.1);
+  }
+  .input::placeholder {
+    @apply italic;
+  }
+  .input:hover {
+    box-shadow: 0 4px 12px rgba(101, 63, 38, 0.2);
+  }
+  .textarea {
+    @apply input resize-y;
+  }
+  .select {
+    @apply input bg-white cursor-pointer;
+  }
+  .checkbox, .radio {
+    @apply h-5 w-5 text-brown-600 focus:ring-brown-600 border-brown-300 rounded;
+    transition: box-shadow 0.3s ease;
+  }
+  .checkbox:hover, .radio:hover {
+    box-shadow: 0 0 6px 2px rgba(101, 63, 38, 0.4);
+  }
+  .form-section {
+    @apply bg-white p-8 rounded-2xl shadow-lg mb-10;
+    background: linear-gradient(135deg, #f5f3f2 0%, #fef3f1 100%);
+    border: 2px solid #653f26;
+    animation: fadeInUp 0.9s ease forwards;
+  }
+  .form-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 gap-8;
+  }
+  .form-row {
+    @apply flex flex-col gap-6 md:flex-row md:items-center;
+  }
+  .btn-primary {
+    @apply bg-brown-600 hover:bg-brown-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg
+      transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:scale-105;
+    box-shadow: 0 5px 15px rgba(101, 63, 38, 0.6);
+  }
+  .btn-secondary {
+    @apply bg-brown-100 hover:bg-brown-200 text-brown-800 font-semibold px-8 py-3 rounded-xl
+      transition duration-300 ease-in-out;
+  }
+  .btn-disabled {
+    @apply bg-gray-300 text-gray-500 cursor-not-allowed;
+  }
+  .input-error {
+    @apply border-red-500 focus:ring-red-400 focus:border-red-600;
+    animation: shake 0.3s ease;
+  }
+  .error-text {
+    @apply text-sm text-red-600 mt-2 font-semibold;
+  }
+  .declaration-box {
+    @apply bg-brown-50 p-6 rounded-xl shadow-inner text-sm text-brown-700 leading-relaxed italic;
+    border-left: 4px solid #653f26;
+  }
+  .step-counter {
+    @apply text-sm text-brown-400 text-center mb-6 tracking-wide;
+  }
+}
+
+@keyframes fadeInDown {
+  0% { opacity: 0; transform: translateY(-15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeInLeft {
+  0% { opacity: 0; transform: translateX(-15px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+@keyframes fadeInUp {
+  0% { opacity: 0; transform: translateY(15px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+}
