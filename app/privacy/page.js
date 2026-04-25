@@ -35,6 +35,39 @@ export default function PrivacyPage() {
             &ldquo;Site&rdquo;).
           </p>
 
+          {/* Carrier-friendly summary box: written so a 10DLC / SMS reviewer can confirm
+              the three required disclosures (collection + use + opt-out, plus the no-share
+              guarantee for mobile numbers) at a glance, without reading the full policy. */}
+          <aside className="mt-8 rounded-2xl border border-black bg-black text-white p-6 md:p-8">
+            <h2 className="text-xl md:text-2xl font-extrabold tracking-tight mb-3">
+              Plain-English summary
+            </h2>
+            <ul className="list-disc ml-5 space-y-2 text-base leading-relaxed">
+              <li>
+                We collect what you give us through forms on this Site (name, phone, email, years of
+                driving experience, message contents) and standard technical data your browser sends.
+              </li>
+              <li>
+                We use it to respond to your inquiry, evaluate recruiting interest, communicate with
+                you by phone, email, or text where you have given us consent, and operate this Site.
+              </li>
+              <li className="font-semibold">
+                Mobile phone numbers and SMS opt-in data are <span className="underline">not shared
+                or sold to third parties for marketing or promotional purposes</span>, and that
+                information is not shared with affiliates for their own marketing or promotional
+                purposes.
+              </li>
+              <li>
+                You can opt out of recruiting calls or texts at any time. Reply{" "}
+                <span className="font-semibold">STOP</span> to a text message to stop texts. Reply{" "}
+                <span className="font-semibold">HELP</span> for help. Tell our recruiter to remove
+                you from call lists, or email{" "}
+                <a className="underline" href="mailto:recruiting@forbeslogistix.com">recruiting@forbeslogistix.com</a>.
+                Message and data rates may apply. Message frequency may vary.
+              </li>
+            </ul>
+          </aside>
+
           <h2 className="text-2xl font-bold mt-10">1. Information We Collect</h2>
           <p>We collect the following categories of information:</p>
           <ul className="list-disc ml-6 space-y-2">
@@ -104,10 +137,15 @@ export default function PrivacyPage() {
               acquisition, reorganization, financing, or sale of assets, subject to applicable law.
             </li>
           </ul>
+          <p className="font-semibold">
+            We do not share or sell your mobile phone number or SMS opt-in data with any third party for
+            marketing or promotional purposes. We do not share that information with affiliates for their
+            own marketing or promotional purposes.
+          </p>
           <p>
-            We do not sell personal information for monetary value, and we do not share personal information
-            for cross-context behavioral advertising as those terms are commonly used in U.S. state privacy
-            laws.
+            More broadly: we do not sell personal information for monetary value, and we do not share
+            personal information for cross-context behavioral advertising as those terms are commonly used
+            in U.S. state privacy laws.
           </p>
 
           <h2 className="text-2xl font-bold mt-10">5. Cookies and Analytics</h2>
@@ -117,16 +155,34 @@ export default function PrivacyPage() {
             cookies, parts of the Site may not work as intended.
           </p>
 
-          <h2 className="text-2xl font-bold mt-10">6. Communications Preferences</h2>
+          <h2 className="text-2xl font-bold mt-10">6. Communications Preferences and Opt-Out</h2>
           <p>
             If you provide your phone number and consent, we may contact you by phone or text for recruiting
-            follow-up, scheduling, application status, and onboarding-related communications. Message and data
-            rates may apply. Message frequency varies. You can opt out of text messages at any time by replying{" "}
-            <span className="font-semibold">STOP</span>, and you can ask us to stop calling you by telling our
-            recruiter or by emailing{" "}
-            <a className="underline" href="mailto:recruiting@forbeslogistix.com">recruiting@forbeslogistix.com</a>.
+            follow-up, interview scheduling, application status, and onboarding-related communications.
+            Message and data rates may apply. Message frequency varies.
+          </p>
+          <p className="font-semibold">How to opt out:</p>
+          <ul className="list-disc ml-6 space-y-2">
+            <li>
+              <span className="font-semibold">Texts:</span> reply{" "}
+              <span className="font-semibold">STOP</span> to any recruiting text message and we will stop
+              texting that number. Reply <span className="font-semibold">HELP</span> for help.
+            </li>
+            <li>
+              <span className="font-semibold">Calls:</span> tell our recruiter you want to be removed from
+              the call list, or email{" "}
+              <a className="underline" href="mailto:recruiting@forbeslogistix.com">recruiting@forbeslogistix.com</a>.
+            </li>
+            <li>
+              <span className="font-semibold">Email:</span> use the unsubscribe link in any marketing
+              email, or email{" "}
+              <a className="underline" href="mailto:contact@forbeslogistix.com">contact@forbeslogistix.com</a>{" "}
+              with the words &ldquo;Unsubscribe&rdquo; in the subject line.
+            </li>
+          </ul>
+          <p>
             Opting out of recruiting communications does not affect our ability to respond to general
-            inquiries you initiate.
+            inquiries you initiate, and does not waive any rights you have under applicable law.
           </p>
 
           <h2 className="text-2xl font-bold mt-10">7. Data Retention</h2>
