@@ -80,7 +80,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          poster="/assets/photos/truck-loading.jpg"
+          preload="auto"
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
