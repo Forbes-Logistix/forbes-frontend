@@ -17,6 +17,9 @@ export default function ContactClient() {
   const [f, setF] = useState({ name: "", email: "", message: "" });
   const [s, setS] = useState("idle");
   const [turnstileToken, setTurnstileToken] = useState("");
+  const [acceptTerms, setAcceptTerms] = useState(false);
+  const [contactConsent, setContactConsent] = useState(false);
+  const [acceptError, setAcceptError] = useState("");
   const widgetRef = useRef(null);
   const widgetIdRef = useRef(null);
 
@@ -77,9 +80,18 @@ export default function ContactClient() {
 
   const onS = async (e) => {
     e.preventDefault();
+    setAcceptError("");
+    if (!acceptTerms) {
+      setAcceptError("Please confirm you have read the Terms of Use and Privacy Policy.");
+      return;
+    }
     setS("sending");
     try {
-      const body = TURNSTILE_SITE_KEY ? { ...f, turnstileToken } : f;
+      const body = {
+        ...f,
+        contactConsent,
+        ...(TURNSTILE_SITE_KEY ? { turnstileToken } : {}),
+      };
       const r = await fetch(`${BACKEND_URL}/api/contact`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -88,6 +100,8 @@ export default function ContactClient() {
       if (!r.ok) throw new Error("send failed");
       setS("ok");
       setF({ name: "", email: "", message: "" });
+      setAcceptTerms(false);
+      setContactConsent(false);
       resetTurnstile();
     } catch {
       setS("err");
@@ -103,7 +117,7 @@ export default function ContactClient() {
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
         <Image
           src="/assets/photos/terminal.jpg"
-          alt="Forbes Logistix terminal and shop in Jackson, Mississippi with company tractor parked outside"
+          alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
           fill
           priority
           sizes="100vw"
@@ -258,6 +272,41 @@ export default function ContactClient() {
                 <div ref={widgetRef} />
               </div>
             )}
+
+            {/* Optional contact-response communications consent. Unchecked by default. */}
+            <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={contactConsent}
+                onChange={(e) => setContactConsent(e.target.checked)}
+                className="mt-1 shrink-0 h-4 w-4 accent-black"
+              />
+              <span>
+                You may contact me by email or phone to respond to this inquiry. Message and data rates
+                may apply if I provide a mobile number. Reply <span className="font-semibold">STOP</span>{" "}
+                to opt out of texts. Consent is not required to receive a response.
+              </span>
+            </label>
+
+            {/* Required acknowledgment of Terms / Privacy. */}
+            <div>
+              <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={acceptTerms}
+                  onChange={(e) => setAcceptTerms(e.target.checked)}
+                  className="mt-1 shrink-0 h-4 w-4 accent-black"
+                  required
+                />
+                <span>
+                  I have read the{" "}
+                  <Link href="/terms" className="underline">Terms of Use</Link> and the{" "}
+                  <Link href="/privacy" className="underline">Privacy Policy</Link>.
+                </span>
+              </label>
+              {acceptError && <p className="mt-1 text-sm text-red-600 font-semibold">{acceptError}</p>}
+            </div>
+
             {s === "ok" && (
               <p className="text-green-700 font-medium text-center">Thanks &mdash; your message was sent.</p>
             )}

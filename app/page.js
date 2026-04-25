@@ -18,6 +18,7 @@ import {
   CalendarDays,
   PhoneCall,
 } from "lucide-react";
+import QuickApplyForm from "./components/QuickApplyForm";
 
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
@@ -79,7 +80,7 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          poster="/assets/photos/truck-loading.jpg"
+          preload="auto"
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
@@ -128,6 +129,18 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ---------- QUICK APPLY ---------- */}
+      <section id="quick-apply" className="relative z-20 bg-white text-black py-20 px-4 scroll-mt-28">
+        <div className="max-w-3xl mx-auto">
+          <QuickApplyForm
+            id="quick-apply-form"
+            variant="dark"
+            heading="Talk to recruiting"
+            subhead="Three fields. We'll call you."
+          />
+        </div>
+      </section>
+
       {/* ---------- AUDIENCE SPLIT ---------- */}
       <section className="relative z-20 bg-white py-20 px-4">
         <div className="max-w-6xl mx-auto">
@@ -169,7 +182,7 @@ export default function HomePage() {
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10">
-                <OfferBullet icon={DollarSign}><span className="font-bold">Earn $90,000+ per year</span></OfferBullet>
+                <OfferBullet icon={DollarSign}><span className="font-bold">Strong, top-tier flatbed pay</span></OfferBullet>
                 <OfferBullet icon={Percent}><span className="font-bold">30% of line haul</span></OfferBullet>
                 <OfferBullet icon={CalendarDays}>
                   Available for dispatch? You&apos;ll earn at least <span className="font-bold">$1,000/week</span>
@@ -184,7 +197,7 @@ export default function HomePage() {
               </ul>
 
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button onClick={() => (window.location.href = "/apply")}>Apply Now</Button>
+                <Button onClick={() => scrollToId("quick-apply-form")}>Apply Now</Button>
                 <a
                   href={`tel:${RECRUITING_PHONE_TEL}`}
                   className="inline-flex items-center justify-center gap-2 bg-transparent text-white border border-white/40 px-8 py-4 text-lg font-semibold rounded-2xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
@@ -271,7 +284,7 @@ export default function HomePage() {
       <section className="relative h-[50vh] min-h-[360px] overflow-hidden">
         <Image
           src="/assets/photos/terminal.jpg"
-          alt="Forbes Logistix terminal and shop in Jackson, Mississippi with company tractor parked outside"
+          alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
           fill
           sizes="100vw"
           className="object-cover"
@@ -280,10 +293,10 @@ export default function HomePage() {
           <div className="max-w-5xl mx-auto px-6 text-white">
             <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">Jackson, Mississippi</p>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl">
-              A real terminal, a real shop, a real company.
+              A real terminal. A real company.
             </h2>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl">
-              3-acre lot. 25,000 sq ft warehouse and shop. Asset-based, veteran-owned, and built around the seat.
+              3-acre lot. 25,000 sq ft warehouse. Asset-based, veteran-owned, and built around the seat.
             </p>
           </div>
         </div>

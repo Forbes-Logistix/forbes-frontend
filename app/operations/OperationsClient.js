@@ -40,13 +40,13 @@ const sections = [
     title: "Modern, maintained equipment",
     Icon: Wrench,
     body:
-      "Modern tractors and well-kept open-deck trailers, serviced at our own shop in Jackson. If something breaks, we fix it. You should not be losing weeks to downtime.",
+      "Modern tractors and well-kept open-deck trailers, kept on top of with regular maintenance. If something breaks, we get it fixed fast. You should not be losing weeks to downtime.",
   },
   {
     title: "Jackson, MS terminal",
     Icon: MapPin,
     body:
-      "Our 3-acre terminal at 3180 Utica Ave includes a 25,000 sq ft warehouse and shop. Drop your trailer, park your truck, talk face-to-face with the people running the company.",
+      "Our 3-acre terminal at 3180 Utica Ave includes a 25,000 sq ft warehouse. Drop your trailer, park your truck, talk face-to-face with the people running the company.",
   },
 ];
 
@@ -116,7 +116,7 @@ export default function OperationsClient() {
               Built around the driver experience.
             </h2>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl">
-              Veteran-owned, asset-based, headquartered in Jackson. Real shop. Real freight. Real people.
+              Veteran-owned, asset-based, headquartered in Jackson. Real freight. Real people. Real seats.
             </p>
           </div>
         </div>

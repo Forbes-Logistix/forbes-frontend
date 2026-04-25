@@ -10,7 +10,7 @@ export default function AboutClient() {
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <Image
           src="/assets/photos/terminal.jpg"
-          alt="Forbes Logistix terminal and shop in Jackson, Mississippi with company tractor parked outside"
+          alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
           fill
           priority
           sizes="100vw"
@@ -44,8 +44,8 @@ export default function AboutClient() {
               just what the spreadsheet says. That perspective shapes how we hire, dispatch, and pay.
             </p>
             <p>
-              Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse and
-              shop, giving us the infrastructure to support our fleet and partners with strength and scale.
+              Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse,
+              giving us the infrastructure to support our fleet and partners with strength and scale.
             </p>
           </div>
         </motion.div>
