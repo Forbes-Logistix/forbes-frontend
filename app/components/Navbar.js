@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { FiMenu, FiX } from "react-icons/fi";
+import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -66,7 +66,7 @@ const Navbar = () => {
             onClick={toggleMenu}
             aria-label="Toggle Menu"
           >
-            {isOpen ? <FiX /> : <FiMenu />}
+            {isOpen ? <X /> : <Menu />}
           </button>
         </div>
       </div>

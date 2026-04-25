@@ -112,7 +112,7 @@ const handleSubmit = async () => {
 
     console.log("Final payload:", cleanData);
 
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/api/send-pdf`, {
+    const response = await fetch("https://forbes-logistix-backend.vercel.app/api/pdf", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
