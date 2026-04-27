@@ -27,22 +27,19 @@ export default function ContactClient() {
     if (!TURNSTILE_SITE_KEY) return;
 
     const SCRIPT_ID = "cf-turnstile-script";
-    const CALLBACK_NAME = "onTurnstileSuccess";
-    const EXPIRED_NAME = "onTurnstileExpired";
-    const ERROR_NAME = "onTurnstileError";
 
-    window[CALLBACK_NAME] = (token) => setTurnstileToken(token);
-    window[EXPIRED_NAME] = () => setTurnstileToken("");
-    window[ERROR_NAME] = () => setTurnstileToken("");
-
+    // Pass function references directly. Earlier we used string-named window
+    // callbacks; under React 18 StrictMode the double-mount cleanup deleted
+    // those names mid-flight and Turnstile threw "c.call is not a function"
+    // when its internal lookup returned undefined. Direct refs sidestep that.
     const renderWidget = () => {
       if (!window.turnstile || !widgetRef.current) return;
       try {
         widgetIdRef.current = window.turnstile.render(widgetRef.current, {
           sitekey: TURNSTILE_SITE_KEY,
-          callback: CALLBACK_NAME,
-          "expired-callback": EXPIRED_NAME,
-          "error-callback": ERROR_NAME,
+          callback: (token) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(""),
+          "error-callback": () => setTurnstileToken(""),
         });
       } catch { /* widget may already be rendered */ }
     };
@@ -63,9 +60,6 @@ export default function ContactClient() {
       if (widgetIdRef.current && window.turnstile) {
         try { window.turnstile.remove(widgetIdRef.current); } catch { /* ignore */ }
       }
-      delete window[CALLBACK_NAME];
-      delete window[EXPIRED_NAME];
-      delete window[ERROR_NAME];
     };
   }, []);
 
