@@ -40,28 +40,23 @@ export default function QuickApplyForm({
 
   // Cloudflare Turnstile — render only when a site key is configured.
   // Skipped entirely otherwise so the form keeps working before the Cloudflare
-  // site is provisioned. Mirror of the pattern in ContactClient.js with distinct
-  // window callback names so the two pages don't collide.
+  // site is provisioned. Pass function references directly to render() rather
+  // than going through window-named callbacks: under React 18 StrictMode the
+  // double-mount cleanup deletes those names mid-flight and Turnstile throws
+  // "c.call is not a function" when its internal lookup returns undefined.
   useEffect(() => {
     if (!TURNSTILE_SITE_KEY) return;
 
     const SCRIPT_ID = "cf-turnstile-script";
-    const CALLBACK_NAME = "onTurnstileApplySuccess";
-    const EXPIRED_NAME = "onTurnstileApplyExpired";
-    const ERROR_NAME = "onTurnstileApplyError";
-
-    window[CALLBACK_NAME] = (token) => setTurnstileToken(token);
-    window[EXPIRED_NAME] = () => setTurnstileToken("");
-    window[ERROR_NAME] = () => setTurnstileToken("");
 
     const renderWidget = () => {
       if (!window.turnstile || !widgetRef.current) return;
       try {
         widgetIdRef.current = window.turnstile.render(widgetRef.current, {
           sitekey: TURNSTILE_SITE_KEY,
-          callback: CALLBACK_NAME,
-          "expired-callback": EXPIRED_NAME,
-          "error-callback": ERROR_NAME,
+          callback: (token) => setTurnstileToken(token),
+          "expired-callback": () => setTurnstileToken(""),
+          "error-callback": () => setTurnstileToken(""),
         });
       } catch { /* widget may already be rendered */ }
     };
@@ -82,9 +77,6 @@ export default function QuickApplyForm({
       if (widgetIdRef.current && window.turnstile) {
         try { window.turnstile.remove(widgetIdRef.current); } catch { /* ignore */ }
       }
-      delete window[CALLBACK_NAME];
-      delete window[EXPIRED_NAME];
-      delete window[ERROR_NAME];
     };
   }, []);
 
