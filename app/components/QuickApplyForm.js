@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Phone } from "lucide-react";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
@@ -31,8 +32,68 @@ export default function QuickApplyForm({
   const [status, setStatus] = useState("idle"); // idle | sending | ok | err
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [turnstileToken, setTurnstileToken] = useState("");
+  const widgetRef = useRef(null);
+  const widgetIdRef = useRef(null);
 
   const isLight = variant === "light";
+
+  // Cloudflare Turnstile — render only when a site key is configured.
+  // Skipped entirely otherwise so the form keeps working before the Cloudflare
+  // site is provisioned. Mirror of the pattern in ContactClient.js with distinct
+  // window callback names so the two pages don't collide.
+  useEffect(() => {
+    if (!TURNSTILE_SITE_KEY) return;
+
+    const SCRIPT_ID = "cf-turnstile-script";
+    const CALLBACK_NAME = "onTurnstileApplySuccess";
+    const EXPIRED_NAME = "onTurnstileApplyExpired";
+    const ERROR_NAME = "onTurnstileApplyError";
+
+    window[CALLBACK_NAME] = (token) => setTurnstileToken(token);
+    window[EXPIRED_NAME] = () => setTurnstileToken("");
+    window[ERROR_NAME] = () => setTurnstileToken("");
+
+    const renderWidget = () => {
+      if (!window.turnstile || !widgetRef.current) return;
+      try {
+        widgetIdRef.current = window.turnstile.render(widgetRef.current, {
+          sitekey: TURNSTILE_SITE_KEY,
+          callback: CALLBACK_NAME,
+          "expired-callback": EXPIRED_NAME,
+          "error-callback": ERROR_NAME,
+        });
+      } catch { /* widget may already be rendered */ }
+    };
+
+    if (document.getElementById(SCRIPT_ID)) {
+      renderWidget();
+    } else {
+      const script = document.createElement("script");
+      script.id = SCRIPT_ID;
+      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit";
+      script.async = true;
+      script.defer = true;
+      script.onload = renderWidget;
+      document.body.appendChild(script);
+    }
+
+    return () => {
+      if (widgetIdRef.current && window.turnstile) {
+        try { window.turnstile.remove(widgetIdRef.current); } catch { /* ignore */ }
+      }
+      delete window[CALLBACK_NAME];
+      delete window[EXPIRED_NAME];
+      delete window[ERROR_NAME];
+    };
+  }, []);
+
+  const resetTurnstile = () => {
+    setTurnstileToken("");
+    if (widgetIdRef.current && window.turnstile) {
+      try { window.turnstile.reset(widgetIdRef.current); } catch { /* ignore */ }
+    }
+  };
 
   const onChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
@@ -75,6 +136,7 @@ export default function QuickApplyForm({
           applicantCert,
           smsConsent,
           honeypot,
+          ...(TURNSTILE_SITE_KEY ? { turnstileToken } : {}),
         }),
       });
       if (!r.ok) {
@@ -87,9 +149,11 @@ export default function QuickApplyForm({
       setApplicantCert(false);
       setSmsConsent(false);
       setFieldErrors({});
+      resetTurnstile();
     } catch (err) {
       setStatus("err");
       setErrorMsg(err.message || "Submission failed. Please try again.");
+      resetTurnstile();
     }
   };
 
@@ -226,6 +290,12 @@ export default function QuickApplyForm({
           {fieldErrors.years && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.years}</p>}
         </div>
 
+        {TURNSTILE_SITE_KEY && (
+          <div className="flex justify-center">
+            <div ref={widgetRef} />
+          </div>
+        )}
+
         {/* Applicant certification + Terms / Privacy acknowledgment — required. */}
         <div className="pt-2">
           <label className={`flex items-start gap-3 text-sm ${labelTone} cursor-pointer`}>
@@ -262,7 +332,7 @@ export default function QuickApplyForm({
         <div>
           <button
             type="submit"
-            disabled={status === "sending"}
+            disabled={status === "sending" || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
             className={`inline-flex items-center justify-center gap-2 px-8 py-4 text-lg font-bold rounded-2xl shadow transition-all duration-300 hover:scale-[1.02] disabled:opacity-60 disabled:cursor-not-allowed ${submitBtn}`}
           >
             <Phone aria-hidden className="w-5 h-5" />
