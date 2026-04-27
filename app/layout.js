@@ -11,6 +11,10 @@ export const metadata = {
   description:
     "Driver-founded flatbed carrier hiring company drivers and owner-operators across the Southeast. Real pay, home weekends, modern equipment, and direct recruiting contact.",
   applicationName: "Forbes Logistix",
+  // Default canonical for any route that doesn't set its own — currently only
+  // the home page (app/page.js is a client component and can't export metadata).
+  // Every other page.js overrides with its own alternates.canonical.
+  alternates: { canonical: "/" },
   openGraph: {
     type: "website",
     siteName: "Forbes Logistix",

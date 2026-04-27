@@ -151,7 +151,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             <AudienceCard
               title="Company Drivers"
-              blurb="W-2 flatbed seat. Real pay, real home time, paid tarps, modern trucks."
+              blurb="W-2 flatbed seat. Real pay, real home time, tarp pay, modern trucks."
               targetId="company-drivers"
             />
             <AudienceCard
