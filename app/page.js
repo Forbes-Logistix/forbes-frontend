@@ -80,7 +80,14 @@ export default function HomePage() {
           muted
           loop
           playsInline
-          preload="auto"
+          // Poster is shown until the video has enough data to render its
+          // first frame — kills the black flash on initial load and gives a
+          // representative LCP image for the page. Frame extracted from
+          // homeVideo.mp4 at ~3 seconds. preload="metadata" defers the full
+          // video bytes until the user is actually on the page (we don't
+          // need full preload because the poster handles the first paint).
+          poster="/assets/homeVideoPoster.jpg"
+          preload="metadata"
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
