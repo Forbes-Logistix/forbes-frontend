@@ -8,6 +8,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Accessibility: every interactive element gets a visible focus ring when
+   reached via keyboard. `:focus-visible` only fires for keyboard focus, not
+   mouse clicks, so it doesn't add a ring on click. The 2px black outline
+   is brand-consistent and meets WCAG AA contrast against both white and
+   beige page backgrounds. Override per-component if a design needs a
+   different color. */
+@layer base {
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  summary:focus-visible,
+  [tabindex]:not([tabindex="-1"]):focus-visible {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
 @layer components {
   .form-title {
     @apply text-3xl font-extrabold text-brown-800 mb-8 text-center tracking-wide;

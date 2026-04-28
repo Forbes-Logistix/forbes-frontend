@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import { ORGANIZATION_SCHEMA } from "./lib/schema";
 
 export const metadata = {
   metadataBase: new URL("https://www.forbeslogistix.com"),
@@ -41,6 +42,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body>
+        {/* Site-wide Organization JSON-LD. Rendered once in the root layout
+            so it appears on every page. Helps Google associate the brand
+            (name, logo, phone, address) across the whole site. */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
+        />
         <Navbar />
         {children}
         <Footer />
