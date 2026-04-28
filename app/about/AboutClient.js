@@ -34,14 +34,15 @@ export default function AboutClient() {
 
           <div className="space-y-5 text-base md:text-lg leading-relaxed text-white/85">
             <p>
-              Forbes Logistix is a veteran-owned, asset-based, driver-founded carrier headquartered in
-              Jackson, Mississippi. We specialize in open-deck transportation and operate in one of the
-              most capacity-constrained freight markets in the country.
+              Forbes Logistix is a Marine Corps veteran-owned, asset-based, driver-founded carrier
+              headquartered in Jackson, Mississippi. We specialize in open-deck transportation and
+              operate in one of the most capacity-constrained freight markets in the country.
             </p>
             <p>
-              The company was founded by a former truck driver who also spent years in operations. Our
-              leadership has sat behind the wheel and understands what the road actually looks like, not
-              just what the spreadsheet says. That perspective shapes how we hire, dispatch, and pay.
+              The company was founded by Chase Forbes, a former truck driver with eight years behind
+              the wheel and additional time in operations. Our leadership has sat behind the wheel and
+              understands what the road actually looks like, not just what the spreadsheet says. That
+              perspective shapes how we hire, dispatch, and pay.
             </p>
             <p>
               Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse,

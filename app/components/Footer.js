@@ -30,6 +30,12 @@ const Footer = () => {
           <p className="text-xs text-gray-700">
             &copy; {new Date().getFullYear()} Forbes Logistix, LLC. All rights reserved.
           </p>
+
+          <p className="text-xs text-gray-700 max-w-3xl mx-auto leading-relaxed">
+            Forbes Logistix is an Equal Opportunity Employer. All qualified applicants will receive
+            consideration without regard to race, color, religion, sex, sexual orientation, gender
+            identity, national origin, disability, or protected veteran status.
+          </p>
         </div>
       </footer>
     </div>

@@ -182,7 +182,6 @@ export default function HomePage() {
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10">
-                <OfferBullet icon={DollarSign}><span className="font-bold">Strong, top-tier flatbed pay</span></OfferBullet>
                 <OfferBullet icon={Percent}><span className="font-bold">30% of line haul</span></OfferBullet>
                 <OfferBullet icon={CalendarDays}>
                   Available for dispatch? You&apos;ll earn at least <span className="font-bold">$1,000/week</span>

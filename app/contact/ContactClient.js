@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import { MapPin, Mail, Phone, Clock, FileText } from "lucide-react";
+import { MapPin, Mail, Phone, FileText } from "lucide-react";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -161,7 +161,7 @@ export default function ContactClient() {
 
       {/* ---------- TERMINAL DETAILS ---------- */}
       <section className="bg-white py-20 px-4">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-8">
+        <div className="max-w-2xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -191,21 +191,6 @@ export default function ContactClient() {
                 </a>
               </li>
             </ul>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            viewport={{ once: true }}
-            className="bg-black text-white rounded-2xl shadow-xl p-10"
-          >
-            <h2 className="text-2xl font-semibold mb-6">Operating Hours</h2>
-            <div className="flex items-start gap-3">
-              <Clock aria-hidden className="w-5 h-5 mt-1 shrink-0" />
-              <p className="text-white/90 leading-relaxed">
-                Open 24 hours a day,<br />7 days a week,<br />365 days a year.
-              </p>
-            </div>
           </motion.div>
         </div>
       </section>
