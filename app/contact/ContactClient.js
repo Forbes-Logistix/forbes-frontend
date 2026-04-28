@@ -211,32 +211,37 @@ export default function ContactClient() {
           </p>
           <form onSubmit={onS} className="space-y-6 text-left bg-white border border-black/10 shadow-xl rounded-2xl p-10" noValidate>
             <div>
-              <label className="block font-medium mb-1 text-gray-800">Your Name</label>
+              <label htmlFor="contact-name" className="block font-medium mb-1 text-gray-800">Your Name</label>
               <input
+                id="contact-name"
                 name="name"
                 type="text"
                 value={f.name}
                 onChange={onC}
+                autoComplete="name"
                 required
                 className="w-full border border-gray-300 rounded-lg p-3 bg-white"
                 placeholder="Enter your name"
               />
             </div>
             <div>
-              <label className="block font-medium mb-1 text-gray-800">Email Address</label>
+              <label htmlFor="contact-email" className="block font-medium mb-1 text-gray-800">Email Address</label>
               <input
+                id="contact-email"
                 name="email"
                 type="email"
                 value={f.email}
                 onChange={onC}
+                autoComplete="email"
                 required
                 className="w-full border border-gray-300 rounded-lg p-3 bg-white"
                 placeholder="Enter your email"
               />
             </div>
             <div>
-              <label className="block font-medium mb-1 text-gray-800">Message</label>
+              <label htmlFor="contact-message" className="block font-medium mb-1 text-gray-800">Message</label>
               <textarea
+                id="contact-message"
                 name="message"
                 rows="5"
                 value={f.message}

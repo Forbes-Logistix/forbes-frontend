@@ -3,38 +3,39 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+
+// Reusable nav link with aria-current="page" applied when the pathname
+// matches. Helps screen readers announce the active section and gives us
+// a hook to style the active state if we want to later.
+const NAV_LINK_BASE =
+  "relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left";
+
+const NavLink = ({ href, label, pathname }) => {
+  const isActive = pathname === href;
+  return (
+    <Link
+      href={href}
+      aria-current={isActive ? "page" : undefined}
+      className={NAV_LINK_BASE}
+    >
+      {label}
+    </Link>
+  );
+};
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const navItems = (
     <>
-      <Link
-        href="/about"
-        className="relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
-      >
-        About Us
-      </Link>
-      <Link
-        href="/operations"
-        className="relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
-      >
-        Operations
-      </Link>
-      <Link
-        href="/careers"
-        className="relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
-      >
-        Careers
-      </Link>
-      <Link
-        href="/contact"
-        className="relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left"
-      >
-        Contact Us
-      </Link>
+      <NavLink href="/about" label="About Us" pathname={pathname} />
+      <NavLink href="/operations" label="Operations" pathname={pathname} />
+      <NavLink href="/careers" label="Careers" pathname={pathname} />
+      <NavLink href="/contact" label="Contact Us" pathname={pathname} />
     </>
   );
 
