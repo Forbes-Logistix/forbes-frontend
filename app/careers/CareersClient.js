@@ -185,6 +185,114 @@ export default function CareersClient() {
         </div>
       </section>
 
+      {/* ---------- FAQ ---------- */}
+      <section className="bg-white text-black py-20 px-4 border-t border-black/5">
+        <div className="max-w-3xl mx-auto">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.6 }}
+          >
+            <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3 text-center">
+              FAQ
+            </p>
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-10 text-center">
+              Frequently asked questions
+            </h2>
+
+            {/* Native <details>/<summary> for accessibility — keyboard-navigable
+                and screen-reader-friendly out of the box. The marker ::marker
+                pseudo is restyled per-item below to fit the brand. */}
+            <ul className="space-y-3">
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    How much OTR experience do I need?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    At least 1 year of verifiable OTR experience.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    What states do you run in?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    Our freight runs east of the Mississippi River. We&apos;re currently hiring drivers based in the Southeast.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    What does home time actually look like?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    Home most weekends.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    How long is orientation, and is it paid?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    Two weeks total: one week in the classroom, one week on the road. Orientation is paid.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    Is the truck assigned, or do you slip-seat?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    The truck is assigned. No slip-seating.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    Who pays for the DOT physical and drug screen?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    Forbes Logistix covers both.
+                  </div>
+                </details>
+              </li>
+
+              <li>
+                <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                  <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                    Do you take owner-operators with their own trailer, or tractor only?
+                    <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                  </summary>
+                  <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                    Either. Come on with just your tractor pulling our trailers, or bring your own tractor and trailer.
+                  </div>
+                </details>
+              </li>
+            </ul>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ---------- OWNER-OPERATORS ---------- */}
       <section id="owner-operators" className="bg-black text-white py-20 px-4 scroll-mt-28">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10 items-center">
