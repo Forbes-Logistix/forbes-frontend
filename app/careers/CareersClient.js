@@ -205,16 +205,16 @@ export default function CareersClient() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6 }}
             >
-              {/* Buffalo brand mark, same h-20 size used on the home page.
+              {/* Buffalo brand mark, same h-32 size used on the home page.
                   This section has a black background so the white silhouette
                   asset reads as-is, no filter needed. */}
               <Image
                 src="/assets/buffalo.png"
                 alt=""
                 aria-hidden
-                width={200}
-                height={200}
-                className="h-20 w-auto mb-3 opacity-90"
+                width={256}
+                height={256}
+                className="h-32 w-auto -ml-4 mb-1 opacity-90"
               />
               <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">
                 For Owner-Operators
