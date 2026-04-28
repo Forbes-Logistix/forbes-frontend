@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Menu, X } from "lucide-react";
 
 const Navbar = () => {
@@ -40,23 +41,34 @@ const Navbar = () => {
   return (
     <header className="bg-white shadow-md h-28 relative z-50">
       <div className="max-w-screen-xl mx-auto px-6 flex items-center justify-between h-full">
-        <Link href="/" className="flex flex-col justify-center h-full">
-          <img src="/assets/forbesLogo.jpeg" alt="Forbes Logistix" className="h-full w-40 object-contain" />
+        <Link href="/" className="flex items-center h-full" aria-label="Forbes Logistix — home">
+          {/* Logo asset is square (~800x800) on transparent background. Sizing
+              via h-20 keeps it within the 112px-tall header with breathing
+              room; w-auto preserves the asset's true aspect ratio so it
+              doesn't squish (the prior JPEG was rendered into a 160x112 box). */}
+          <Image
+            src="/assets/forbesLogo.png"
+            alt="Forbes Logistix"
+            width={200}
+            height={200}
+            className="h-20 w-auto"
+            priority
+          />
         </Link>
 
         <nav className="hidden md:flex gap-10 text-[17px] font-medium tracking-wide items-center">
           {navItems}
           <Link
-            href="/careers"
+            href="/apply"
             className="border border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-2xl font-semibold shadow-lg hover:scale-105 transition-all duration-300"
           >
-            Apply Now
+            Apply
           </Link>
         </nav>
 
         <div className="flex items-center gap-3 md:hidden">
           <Link
-            href="/careers"
+            href="/apply"
             className="border border-black text-black hover:bg-black hover:text-white px-4 py-1 text-sm rounded-xl font-semibold shadow transition-all duration-300"
           >
             Apply

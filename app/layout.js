@@ -19,7 +19,10 @@ export const metadata = {
     type: "website",
     siteName: "Forbes Logistix",
     url: "https://www.forbeslogistix.com",
-    images: [{ url: "/assets/forbesLogo.jpeg" }],
+    // Default og:image is a real photo (matches the per-page pattern in
+    // /apply, /careers, /operations). The site logo is intentionally NOT
+    // used here — logos render poorly as social previews.
+    images: [{ url: "/assets/photos/truck-loading.jpg" }],
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: "/favicon.ico", apple: "/favicon.ico" },
