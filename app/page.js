@@ -93,6 +93,20 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
+              {/* Brand mark sits above the H1 in the hero. The buffalo asset is
+                  white on transparent; on the dark video backdrop it renders as
+                  a tone-on-tone seal. h-20 (80px) is in the brand-seal range
+                  (64–96px) and matches the size used in the OO sections so the
+                  treatment is consistent across the site. */}
+              <Image
+                src="/assets/buffalo.png"
+                alt=""
+                aria-hidden
+                width={200}
+                height={200}
+                priority
+                className="h-20 w-auto mx-auto mb-4 opacity-90 drop-shadow-lg"
+              />
               <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight drop-shadow-2xl">
                 Run with the Buffalo
               </h1>
@@ -240,6 +254,18 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6 }}
             >
+              {/* Same buffalo asset as the home hero, but this section has a
+                  white background — `filter invert` flips the white silhouette
+                  to black so it reads tone-on-tone here. Same h-20 size as the
+                  hero placement; left-aligned to match the column's text. */}
+              <Image
+                src="/assets/buffalo.png"
+                alt=""
+                aria-hidden
+                width={200}
+                height={200}
+                className="h-20 w-auto mb-3 opacity-80 [filter:invert(1)]"
+              />
               <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">For Owner-Operators</p>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
                 Run your truck. Run with the Buffalo.
