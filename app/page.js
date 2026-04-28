@@ -93,6 +93,22 @@ export default function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
             >
+              {/* Brand mark sits above the H1 in the hero. The buffalo asset is
+                  white on transparent; on the dark video backdrop it renders as
+                  a tone-on-tone seal. h-32 (128px) on the wrapper because the
+                  source PNG has internal whitespace around the silhouette —
+                  this lands the visible art in the brand-seal range (~80px
+                  tall). Same h-32 used in both OO section placements so the
+                  treatment is consistent across the site. */}
+              <Image
+                src="/assets/buffalo.png"
+                alt=""
+                aria-hidden
+                width={256}
+                height={256}
+                priority
+                className="h-32 w-auto mx-auto mb-2 opacity-90 drop-shadow-lg"
+              />
               <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight drop-shadow-2xl">
                 Run with the Buffalo
               </h1>
@@ -240,6 +256,18 @@ export default function HomePage() {
               viewport={{ once: true, amount: 0.2 }}
               transition={{ duration: 0.6 }}
             >
+              {/* Same buffalo asset as the home hero, but this section has a
+                  white background — `filter invert` flips the white silhouette
+                  to black so it reads tone-on-tone here. Same h-32 size as the
+                  hero placement; left-aligned to match the column's text. */}
+              <Image
+                src="/assets/buffalo.png"
+                alt=""
+                aria-hidden
+                width={256}
+                height={256}
+                className="h-32 w-auto -ml-4 mb-1 opacity-80 [filter:invert(1)]"
+              />
               <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">For Owner-Operators</p>
               <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
                 Run your truck. Run with the Buffalo.
