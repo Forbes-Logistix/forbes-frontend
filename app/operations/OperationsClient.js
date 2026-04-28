@@ -34,7 +34,7 @@ const sections = [
     title: "Weekly direct deposit, no surprises",
     Icon: WalletCards,
     body:
-      "Settlements run weekly with direct deposit. The numbers match what you were quoted: 30% of line haul, $100 tarp pay, and a dispatch-floor of $1,000/week if you are available.",
+      "Settlements run weekly with direct deposit. The numbers match what you were quoted: 30% of line haul, $100 tarp pay, and at least $1,000/week if you're available for dispatch all week.",
   },
   {
     title: "Modern, maintained equipment",

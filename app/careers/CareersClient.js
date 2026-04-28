@@ -127,7 +127,6 @@ export default function CareersClient() {
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
-                <OfferBullet icon={DollarSign}><span className="font-bold">Strong, top-tier flatbed pay</span></OfferBullet>
                 <OfferBullet icon={Percent}><span className="font-bold">30% of line haul</span></OfferBullet>
                 <OfferBullet icon={CalendarDays}>
                   Available for dispatch? You earn at least <span className="font-bold">$1,000/week</span>
@@ -176,7 +175,7 @@ export default function CareersClient() {
 
             <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4">
               <Requirement icon={IdCard}>Valid Class A CDL, at least 23 years old</Requirement>
-              <Requirement icon={BriefcaseBusiness}>Verifiable OTR experience</Requirement>
+              <Requirement icon={BriefcaseBusiness}>At least 1 year of verifiable OTR experience</Requirement>
               <Requirement icon={ShieldAlert}>Clean MVR &mdash; no major violations</Requirement>
               <Requirement icon={TestTubeDiagonal}>Pass DOT physical and drug screen</Requirement>
               <Requirement icon={HeartPulse}>Current DOT medical card</Requirement>
