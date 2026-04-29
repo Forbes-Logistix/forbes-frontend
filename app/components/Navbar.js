@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const toggleMenu = () => setIsOpen(!isOpen);
+
+  // Auto-close the mobile menu whenever the route changes. Navbar lives in
+  // the root layout so its state survives client-side navigations — without
+  // this, tapping a nav link on mobile leaves the open menu covering the
+  // page the user just navigated to.
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
 
   const navItems = (
     <>
