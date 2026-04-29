@@ -242,23 +242,6 @@ export default function QuickApplyForm({
             placeholder="(601) 555-1234"
           />
           {fieldErrors.phone && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.phone}</p>}
-
-          {/* Communications consent — recruiting variant. Conspicuous, near phone field. Unchecked by default. */}
-          <label className={`mt-3 flex items-start gap-3 text-sm ${labelTone} cursor-pointer`}>
-            <input
-              type="checkbox"
-              checked={smsConsent}
-              onChange={(e) => setSmsConsent(e.target.checked)}
-              className="mt-1 shrink-0 h-4 w-4 accent-black"
-            />
-            <span>
-              I agree to receive recruiting-related phone calls and text messages from Forbes Logistix at the
-              number above, including for follow-up, interview scheduling, application status, and
-              onboarding-related communications. Message frequency may vary. Message and data rates may
-              apply. Reply <span className="font-semibold">STOP</span> to opt out of texts at any time.
-              Consent is not a condition of submitting this form or of being considered for employment.
-            </span>
-          </label>
         </div>
 
         <div>
@@ -288,8 +271,29 @@ export default function QuickApplyForm({
           </div>
         )}
 
+        {/* Optional SMS / calls consent. TCPA requires this be a separate,
+            unbundled checkbox (cannot be a condition of form submission), so
+            it stays unchecked by default with explicit "Consent is not a
+            condition" copy. Stacked directly above the required cert+Terms
+            checkbox per layout spec. */}
+        <label className={`flex items-start gap-3 text-sm ${labelTone} cursor-pointer`}>
+          <input
+            type="checkbox"
+            checked={smsConsent}
+            onChange={(e) => setSmsConsent(e.target.checked)}
+            className="mt-1 shrink-0 h-4 w-4 accent-black"
+          />
+          <span>
+            I agree to receive recruiting-related phone calls and text messages from Forbes Logistix at the
+            number above, including for follow-up, interview scheduling, application status, and
+            onboarding-related communications. Message frequency may vary. Message and data rates may
+            apply. Reply <span className="font-semibold">STOP</span> to opt out of texts at any time.
+            Consent is not a condition of submitting this form or of being considered for employment.
+          </span>
+        </label>
+
         {/* Applicant certification + Terms / Privacy acknowledgment — required. */}
-        <div className="pt-2">
+        <div>
           <label className={`flex items-start gap-3 text-sm ${labelTone} cursor-pointer`}>
             <input
               type="checkbox"
