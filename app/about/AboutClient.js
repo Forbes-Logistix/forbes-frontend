@@ -21,7 +21,7 @@ export default function AboutClient() {
             matters while letting the mountain photo read clearly outside the
             words. Drop-shadows on the text reinforce contrast at the
             transition zone. */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.70)_0%,rgba(0,0,0,0.70)_30%,rgba(0,0,0,0.40)_80%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.70)_0%,rgba(0,0,0,0.70)_15%,rgba(0,0,0,0.40)_55%)]" />
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -77,7 +77,7 @@ export default function AboutClient() {
             left-aligned within max-w-5xl (so off-center horizontally), but
             the centered-ellipse gradient still places more darkness where
             the text falls than where the photo edges sit. */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.65)_0%,rgba(0,0,0,0.65)_30%,rgba(0,0,0,0.40)_80%)] flex items-center">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.65)_0%,rgba(0,0,0,0.65)_15%,rgba(0,0,0,0.40)_55%)] flex items-center">
           <div className="max-w-5xl mx-auto px-6 text-white">
             <p className="uppercase tracking-widest text-white/80 text-sm font-bold mb-3 drop-shadow-md">
               Jackson, Mississippi
