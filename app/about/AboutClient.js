@@ -16,10 +16,12 @@ export default function AboutClient() {
           sizes="100vw"
           className="object-cover"
         />
-        {/* Lighter overlay so the mountain photo reads through more clearly.
-            Headline + paragraphs get a drop-shadow to keep contrast against
-            the brighter top/sky portion of the photo. */}
-        <div className="absolute inset-0 bg-black/50" />
+        {/* Radial gradient overlay: 70% dark behind the (centered) text card,
+            fading to 40% at the edges. Keeps headline contrast where it
+            matters while letting the mountain photo read clearly outside the
+            words. Drop-shadows on the text reinforce contrast at the
+            transition zone. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.70)_0%,rgba(0,0,0,0.70)_30%,rgba(0,0,0,0.40)_80%)]" />
 
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -70,7 +72,12 @@ export default function AboutClient() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/50 flex items-center">
+        {/* Same radial-gradient pattern as the hero, but at 65% center to
+            match the original treatment of this band. Text on this band is
+            left-aligned within max-w-5xl (so off-center horizontally), but
+            the centered-ellipse gradient still places more darkness where
+            the text falls than where the photo edges sit. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.65)_0%,rgba(0,0,0,0.65)_30%,rgba(0,0,0,0.40)_80%)] flex items-center">
           <div className="max-w-5xl mx-auto px-6 text-white">
             <p className="uppercase tracking-widest text-white/80 text-sm font-bold mb-3 drop-shadow-md">
               Jackson, Mississippi
