@@ -23,7 +23,11 @@ export default function AboutClient() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
           viewport={{ once: true }}
-          className="relative z-10 text-white max-w-3xl px-6 md:px-12 py-12 rounded-xl border border-white/10 bg-white/5 backdrop-blur-sm shadow-2xl"
+          // No card/border/glass treatment — text sits directly on the dark
+          // overlay so the mountain photo reads through. Matches the
+          // treatment used on the lower terminal credibility band, and on
+          // the home page's terminal band.
+          className="relative z-10 text-white max-w-3xl px-6 md:px-12"
         >
           <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3 text-center">
             About Forbes Logistix
