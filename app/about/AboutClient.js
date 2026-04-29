@@ -9,8 +9,8 @@ export default function AboutClient() {
       {/* ---------- HERO ---------- */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
         <Image
-          src="/assets/photos/terminal.jpg"
-          alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
+          src="/assets/photos/truck-mountain.jpg"
+          alt="Forbes Logistix flatbed truck loading freight on a Western plain with Rocky Mountains in the background"
           fill
           priority
           sizes="100vw"
@@ -44,12 +44,39 @@ export default function AboutClient() {
               understands what the road actually looks like, not just what the spreadsheet says. That
               perspective shapes how we hire, dispatch, and pay.
             </p>
-            <p>
+          </div>
+        </motion.div>
+      </section>
+
+      {/* ---------- TERMINAL CREDIBILITY BAND ----------
+          Pulled the original third paragraph (terminal description) out of the
+          hero card and into its own band with the terminal photo as background.
+          Lets the mountain hero do "we drive real distances" without competing
+          with terminal-specific copy, and gives the terminal photo the role
+          where it fits best — a credibility statement about the home base.
+          Mirrors the same pattern used on the home page. */}
+      <section className="relative h-[50vh] min-h-[360px] overflow-hidden">
+        <Image
+          src="/assets/photos/terminal.jpg"
+          alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
+          fill
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/65 flex items-center">
+          <div className="max-w-5xl mx-auto px-6 text-white">
+            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">
+              Jackson, Mississippi
+            </p>
+            <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl">
+              A real terminal. A real company.
+            </h2>
+            <p className="text-lg md:text-xl text-white/85 max-w-2xl">
               Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse,
               giving us the infrastructure to support our fleet and partners with strength and scale.
             </p>
           </div>
-        </motion.div>
+        </div>
       </section>
     </div>
   );
