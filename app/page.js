@@ -90,25 +90,9 @@ export default function HomePage() {
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
-        {/* Stacked-ellipse overlay: instead of one big oval, four tight
-            ellipses positioned at each text row (buffalo+H1, tagline,
-            description, buttons+call). They overlap into a contoured
-            "blob" that bends with the text instead of darkening everything
-            around it. Each ellipse is dark-center fading to transparent;
-            a thin rgba(0,0,0,0.20) base tint sits everywhere else so the
-            video still has subtle weight without competing with the text.
-            Position percentages assume the centered text card layout. */}
-        <div
-          className="absolute inset-0 z-10"
-          style={{
-            backgroundColor: "rgba(0,0,0,0.20)",
-            backgroundImage:
-              "radial-gradient(ellipse 30% 9% at 50% 36%, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.80) 55%, transparent 100%), " +
-              "radial-gradient(ellipse 22% 5% at 50% 49%, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.80) 55%, transparent 100%), " +
-              "radial-gradient(ellipse 26% 6% at 50% 57%, rgba(0,0,0,0.80) 0%, rgba(0,0,0,0.80) 55%, transparent 100%), " +
-              "radial-gradient(ellipse 24% 5% at 50% 67%, rgba(0,0,0,0.78) 0%, rgba(0,0,0,0.78) 55%, transparent 100%)",
-          }}
-        />
+        {/* No darkening overlay on the hero — the buffalo footage plays at
+            full brightness. Text contrast is carried entirely by the
+            existing drop-shadows on the H1, tagline, and description. */}
 
         <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
