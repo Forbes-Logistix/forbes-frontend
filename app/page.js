@@ -90,9 +90,10 @@ export default function HomePage() {
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
-        {/* No darkening overlay on the hero — the buffalo footage plays at
-            full brightness. Text contrast is carried entirely by the
-            existing drop-shadows on the H1, tagline, and description. */}
+        {/* Flat 10% black overlay — just enough to take the edge off bright
+            frames so the H1, tagline, and description (with their existing
+            drop-shadows) stay legible without losing the buffalo footage. */}
+        <div className="absolute inset-0 bg-black/10 z-10" />
 
         <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
