@@ -90,10 +90,10 @@ export default function HomePage() {
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
-        {/* Flat 25% black overlay — light enough that the buffalo footage
-            still reads, dark enough that the H1, tagline, and description
-            (with their existing drop-shadows) stay clearly legible. */}
-        <div className="absolute inset-0 bg-black/25 z-10" />
+        {/* Flat 15% black overlay — just enough to take the edge off bright
+            frames. Existing drop-shadows on the H1, tagline, and description
+            carry the rest of the contrast. */}
+        <div className="absolute inset-0 bg-black/15 z-10" />
 
         <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
