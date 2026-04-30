@@ -10,7 +10,6 @@ import {
   WalletCards,
   Truck,
   MapPinned,
-  DollarSign,
   Award,
   ShieldCheck,
   HeartPulse,

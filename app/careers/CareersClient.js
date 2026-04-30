@@ -6,7 +6,6 @@ import {
   Phone,
   Mail,
   Check,
-  DollarSign,
   Percent,
   CalendarDays,
   Award,
