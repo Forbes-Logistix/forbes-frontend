@@ -1,74 +1,57 @@
-# Getting Started with Create React App
+# Forbes Logistix — Marketing Site
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Next.js 16 (App Router) marketing & recruiting site for Forbes Logistix, LLC. Lives at https://forbeslogistix.com.
 
-## Available Scripts
+## Stack
 
-In the project directory, you can run:
+- **Framework**: Next.js 16, React 18, App Router
+- **Styling**: Tailwind CSS 3
+- **Animation**: framer-motion
+- **Icons**: lucide-react
+- **Hosting**: Vercel
+- **Forms**: post to the companion API at `forbes-logistix-backend.vercel.app` (`/api/contact`, `/api/lead`)
+- **Bot protection**: Cloudflare Turnstile (Managed mode), gated by `NEXT_PUBLIC_TURNSTILE_SITE_KEY`
+- **DNS**: Cloudflare; **Email**: M365 (Graph sendMail from the backend)
 
-### `npm start`
+## Local development
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm install
+npm run dev
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Runs at http://localhost:3000. Forms hit the production backend by default.
 
-### `npm test`
+## Build
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```bash
+npm run build
+```
 
-### `npm run build`
+All routes are statically prerendered — see Next.js build output.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Environment variables
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+| Variable | Where | Notes |
+|---|---|---|
+| `NEXT_PUBLIC_TURNSTILE_SITE_KEY` | Vercel (frontend) | Optional. When unset, forms still submit but no Turnstile widget renders and the backend skips verification. |
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+The companion backend has its own env vars (Graph credentials, recipient emails, Turnstile secret) — see the canonical handoff doc.
 
-### `npm run eject`
+## Layout
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+- `app/` — App Router pages, components, lib, globals.css
+  - `page.js` — home (Run with the Buffalo)
+  - `about/`, `operations/`, `careers/`, `contact/`, `apply/`, `privacy/`, `terms/` — page directories. `*Client.js` files are the client components; `page.js` is the server wrapper that exports `metadata` + JSON-LD.
+  - `components/Navbar.js`, `components/Footer.js`, `components/QuickApplyForm.js`
+  - `lib/schema.js` — shared building blocks for Organization / LocalBusiness / JobPosting JSON-LD
+  - `lib/styles.js` — shared className constants (currently just `NAV_LINK`)
+  - `globals.css` — Tailwind base + global focus-visible accessibility ring
+  - `sitemap.js`, `robots.js` — generated on every build
+- `public/assets/` — photos (`photos/`), buffalo brand mark, logo, hero video + poster
+- `next.config.js` — legacy CRA URL redirects (`/aboutUs` → `/about`, `/contactUs` → `/contact`)
+- `vercel.json` — security headers (CSP, HSTS, X-Frame-Options, etc.)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Canonical handoff doc
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-Deployment reset test
-deployment trigger
-
-
+The full runbook (env var catalog, Vercel/Cloudflare/Entra dashboards, disaster-recovery rebuild guide, security posture, glossary) lives in OneDrive — not in this repo. Ask the owner for the path.

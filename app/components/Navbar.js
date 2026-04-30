@@ -5,20 +5,18 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
+import { NAV_LINK } from "../lib/styles";
 
 // Reusable nav link with aria-current="page" applied when the pathname
 // matches. Helps screen readers announce the active section and gives us
 // a hook to style the active state if we want to later.
-const NAV_LINK_BASE =
-  "relative text-black transition-colors duration-300 after:content-[''] after:absolute after:left-0 after:bottom-[-2px] after:w-full after:h-[1.5px] after:bg-black after:scale-x-0 hover:after:scale-x-100 after:transition-transform after:duration-300 after:origin-left";
-
 const NavLink = ({ href, label, pathname }) => {
   const isActive = pathname === href;
   return (
     <Link
       href={href}
       aria-current={isActive ? "page" : undefined}
-      className={NAV_LINK_BASE}
+      className={NAV_LINK}
     >
       {label}
     </Link>

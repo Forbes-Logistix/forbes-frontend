@@ -26,7 +26,7 @@ export const metadata = {
     images: [{ url: "/assets/photos/truck-loading.jpg" }],
   },
   twitter: { card: "summary_large_image" },
-  icons: { icon: "/favicon.ico", apple: "/favicon.ico" },
+  icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   verification: {
     google: "HjB7Z7Vt33q0tR3UBZyzKyWryGMhtrIK1X5TyZK6tsE",
   },
