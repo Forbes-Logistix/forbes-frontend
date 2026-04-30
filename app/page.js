@@ -90,7 +90,14 @@ export default function HomePage() {
         >
           <source src="/assets/homeVideo.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-black/60 z-10" />
+        {/* Radial gradient overlay (mirrors About hero treatment): 70% dark
+            tightly clamped behind the centered text card, fading to 40% at
+            the edges so the buffalo footage reads clearly outside the
+            words. Same shape used on About — 0% to 15% holds the dark
+            "spotlight" steady, then 55% reaches the lighter 40% at the
+            photo edges. Existing drop-shadows on the H1/p reinforce
+            contrast at the transition zone. */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,0,0,0.70)_0%,rgba(0,0,0,0.70)_15%,rgba(0,0,0,0.40)_55%)] z-10" />
 
         <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
