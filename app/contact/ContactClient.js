@@ -13,6 +13,13 @@ const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
 const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
+// Client-side parity with contactController's caps/regex so users get
+// field-level feedback instead of a round-trip rejection.
+const MAX_NAME = 100;
+const MAX_EMAIL = 254;
+const MAX_MESSAGE = 5000;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function ContactClient() {
   const [f, setF] = useState({ name: "", email: "", message: "" });
   const [s, setS] = useState("idle");
@@ -20,6 +27,8 @@ export default function ContactClient() {
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [contactConsent, setContactConsent] = useState(false);
   const [acceptError, setAcceptError] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const widgetRef = useRef(null);
   const widgetIdRef = useRef(null);
 
@@ -44,8 +53,17 @@ export default function ContactClient() {
       } catch { /* widget may already be rendered */ }
     };
 
-    if (document.getElementById(SCRIPT_ID)) {
-      renderWidget();
+    const existing = document.getElementById(SCRIPT_ID);
+    if (existing) {
+      // The script tag can already exist while the API is still loading
+      // (client-side navigation between form pages). Calling renderWidget()
+      // before window.turnstile exists would leave the widget unrendered and
+      // the submit button permanently disabled — wait for load instead.
+      if (window.turnstile) {
+        renderWidget();
+      } else {
+        existing.addEventListener("load", renderWidget);
+      }
     } else {
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
@@ -72,9 +90,27 @@ export default function ContactClient() {
 
   const onC = (e) => setF({ ...f, [e.target.name]: e.target.value });
 
+  const validate = () => {
+    const errs = {};
+    const name = f.name.trim();
+    const email = f.email.trim();
+    const message = f.message.trim();
+    if (!name) errs.name = "Required";
+    else if (name.length > MAX_NAME) errs.name = `Must be ${MAX_NAME} characters or fewer`;
+    if (!email) errs.email = "Required";
+    else if (email.length > MAX_EMAIL || !EMAIL_REGEX.test(email)) errs.email = "Enter a valid email address";
+    if (!message) errs.message = "Required";
+    else if (message.length > MAX_MESSAGE) errs.message = `Must be ${MAX_MESSAGE} characters or fewer`;
+    return errs;
+  };
+
   const onS = async (e) => {
     e.preventDefault();
     setAcceptError("");
+    setErrorMsg("");
+    const errs = validate();
+    setFieldErrors(errs);
+    if (Object.keys(errs).length > 0) return;
     if (!acceptTerms) {
       setAcceptError("Please confirm you have read the Terms of Use and Privacy Policy.");
       return;
@@ -82,8 +118,14 @@ export default function ContactClient() {
     setS("sending");
     try {
       const body = {
-        ...f,
+        name: f.name.trim(),
+        email: f.email.trim(),
+        message: f.message.trim(),
         contactConsent,
+        // Recorded in the backend's consent-record block alongside
+        // contactConsent — the required checkbox was previously never
+        // transmitted, so the record had no proof of the acknowledgment.
+        acceptTerms,
         ...(TURNSTILE_SITE_KEY ? { turnstileToken } : {}),
       };
       const r = await fetch(`${BACKEND_URL}/api/contact`, {
@@ -91,14 +133,24 @@ export default function ContactClient() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error("send failed");
+      if (!r.ok) {
+        // Surface the backend's message (length caps, rate-limit notices,
+        // verification failures) instead of a blind generic error.
+        let serverMsg = "";
+        try { serverMsg = (await r.json()).message; } catch { /* ignore */ }
+        const err = new Error(serverMsg || "send failed");
+        err.isServerMessage = Boolean(serverMsg);
+        throw err;
+      }
       setS("ok");
       setF({ name: "", email: "", message: "" });
       setAcceptTerms(false);
       setContactConsent(false);
+      setFieldErrors({});
       resetTurnstile();
-    } catch {
+    } catch (err) {
       setS("err");
+      setErrorMsg(err && err.isServerMessage ? err.message : "");
       resetTurnstile();
     }
   };
@@ -121,7 +173,7 @@ export default function ContactClient() {
 
         <div className="relative z-10 max-w-5xl w-full px-6 py-20 text-white">
           <div className="text-center mb-10">
-            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">Recruiting</p>
+            <p className="uppercase tracking-widest text-white/80 text-sm font-bold mb-3">Recruiting</p>
             <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4">
               Talk to the people running the trucks.
             </h1>
@@ -220,9 +272,15 @@ export default function ContactClient() {
                 onChange={onC}
                 autoComplete="name"
                 required
+                maxLength={MAX_NAME}
+                aria-invalid={fieldErrors.name ? true : undefined}
+                aria-describedby={fieldErrors.name ? "contact-name-error" : undefined}
                 className="w-full border border-gray-300 rounded-lg p-3 bg-white"
                 placeholder="Enter your name"
               />
+              {fieldErrors.name && (
+                <p id="contact-name-error" className="mt-1 text-sm text-red-600">{fieldErrors.name}</p>
+              )}
             </div>
             <div>
               <label htmlFor="contact-email" className="block font-medium mb-1 text-gray-800">Email Address</label>
@@ -234,9 +292,15 @@ export default function ContactClient() {
                 onChange={onC}
                 autoComplete="email"
                 required
+                maxLength={MAX_EMAIL}
+                aria-invalid={fieldErrors.email ? true : undefined}
+                aria-describedby={fieldErrors.email ? "contact-email-error" : undefined}
                 className="w-full border border-gray-300 rounded-lg p-3 bg-white"
                 placeholder="Enter your email"
               />
+              {fieldErrors.email && (
+                <p id="contact-email-error" className="mt-1 text-sm text-red-600">{fieldErrors.email}</p>
+              )}
             </div>
             <div>
               <label htmlFor="contact-message" className="block font-medium mb-1 text-gray-800">Message</label>
@@ -247,9 +311,15 @@ export default function ContactClient() {
                 value={f.message}
                 onChange={onC}
                 required
+                maxLength={MAX_MESSAGE}
+                aria-invalid={fieldErrors.message ? true : undefined}
+                aria-describedby={fieldErrors.message ? "contact-message-error" : undefined}
                 className="w-full border border-gray-300 rounded-lg p-3 bg-white"
                 placeholder="Type your message..."
               />
+              {fieldErrors.message && (
+                <p id="contact-message-error" className="mt-1 text-sm text-red-600">{fieldErrors.message}</p>
+              )}
             </div>
             {TURNSTILE_SITE_KEY && (
               <div className="flex justify-center">
@@ -288,15 +358,19 @@ export default function ContactClient() {
                   <Link href="/privacy" className="underline">Privacy Policy</Link>.
                 </span>
               </label>
-              {acceptError && <p className="mt-1 text-sm text-red-600 font-semibold">{acceptError}</p>}
+              {acceptError && (
+                <p role="alert" className="mt-1 text-sm text-red-600 font-semibold">{acceptError}</p>
+              )}
             </div>
 
             {s === "ok" && (
-              <p className="text-green-700 font-medium text-center">Thanks &mdash; your message was sent.</p>
+              <p role="status" className="text-green-700 font-medium text-center">
+                Thanks &mdash; your message was sent.
+              </p>
             )}
             {s === "err" && (
-              <p className="text-red-600 font-medium text-center">
-                Something went wrong. Please call {RECRUITING_PHONE_DISPLAY}.
+              <p role="alert" className="text-red-600 font-medium text-center">
+                {errorMsg || "Something went wrong."} Please call {RECRUITING_PHONE_DISPLAY}.
               </p>
             )}
             <div className="text-center mt-10">

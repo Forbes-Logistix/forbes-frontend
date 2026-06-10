@@ -81,17 +81,22 @@ const Navbar = () => {
             Apply
           </Link>
           <button
-            className="text-3xl text-black focus:outline-none"
+            className="text-3xl text-black"
             onClick={toggleMenu}
-            aria-label="Toggle Menu"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isOpen}
+            aria-controls="mobile-menu"
           >
-            {isOpen ? <X /> : <Menu />}
+            {isOpen ? <X aria-hidden /> : <Menu aria-hidden />}
           </button>
         </div>
       </div>
 
       {isOpen && (
-        <div className="md:hidden absolute top-28 left-0 w-full bg-white shadow-md px-6 py-6 flex flex-col gap-6 text-[17px] font-medium tracking-wide">
+        <div
+          id="mobile-menu"
+          className="md:hidden absolute top-28 left-0 w-full bg-white shadow-md px-6 py-6 flex flex-col gap-6 text-[17px] font-medium tracking-wide"
+        >
           {navItems}
         </div>
       )}

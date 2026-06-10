@@ -35,6 +35,16 @@ export default function QuickApplyForm({
   const [turnstileToken, setTurnstileToken] = useState("");
   const widgetRef = useRef(null);
   const widgetIdRef = useRef(null);
+  const successRef = useRef(null);
+
+  // The success state swaps the whole form card out of the DOM, which would
+  // silently drop keyboard/screen-reader focus. Move it to the confirmation
+  // heading so the outcome is announced and Tab continues from there.
+  useEffect(() => {
+    if (status === "ok" && successRef.current) {
+      successRef.current.focus();
+    }
+  }, [status]);
 
   const isLight = variant === "light";
 
@@ -61,8 +71,17 @@ export default function QuickApplyForm({
       } catch { /* widget may already be rendered */ }
     };
 
-    if (document.getElementById(SCRIPT_ID)) {
-      renderWidget();
+    const existing = document.getElementById(SCRIPT_ID);
+    if (existing) {
+      // The script tag can already exist while the API is still loading
+      // (client-side navigation between form pages). Calling renderWidget()
+      // before window.turnstile exists would leave the widget unrendered and
+      // the submit button permanently disabled — wait for load instead.
+      if (window.turnstile) {
+        renderWidget();
+      } else {
+        existing.addEventListener("load", renderWidget);
+      }
     } else {
       const script = document.createElement("script");
       script.id = SCRIPT_ID;
@@ -100,8 +119,9 @@ export default function QuickApplyForm({
     const yearsNum = Number(form.years);
     if (form.years === "" || form.years === null) {
       errs.years = "Required";
-    } else if (!Number.isFinite(yearsNum) || yearsNum < 0 || yearsNum > 60) {
-      errs.years = "Enter 0–60";
+    } else if (!Number.isInteger(yearsNum) || yearsNum < 0 || yearsNum > 60) {
+      // Whole years only — matches the backend's Number.isInteger check.
+      errs.years = "Enter whole years, 0–60";
     }
     if (!applicantCert) {
       errs.applicantCert = "Please confirm to continue";
@@ -166,8 +186,10 @@ export default function QuickApplyForm({
 
   if (status === "ok") {
     return (
-      <div className={`${card} border rounded-2xl shadow-xl p-8 md:p-10 ${className}`} id={id}>
-        <h3 className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3">Thanks &mdash; we got it.</h3>
+      <div role="status" className={`${card} border rounded-2xl shadow-xl p-8 md:p-10 ${className}`} id={id}>
+        <h3 ref={successRef} tabIndex={-1} className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3 outline-none">
+          Thanks &mdash; we got it.
+        </h3>
         <p className={`text-base md:text-lg leading-relaxed ${labelTone}`}>
           Recruiting will call you shortly. If it&apos;s urgent, call{" "}
           <a href={`tel:${RECRUITING_PHONE_TEL}`} className="font-bold underline underline-offset-4">
@@ -218,10 +240,12 @@ export default function QuickApplyForm({
             autoComplete="name"
             required
             maxLength={100}
+            aria-invalid={fieldErrors.name ? true : undefined}
+            aria-describedby={fieldErrors.name ? "qa-name-error" : undefined}
             className={inputBase}
             placeholder="Jane Driver"
           />
-          {fieldErrors.name && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.name}</p>}
+          {fieldErrors.name && <p id="qa-name-error" className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.name}</p>}
         </div>
 
         <div>
@@ -238,10 +262,12 @@ export default function QuickApplyForm({
             inputMode="tel"
             required
             maxLength={32}
+            aria-invalid={fieldErrors.phone ? true : undefined}
+            aria-describedby={fieldErrors.phone ? "qa-phone-error" : undefined}
             className={inputBase}
             placeholder="(601) 555-1234"
           />
-          {fieldErrors.phone && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.phone}</p>}
+          {fieldErrors.phone && <p id="qa-phone-error" className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.phone}</p>}
         </div>
 
         <div>
@@ -259,10 +285,12 @@ export default function QuickApplyForm({
             max={60}
             step={1}
             required
+            aria-invalid={fieldErrors.years ? true : undefined}
+            aria-describedby={fieldErrors.years ? "qa-years-error" : undefined}
             className={inputBase}
             placeholder="e.g. 5"
           />
-          {fieldErrors.years && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.years}</p>}
+          {fieldErrors.years && <p id="qa-years-error" className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.years}</p>}
         </div>
 
         {TURNSTILE_SITE_KEY && (
@@ -301,6 +329,8 @@ export default function QuickApplyForm({
               onChange={(e) => setApplicantCert(e.target.checked)}
               className="mt-1 shrink-0 h-4 w-4 accent-black"
               required
+              aria-invalid={fieldErrors.applicantCert ? true : undefined}
+              aria-describedby={fieldErrors.applicantCert ? "qa-cert-error" : undefined}
             />
             <span>
               I certify the information above is true and complete to the best of my knowledge. I understand
@@ -312,11 +342,11 @@ export default function QuickApplyForm({
               <Link href="/privacy" className={linkTone}>Privacy Policy</Link>.
             </span>
           </label>
-          {fieldErrors.applicantCert && <p className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.applicantCert}</p>}
+          {fieldErrors.applicantCert && <p id="qa-cert-error" className={`mt-1 text-sm ${errorTone}`}>{fieldErrors.applicantCert}</p>}
         </div>
 
         {status === "err" && (
-          <p className={`text-sm font-semibold ${errorTone}`}>
+          <p role="alert" className={`text-sm font-semibold ${errorTone}`}>
             {errorMsg || "Submission failed. Please try again."} Or call{" "}
             <a href={`tel:${RECRUITING_PHONE_TEL}`} className="underline underline-offset-4">
               {RECRUITING_PHONE_DISPLAY}
