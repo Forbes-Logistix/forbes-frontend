@@ -44,15 +44,19 @@ export const JOB_LOCATION = {
   address: POSTAL_ADDRESS,
 };
 
-// Returns ISO YYYY-MM-DD for "today" and "today + 90 days". Used to compute
-// JobPosting.datePosted and JobPosting.validThrough at build/render time.
-// Re-evaluated each Vercel deploy, which is frequent enough.
-export function jobDates() {
-  const today = new Date();
-  const ninetyDays = new Date(today);
-  ninetyDays.setDate(ninetyDays.getDate() + 90);
-  return {
-    datePosted: today.toISOString().split("T")[0],
-    validThrough: ninetyDays.toISOString().split("T")[0],
-  };
+// The date the postings actually went live on the site. Google guidance:
+// JobPosting.datePosted should be the real original posting date — bump this
+// constant only when a role materially changes or is re-opened. (It used to
+// be computed as "today" at build time, which silently reset on every deploy.)
+export const JOB_DATE_POSTED = "2026-04-28";
+
+// JobPosting.validThrough — rolling 90-day window from now. The careers page
+// exports `revalidate`, so ISR re-evaluates this daily and the window keeps
+// sliding. Previously this froze at the last deploy: with no deploys after
+// 2026-05-08 the postings would have expired from Google for Jobs on
+// 2026-08-06 without anyone noticing.
+export function validThroughISO() {
+  const d = new Date();
+  d.setDate(d.getDate() + 90);
+  return d.toISOString().split("T")[0];
 }
