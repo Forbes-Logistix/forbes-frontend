@@ -6,7 +6,7 @@ import { HIRING_ORGANIZATION, JOB_LOCATION, JOB_DATE_POSTED, validThroughISO } f
 // static and the dates freeze at build time.
 export const revalidate = 86400;
 
-const TITLE = "Company Driver & Owner-Operator Jobs | Forbes Logistix";
+const TITLE = "Flatbed Company Driver & Owner-Operator Jobs | Forbes Logistix";
 const DESCRIPTION =
   "Company flatbed drivers are currently making over $2,500/week: 30% of line haul, $3,000 sign-on, $100 tarp pay, home weekends. Owner-operators keep 90% of total billed revenue.";
 

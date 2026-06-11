@@ -4,17 +4,29 @@ const SITE = "https://www.forbeslogistix.com";
 // sitemap should list only canonical, indexable URLs — submitting a noindexed
 // URL sends Google contradictory signals.
 //
-// lastModified is intentionally omitted: it used to be `new Date()` at build
-// time, which falsely claimed every page changed on every deploy. Better to
-// say nothing than to fabricate it.
+// lastModified values are REAL content-change dates, maintained by hand —
+// update the matching constant when a page's content materially changes.
+// (They were previously `new Date()` at build time, which falsely claimed
+// every page changed on every deploy; then omitted entirely. Honest dates
+// help Google prioritize recrawling pages that actually changed.)
+const MODIFIED = {
+  home: "2026-06-11", // recruiting content pass: pay story, hero CTA, proof bar
+  careers: "2026-06-11", // $2,500/wk + baseSalary + OO framing
+  about: "2026-06-11", // recruiting CTA strip added
+  operations: "2026-06-11", // pay line + recruiting CTA strip
+  contact: "2026-06-10", // form validation + accessibility pass
+  terms: "2026-04-25", // effective date
+  privacy: "2026-04-25", // effective date
+};
+
 export default function sitemap() {
   return [
-    { url: `${SITE}/`,           changeFrequency: "weekly",  priority: 1.0 },
-    { url: `${SITE}/careers`,    changeFrequency: "weekly",  priority: 0.9 },
-    { url: `${SITE}/about`,      changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE}/operations`, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${SITE}/contact`,    changeFrequency: "monthly", priority: 0.6 },
-    { url: `${SITE}/terms`,      changeFrequency: "yearly",  priority: 0.2 },
-    { url: `${SITE}/privacy`,    changeFrequency: "yearly",  priority: 0.2 },
+    { url: `${SITE}/`,           lastModified: MODIFIED.home,       changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${SITE}/careers`,    lastModified: MODIFIED.careers,    changeFrequency: "weekly",  priority: 0.9 },
+    { url: `${SITE}/about`,      lastModified: MODIFIED.about,      changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/operations`, lastModified: MODIFIED.operations, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${SITE}/contact`,    lastModified: MODIFIED.contact,    changeFrequency: "monthly", priority: 0.6 },
+    { url: `${SITE}/terms`,      lastModified: MODIFIED.terms,      changeFrequency: "yearly",  priority: 0.2 },
+    { url: `${SITE}/privacy`,    lastModified: MODIFIED.privacy,    changeFrequency: "yearly",  priority: 0.2 },
   ];
 }

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Phone,
@@ -263,6 +264,11 @@ export default function HomePage() {
                   <Phone aria-hidden className="w-5 h-5" /> Call Recruiting
                 </a>
               </div>
+              <p className="mt-6 text-base text-white/70">
+                <Link href="/careers#company-drivers" className="underline underline-offset-4 hover:text-white">
+                  Full offer, requirements &amp; FAQ on the jobs page →
+                </Link>
+              </p>
             </motion.div>
           </div>
 
@@ -345,6 +351,11 @@ export default function HomePage() {
                   <Mail aria-hidden className="w-5 h-5" /> Email Recruiting
                 </a>
               </div>
+              <p className="mt-6 text-base text-gray-600">
+                <Link href="/careers#owner-operators" className="underline underline-offset-4 hover:text-black">
+                  Full owner-operator details on the jobs page →
+                </Link>
+              </p>
             </motion.div>
           </div>
         </div>
