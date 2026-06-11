@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
+import { Phone, Mail, FileText } from "lucide-react";
+
+const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
+const RECRUITING_PHONE_TEL = "+16013005529";
+const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
 export default function AboutClient() {
   return (
@@ -89,6 +95,47 @@ export default function AboutClient() {
               Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse,
               giving us the infrastructure to support our fleet and partners with strength and scale.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- RECRUITING CTA ----------
+          Every page should end with a next step. Drivers vetting the company
+          land here — don't make them go back to the nav to act. Same 3-way
+          strip pattern as home/careers/contact; the Apply card links to
+          /apply since this page doesn't embed the form. */}
+      <section className="bg-white text-black py-20 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">
+            Sound like your kind of company?
+          </h2>
+          <p className="text-lg text-gray-600 mb-10">Three ways to reach recruiting.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a
+              href={`tel:${RECRUITING_PHONE_TEL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Phone aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Call Recruiting</span>
+              <span className="text-sm opacity-80 mt-1">{RECRUITING_PHONE_DISPLAY}</span>
+            </a>
+            <a
+              href={`mailto:${RECRUITING_EMAIL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Mail aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Email Recruiting</span>
+              <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
+            </a>
+            <Link
+              href="/apply"
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-white/20 shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <FileText aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Apply Now</span>
+              <span className="text-sm opacity-80 mt-1">Three-field callback form</span>
+            </Link>
           </div>
         </div>
       </section>

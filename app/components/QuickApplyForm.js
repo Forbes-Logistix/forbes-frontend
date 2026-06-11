@@ -364,7 +364,7 @@ export default function QuickApplyForm({
             <Phone aria-hidden className="w-5 h-5" />
             {status === "sending" ? "Sending..." : "Get a Callback"}
           </button>
-          <p className={`mt-3 text-sm ${helpTone}`}>We&apos;ll call you back within one business day.</p>
+          <p className={`mt-3 text-sm ${helpTone}`}>Apply before 4 PM CT and we&apos;ll call you back today.</p>
         </div>
       </form>
     </div>

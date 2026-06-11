@@ -7,10 +7,17 @@ const Footer = () => {
       <div className="max-w-4xl mx-auto space-y-5">
         <h2 className="text-xl font-bold tracking-wide">Forbes Logistix</h2>
 
+        {/* Recruiting phone, one tap from any page bottom. */}
+        <p className="text-sm">
+          <a href="tel:+16013005529" className="font-semibold hover:underline underline-offset-2">
+            Recruiting: (601) 300-5529
+          </a>
+        </p>
+
         <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm">
           <Link href="/about" className={NAV_LINK}>About Us</Link>
           <Link href="/operations" className={NAV_LINK}>Operations</Link>
-          <Link href="/careers" className={NAV_LINK}>Careers</Link>
+          <Link href="/careers" className={NAV_LINK}>Driving Jobs</Link>
           <Link href="/contact" className={NAV_LINK}>Contact</Link>
         </nav>
 

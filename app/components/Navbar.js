@@ -40,7 +40,9 @@ const Navbar = () => {
     <>
       <NavLink href="/about" label="About Us" pathname={pathname} />
       <NavLink href="/operations" label="Operations" pathname={pathname} />
-      <NavLink href="/careers" label="Careers" pathname={pathname} />
+      {/* "Driving Jobs" over "Careers": matches what drivers actually search
+          and the page's own title tag. Route stays /careers (SEO/links). */}
+      <NavLink href="/careers" label="Driving Jobs" pathname={pathname} />
       <NavLink href="/contact" label="Contact Us" pathname={pathname} />
     </>
   );
