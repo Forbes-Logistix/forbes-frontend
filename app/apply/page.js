@@ -3,12 +3,12 @@ import QuickApplyForm from "../components/QuickApplyForm";
 export const metadata = {
   title: "Apply — Forbes Logistix",
   description:
-    "Quick three-field driver application. We'll call you back within one business day. Full DOT application is sent after we talk.",
+    "Quick three-field driver application. Apply before 4 PM CT and we'll call you back today. Full DOT application is sent after we talk.",
   alternates: { canonical: "https://www.forbeslogistix.com/apply" },
   openGraph: {
     title: "Apply — Forbes Logistix",
     description:
-      "Quick three-field driver application. We'll call you back within one business day.",
+      "Quick three-field driver application. Apply before 4 PM CT and we'll call you back today.",
     url: "https://www.forbeslogistix.com/apply",
     images: [{ url: "/assets/og/truck-loading-og.jpg", width: 1200, height: 630 }],
   },

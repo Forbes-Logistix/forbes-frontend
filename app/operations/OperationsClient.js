@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Truck,
@@ -9,7 +10,14 @@ import {
   WalletCards,
   Wrench,
   MapPin,
+  Phone,
+  Mail,
+  FileText,
 } from "lucide-react";
+
+const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
+const RECRUITING_PHONE_TEL = "+16013005529";
+const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
 const sections = [
   {
@@ -34,7 +42,7 @@ const sections = [
     title: "Weekly direct deposit, no surprises",
     Icon: WalletCards,
     body:
-      "Settlements run weekly with direct deposit. The numbers match what you were quoted: 30% of line haul, $100 tarp pay, and at least $1,000/week if you're available for dispatch all week.",
+      "Settlements run weekly with direct deposit. The numbers match what you were quoted: 30% of line haul, $100 tarp pay, and at least $1,000/week if you're available for dispatch all week. Right now our company drivers are making over $2,500 a week.",
   },
   {
     title: "Modern, maintained equipment",
@@ -118,6 +126,44 @@ export default function OperationsClient() {
             <p className="text-lg md:text-xl text-white/85 max-w-2xl">
               Veteran-owned, asset-based, headquartered in Jackson. Real freight. Real people. Real seats.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------- RECRUITING CTA ----------
+          This page sells the day-to-day; close the loop with a next step
+          instead of dead-ending. Same 3-way strip pattern as home/careers;
+          Apply links to /apply since the form isn't embedded here. */}
+      <section className="bg-white text-black py-20 px-4">
+        <div className="max-w-5xl mx-auto text-center">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Want this seat?</h2>
+          <p className="text-lg text-gray-600 mb-10">Three ways to reach recruiting.</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <a
+              href={`tel:${RECRUITING_PHONE_TEL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-black shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Phone aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Call Recruiting</span>
+              <span className="text-sm opacity-80 mt-1">{RECRUITING_PHONE_DISPLAY}</span>
+            </a>
+            <a
+              href={`mailto:${RECRUITING_EMAIL}`}
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-black shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <Mail aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Email Recruiting</span>
+              <span className="text-sm opacity-80 mt-1 break-all">{RECRUITING_EMAIL}</span>
+            </a>
+            <Link
+              href="/apply"
+              className="flex flex-col items-center justify-center bg-black text-white px-6 py-8 rounded-2xl border border-black shadow-xl hover:bg-white hover:text-black hover:scale-105 transition-all duration-300"
+            >
+              <FileText aria-hidden className="w-8 h-8 mb-3" />
+              <span className="text-lg font-bold">Apply Now</span>
+              <span className="text-sm opacity-80 mt-1">Three-field callback form</span>
+            </Link>
           </div>
         </div>
       </section>

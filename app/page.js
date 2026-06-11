@@ -10,7 +10,6 @@ import {
   House,
   WalletCards,
   Truck,
-  MapPinned,
   Award,
   ShieldCheck,
   HeartPulse,
@@ -154,6 +153,15 @@ export default function HomePage() {
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                {/* Primary action first: a hot lead (e.g. arriving from a job
+                    listing) gets a direct path to the form instead of being
+                    routed past it to the offer sections. */}
+                <button
+                  onClick={() => scrollToId("quick-apply")}
+                  className="bg-white text-black px-8 py-4 text-lg font-bold rounded-2xl shadow-xl border border-white transition-all duration-300 ease-in-out hover:bg-black hover:text-white hover:scale-105"
+                >
+                  Get a Callback
+                </button>
                 <Button onClick={() => scrollToId("company-drivers")}>Company Drivers</Button>
                 <Button onClick={() => scrollToId("owner-operators")}>Owner-Operators</Button>
               </div>
@@ -175,7 +183,7 @@ export default function HomePage() {
           <ProofChip icon={House} label="Home Weekends" />
           <ProofChip icon={WalletCards} label="Weekly Direct Deposit" />
           <ProofChip icon={Truck} label="Modern Equipment" />
-          <ProofChip icon={MapPinned} label="Southeast Opportunities" />
+          <ProofChip icon={Award} label="$3,000 Sign-On" />
         </div>
       </section>
 
@@ -228,7 +236,8 @@ export default function HomePage() {
                 Drive with Forbes. Get paid like it.
               </h2>
               <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
-                Straight numbers. No fine print.
+                Straight numbers, no fine print: our company drivers are currently making over{" "}
+                <span className="font-bold text-white">$2,500 a week</span>.
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4 mb-10">

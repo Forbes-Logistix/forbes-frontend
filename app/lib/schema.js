@@ -48,7 +48,9 @@ export const JOB_LOCATION = {
 // JobPosting.datePosted should be the real original posting date — bump this
 // constant only when a role materially changes or is re-opened. (It used to
 // be computed as "today" at build time, which silently reset on every deploy.)
-export const JOB_DATE_POSTED = "2026-04-28";
+// 2026-06-11: bumped — baseSalary ($2,500/wk current earnings) added to the
+// company-driver posting and the OO settlement framing was rewritten.
+export const JOB_DATE_POSTED = "2026-06-11";
 
 // JobPosting.validThrough — rolling 90-day window from now. The careers page
 // exports `revalidate`, so ISR re-evaluates this daily and the window keeps

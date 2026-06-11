@@ -122,7 +122,8 @@ export default function CareersClient() {
                 The offer, in plain numbers.
               </h2>
               <p className="text-lg md:text-xl text-white/80 max-w-2xl mb-10">
-                No fine print. Here is what you earn and what you get.
+                No fine print: our company drivers are currently making over{" "}
+                <span className="font-bold text-white">$2,500 a week</span>. Here is the full package.
               </p>
 
               <ul className="grid sm:grid-cols-2 gap-x-8 gap-y-4">
@@ -341,8 +342,28 @@ export default function CareersClient() {
                 <OfferBullet icon={PhoneCall}>Direct communication with dispatch</OfferBullet>
               </ul>
 
+              {/* The 90/10 split, framed honestly: the OO runs their business,
+                  Forbes keeps it loaded. Answers "90% minus what?" before the
+                  phone call so the calls that come in are serious. */}
+              <div className="grid sm:grid-cols-2 gap-6 mb-8 max-w-2xl">
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                  <h3 className="font-bold text-lg mb-2">You run the truck</h3>
+                  <p className="text-white/75 leading-relaxed">
+                    Your tractor, your business — fuel, insurance, plates, and maintenance are yours.
+                    You keep 90% because you carry the iron.
+                  </p>
+                </div>
+                <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+                  <h3 className="font-bold text-lg mb-2">We keep it loaded</h3>
+                  <p className="text-white/75 leading-relaxed">
+                    Load sourcing, billing, dispatch, and weekly settlements are on us.
+                    That&apos;s what the 10% buys — you drive, we handle the back office.
+                  </p>
+                </div>
+              </div>
+
               <p className="text-base md:text-lg text-white/75 mb-8 max-w-2xl">
-                Talk to recruiting about settlement details, equipment standards, and onboarding.
+                Talk to recruiting about equipment standards and onboarding.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">

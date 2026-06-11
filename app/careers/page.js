@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 const TITLE = "Company Driver & Owner-Operator Jobs | Forbes Logistix";
 const DESCRIPTION =
-  "Company drivers: strong flatbed pay, 30% of line haul, $3,000 sign-on, $100 tarp pay, and home weekends. Owner-operators keep 90% of total billed revenue.";
+  "Company flatbed drivers are currently making over $2,500/week: 30% of line haul, $3,000 sign-on, $100 tarp pay, home weekends. Owner-operators keep 90% of total billed revenue.";
 
 export const metadata = {
   title: TITLE,
@@ -31,8 +31,9 @@ const COMPANY_DRIVER_DESCRIPTION = `
 <p>Forbes Logistix is hiring W-2 company flatbed drivers for open-deck freight across the Southeast.</p>
 <p><strong>What you earn:</strong></p>
 <ul>
+  <li>Our company drivers are currently making over $2,500/week</li>
   <li>30% of line haul</li>
-  <li>At least $1,000/week when available for dispatch</li>
+  <li>At least $1,000/week guaranteed when available for dispatch</li>
   <li>$3,000 sign-on bonus</li>
   <li>$100 tarp pay</li>
   <li>Weekly direct deposit</li>
@@ -62,7 +63,8 @@ const OWNER_OPERATOR_DESCRIPTION = `
   <li>Real open-deck freight</li>
   <li>Direct communication with dispatch</li>
 </ul>
-<p>Talk to recruiting about settlement details, equipment standards, and onboarding.</p>
+<p>You run the truck and cover its costs — fuel, insurance, plates, maintenance. We keep it loaded: load sourcing, billing, dispatch, and weekly settlements are on us.</p>
+<p>Talk to recruiting about equipment standards and onboarding.</p>
 <p>Forbes Logistix is a Marine Corps veteran-owned, driver-founded carrier headquartered in Jackson, Mississippi.</p>
 `.trim();
 
@@ -81,6 +83,14 @@ export default function CareersPage() {
     industry: "Trucking",
     hiringOrganization: HIRING_ORGANIZATION,
     jobLocation: JOB_LOCATION,
+    // Representative current weekly earnings (drivers are making over $2,500/wk;
+    // $1,000/wk is the guaranteed floor). Google for Jobs ranks postings with
+    // salary data above those without.
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "USD",
+      value: { "@type": "QuantitativeValue", value: 2500, unitText: "WEEK" },
+    },
     directApply: false,
   };
 
