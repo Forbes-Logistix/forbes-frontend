@@ -10,8 +10,10 @@ export const metadata = {
     default: "Flatbed Driving Jobs in the Southeast | Forbes Logistix",
     template: "%s",
   },
+  // SERP click-through is the lever here: lead with the numbers a driver
+  // scans for (weekly pay, sign-on, the 90% OO split).
   description:
-    "Driver-founded flatbed carrier hiring company drivers and owner-operators across the Southeast. Real pay, home weekends, modern equipment, and direct recruiting contact.",
+    "Driver-founded flatbed carrier in Jackson, MS. Company drivers make $2,500+/week with a $3,000 sign-on and home weekends. Owner-operators keep 90%.",
   applicationName: "Forbes Logistix",
   // Default canonical for any route that doesn't set its own — currently only
   // the home page (app/page.js is a client component and can't export metadata).
