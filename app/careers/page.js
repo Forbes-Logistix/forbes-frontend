@@ -1,5 +1,10 @@
 import CareersClient from "./CareersClient";
-import { HIRING_ORGANIZATION, JOB_LOCATION, jobDates } from "../lib/schema";
+import { HIRING_ORGANIZATION, JOB_LOCATION, JOB_DATE_POSTED, validThroughISO } from "../lib/schema";
+
+// ISR: re-render at most daily so the JobPosting validThrough window keeps
+// rolling forward without a manual redeploy. Without this the page is fully
+// static and the dates freeze at build time.
+export const revalidate = 86400;
 
 const TITLE = "Company Driver & Owner-Operator Jobs | Forbes Logistix";
 const DESCRIPTION =
@@ -13,7 +18,7 @@ export const metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/careers",
-    images: [{ url: "/assets/photos/truck-loading.jpg" }],
+    images: [{ url: "/assets/og/truck-loading-og.jpg", width: 1200, height: 630 }],
   },
 };
 
@@ -62,7 +67,8 @@ const OWNER_OPERATOR_DESCRIPTION = `
 `.trim();
 
 export default function CareersPage() {
-  const { datePosted, validThrough } = jobDates();
+  const datePosted = JOB_DATE_POSTED;
+  const validThrough = validThroughISO();
 
   const companyDriverJob = {
     "@context": "https://schema.org",
@@ -75,7 +81,6 @@ export default function CareersPage() {
     industry: "Trucking",
     hiringOrganization: HIRING_ORGANIZATION,
     jobLocation: JOB_LOCATION,
-    applicantLocationRequirements: { "@type": "Country", name: "US" },
     directApply: false,
   };
 
@@ -90,7 +95,6 @@ export default function CareersPage() {
     industry: "Trucking",
     hiringOrganization: HIRING_ORGANIZATION,
     jobLocation: JOB_LOCATION,
-    applicantLocationRequirements: { "@type": "Country", name: "US" },
     directApply: false,
   };
 

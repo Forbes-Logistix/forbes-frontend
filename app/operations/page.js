@@ -12,7 +12,7 @@ export const metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/operations",
-    images: [{ url: "/assets/photos/truck-precast.jpg" }],
+    images: [{ url: "/assets/og/truck-precast-og.jpg", width: 1200, height: 630 }],
   },
 };
 

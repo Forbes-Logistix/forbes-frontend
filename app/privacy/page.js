@@ -17,7 +17,7 @@ const EFFECTIVE = "April 25, 2026";
 
 export default function PrivacyPage() {
   return (
-    <main className="bg-white text-black">
+    <div className="bg-white text-black">
       <article className="max-w-3xl mx-auto px-6 py-20">
         <header className="mb-10 border-b border-black/10 pb-6">
           <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">Forbes Logistix</p>
@@ -244,6 +244,6 @@ export default function PrivacyPage() {
           </p>
         </div>
       </article>
-    </main>
+    </div>
   );
 }

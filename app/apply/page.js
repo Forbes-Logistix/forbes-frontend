@@ -10,7 +10,7 @@ export const metadata = {
     description:
       "Quick three-field driver application. We'll call you back within one business day.",
     url: "https://www.forbeslogistix.com/apply",
-    images: [{ url: "/assets/photos/truck-loading.jpg" }],
+    images: [{ url: "/assets/og/truck-loading-og.jpg", width: 1200, height: 630 }],
   },
   robots: { index: false, follow: true },
 };

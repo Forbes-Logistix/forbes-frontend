@@ -17,7 +17,7 @@ export const metadata = {
     title: TITLE,
     description: DESCRIPTION,
     url: "https://www.forbeslogistix.com/contact",
-    images: [{ url: "/assets/photos/terminal.jpg" }],
+    images: [{ url: "/assets/og/terminal-og.jpg", width: 1200, height: 630 }],
   },
 };
 

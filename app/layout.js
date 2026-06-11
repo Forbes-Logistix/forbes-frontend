@@ -1,6 +1,7 @@
 import "./globals.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import MotionProvider from "./components/MotionProvider";
 import { ORGANIZATION_SCHEMA } from "./lib/schema";
 
 export const metadata = {
@@ -22,8 +23,10 @@ export const metadata = {
     url: "https://www.forbeslogistix.com",
     // Default og:image is a real photo (matches the per-page pattern in
     // /apply, /careers, /operations). The site logo is intentionally NOT
-    // used here — logos render poorly as social previews.
-    images: [{ url: "/assets/photos/truck-loading.jpg" }],
+    // used here — logos render poorly as social previews. The /assets/og/
+    // variants are pre-sized 1200x630 crops (~130 KB) — the raw photos are
+    // multi-megabyte and bypass next/image when fetched by social scrapers.
+    images: [{ url: "/assets/og/truck-loading-og.jpg", width: 1200, height: 630 }],
   },
   twitter: { card: "summary_large_image" },
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
@@ -50,7 +53,12 @@ export default function RootLayout({ children }) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(ORGANIZATION_SCHEMA) }}
         />
         <Navbar />
-        {children}
+        {/* Single <main> landmark for every route (terms/privacy previously
+            declared their own — those are now plain divs). MotionProvider
+            makes framer-motion respect prefers-reduced-motion site-wide. */}
+        <main>
+          <MotionProvider>{children}</MotionProvider>
+        </main>
         <Footer />
       </body>
     </html>

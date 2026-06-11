@@ -66,7 +66,7 @@ export default function OperationsClient() {
         <div className="absolute inset-0 bg-black/70" />
         <div className="relative z-10 h-full flex items-center px-6 md:px-20">
           <div className="max-w-4xl">
-            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">How we run</p>
+            <p className="uppercase tracking-widest text-white/80 text-sm font-bold mb-3">How we run</p>
             <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
               What the seat actually looks like.
             </h1>

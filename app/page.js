@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import {
@@ -25,7 +26,11 @@ const RECRUITING_EMAIL = "recruiting@forbeslogistix.com";
 
 const scrollToId = (id) => {
   const el = document.getElementById(id);
-  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+  if (!el) return;
+  // scrollIntoView's behavior param ignores CSS, so honor the OS
+  // reduced-motion preference here explicitly.
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
 };
 
 const Button = ({ children, className = "", ...props }) => (
@@ -69,11 +74,29 @@ const OfferBullet = ({ icon: Icon, children }) => (
 );
 
 export default function HomePage() {
+  const videoRef = useRef(null);
+
+  // Respect the OS reduced-motion preference: pause the looping hero video
+  // and let the poster carry the visual. Re-plays if the preference is lifted.
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const apply = () => {
+      const v = videoRef.current;
+      if (!v) return;
+      if (mq.matches) v.pause();
+      else v.play().catch(() => { /* autoplay restrictions — poster stays */ });
+    };
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
+
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
       {/* ---------- HERO (buffalo video) ---------- */}
       <section className="relative min-h-screen">
         <video
+          ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover z-0"
           autoPlay
           muted
@@ -109,13 +132,15 @@ export default function HomePage() {
                   this lands the visible art in the brand-seal range (~80px
                   tall). Same h-32 used in both OO section placements so the
                   treatment is consistent across the site. */}
+              {/* No `priority`: this decorative mark was preloading at high
+                  priority and competing with the hero poster (the real LCP
+                  image) for bandwidth. */}
               <Image
                 src="/assets/buffalo.png"
                 alt=""
                 aria-hidden
                 width={256}
                 height={256}
-                priority
                 className="h-32 w-auto mx-auto mb-2 opacity-90 drop-shadow-lg"
               />
               <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight drop-shadow-2xl">
@@ -327,7 +352,7 @@ export default function HomePage() {
         />
         <div className="absolute inset-0 bg-black/60 flex items-center">
           <div className="max-w-5xl mx-auto px-6 text-white">
-            <p className="uppercase tracking-widest text-white/60 text-sm font-bold mb-3">Jackson, Mississippi</p>
+            <p className="uppercase tracking-widest text-white/80 text-sm font-bold mb-3">Jackson, Mississippi</p>
             <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 max-w-3xl">
               A real terminal. A real company.
             </h2>

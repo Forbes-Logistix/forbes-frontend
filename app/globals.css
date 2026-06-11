@@ -20,4 +20,21 @@
     outline-offset: 2px;
     border-radius: 2px;
   }
+
+  /* Honor the OS reduced-motion preference for CSS-driven movement.
+     framer-motion is covered separately by MotionConfig reducedMotion="user"
+     in app/components/MotionProvider.js, and the hero video pauses via a
+     matchMedia check in app/page.js. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      transition-duration: 0.01ms !important;
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+    }
+  }
 }
