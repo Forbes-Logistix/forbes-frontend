@@ -30,6 +30,13 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} Forbes Logistix, LLC. All rights reserved.
         </p>
 
+        {/* Drivers vet carriers on FMCSA — publishing the numbers saves them
+            the hunt and signals we have nothing to hide. Verified against
+            SAFER 2026-06-11. */}
+        <p className="text-xs text-gray-700 font-medium">
+          USDOT 4361817 &middot; MC 1706978
+        </p>
+
         <p className="text-xs text-gray-700 max-w-3xl mx-auto leading-relaxed">
           Forbes Logistix is an Equal Opportunity Employer. All qualified applicants will receive
           consideration without regard to race, color, religion, sex, sexual orientation, gender

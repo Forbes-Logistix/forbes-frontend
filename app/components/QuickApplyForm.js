@@ -213,12 +213,16 @@ export default function QuickApplyForm({
       )}
 
       <form onSubmit={onSubmit} className="space-y-5" noValidate>
-        {/* Honeypot — visually hidden, autocomplete off. Bots fill anything they see. */}
+        {/* Honeypot — visually hidden, autocomplete off. Bots fill anything
+            they see. The field is deliberately NOT named "website"/"url"/
+            "company": browser autofill matches those names and can fill the
+            field for a real applicant, making the backend silently fake-accept
+            and discard their submission. */}
         <div aria-hidden className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden">
-          <label htmlFor="qa-website">Website</label>
+          <label htmlFor="qa-extra-field">Leave this field empty</label>
           <input
-            id="qa-website"
-            name="website"
+            id="qa-extra-field"
+            name="qa_extra_field"
             type="text"
             tabIndex="-1"
             autoComplete="off"
