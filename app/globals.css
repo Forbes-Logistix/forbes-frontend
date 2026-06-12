@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Full-viewport heroes with a small-viewport-height fallback. 100vh on
+   mobile Safari/Chrome includes the area behind the collapsing URL bar, so
+   hero CTAs get pushed below the visible fold; svh measures the SMALL
+   (URL-bar-visible) viewport. Two declarations = automatic fallback for
+   browsers without svh support. */
+@layer utilities {
+  .min-h-hero {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+  .min-h-hero-80 {
+    min-height: 80vh;
+    min-height: 80svh;
+  }
+  .h-hero-60 {
+    height: 60vh;
+    height: 60svh;
+  }
+}
+
 /* Accessibility: every interactive element gets a visible focus ring when
    reached via keyboard. `:focus-visible` only fires for keyboard focus, not
    mouse clicks, so it doesn't add a ring on click. The 2px black outline

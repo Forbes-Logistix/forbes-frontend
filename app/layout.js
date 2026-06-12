@@ -2,6 +2,7 @@ import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import MobileActionBar from "./components/MobileActionBar";
 import MotionProvider from "./components/MotionProvider";
 import { ORGANIZATION_SCHEMA } from "./lib/schema";
 
@@ -63,9 +64,9 @@ export default function RootLayout({ children }) {
           <MotionProvider>{children}</MotionProvider>
         </main>
         <Footer />
+        <MobileActionBar />
         {/* Vercel Web Analytics (cookie-less; enabled on the project
-            2026-06-11). Custom events for tel: taps come with the mobile
-            conversion PR. */}
+            2026-06-11). Custom events: call_tap, apply_tap, lead_submitted. */}
         <Analytics />
       </body>
     </html>

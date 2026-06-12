@@ -62,7 +62,7 @@ export default function OperationsClient() {
   return (
     <div className="bg-black text-white">
       {/* ---------- HERO IMAGE ---------- */}
-      <section className="relative h-[60vh] min-h-[420px] w-full overflow-hidden">
+      <section className="relative h-hero-60 min-h-[420px] w-full overflow-hidden">
         <Image
           src="/assets/photos/truck-precast.jpg"
           alt="Forbes Logistix flatbed hauling precast concrete products at customer site"

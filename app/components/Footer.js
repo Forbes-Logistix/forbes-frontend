@@ -7,9 +7,10 @@ const Footer = () => {
       <div className="max-w-4xl mx-auto space-y-5">
         <h2 className="text-xl font-bold tracking-wide">Forbes Logistix</h2>
 
-        {/* Recruiting phone, one tap from any page bottom. */}
+        {/* Recruiting phone, one tap from any page bottom. inline-block +
+            py-2 grows the tap target past 44px. */}
         <p className="text-sm">
-          <a href="tel:+16013005529" className="font-semibold hover:underline underline-offset-2">
+          <a href="tel:+16013005529" className="inline-block py-2 font-semibold hover:underline underline-offset-2">
             Recruiting: (601) 300-5529
           </a>
         </p>

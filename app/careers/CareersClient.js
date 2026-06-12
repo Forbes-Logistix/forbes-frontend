@@ -45,7 +45,7 @@ export default function CareersClient() {
   return (
     <div className="bg-white text-black min-h-screen overflow-hidden">
       {/* ---------- HERO ---------- */}
-      <section className="relative w-full h-screen flex items-center justify-center">
+      <section className="relative w-full min-h-hero flex items-center justify-center">
         <Image
           src="/assets/photos/truck-loading.jpg"
           alt="Forbes Logistix Western Star tractor with open-deck trailer under covered loading area"
