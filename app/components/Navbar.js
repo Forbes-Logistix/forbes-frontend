@@ -4,8 +4,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Phone } from "lucide-react";
+import { track } from "@vercel/analytics";
 import { NAV_LINK } from "../lib/styles";
+
+const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
+const RECRUITING_PHONE_TEL = "+16013005529";
 
 // Reusable nav link with aria-current="page" applied when the pathname
 // matches. Helps screen readers announce the active section and gives us
@@ -67,6 +71,13 @@ const Navbar = () => {
 
         <nav className="hidden md:flex gap-10 text-[17px] font-medium tracking-wide items-center">
           {navItems}
+          <a
+            href={`tel:${RECRUITING_PHONE_TEL}`}
+            onClick={() => track("call_tap", { placement: "navbar" })}
+            className="font-semibold hover:underline underline-offset-4 whitespace-nowrap"
+          >
+            {RECRUITING_PHONE_DISPLAY}
+          </a>
           <Link
             href="/apply"
             className="border border-black text-black hover:bg-black hover:text-white px-6 py-2 rounded-2xl font-semibold shadow-lg hover:scale-105 transition-all duration-300"
@@ -78,12 +89,13 @@ const Navbar = () => {
         <div className="flex items-center gap-3 md:hidden">
           <Link
             href="/apply"
-            className="border border-black text-black hover:bg-black hover:text-white px-4 py-1 text-sm rounded-xl font-semibold shadow transition-all duration-300"
+            className="border border-black text-black hover:bg-black hover:text-white px-4 py-2 text-sm rounded-xl font-semibold shadow transition-all duration-300"
           >
             Apply
           </Link>
+          {/* p-2 grows the hit area to ~44px without shifting layout */}
           <button
-            className="text-3xl text-black"
+            className="text-3xl text-black p-2 -m-1"
             onClick={toggleMenu}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
@@ -100,6 +112,21 @@ const Navbar = () => {
           className="md:hidden absolute top-28 left-0 w-full bg-white shadow-md px-6 py-6 flex flex-col gap-6 text-[17px] font-medium tracking-wide"
         >
           {navItems}
+          {/* Conversion actions belong in the menu too — a driver who opens
+              it shouldn't have to close it and hunt for the phone number. */}
+          <a
+            href={`tel:${RECRUITING_PHONE_TEL}`}
+            onClick={() => track("call_tap", { placement: "mobile_menu" })}
+            className="flex items-center gap-2 font-bold py-1"
+          >
+            <Phone aria-hidden className="w-4 h-4" /> Call Recruiting · {RECRUITING_PHONE_DISPLAY}
+          </a>
+          <Link
+            href="/apply"
+            className="border border-black text-center px-6 py-3 rounded-2xl font-semibold"
+          >
+            Apply
+          </Link>
         </div>
       )}
     </header>

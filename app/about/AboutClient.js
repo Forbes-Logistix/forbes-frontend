@@ -13,7 +13,7 @@ export default function AboutClient() {
   return (
     <div className="bg-black text-white">
       {/* ---------- HERO ---------- */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-hero flex items-center justify-center overflow-hidden">
         <Image
           src="/assets/photos/truck-mountain.jpg"
           alt="Forbes Logistix flatbed truck loading freight on a Western plain with Rocky Mountains in the background"

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { track } from "@vercel/analytics";
 import {
   Phone,
   Mail,
@@ -94,7 +95,7 @@ export default function HomePage() {
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
       {/* ---------- HERO (buffalo video) ---------- */}
-      <section className="relative min-h-screen">
+      <section className="relative min-h-hero">
         <video
           ref={videoRef}
           className="absolute inset-0 w-full h-full object-cover z-0"
@@ -118,7 +119,7 @@ export default function HomePage() {
             carry the rest of the contrast. */}
         <div className="absolute inset-0 bg-black/15 z-10" />
 
-        <div className="relative z-20 min-h-screen text-white font-sans flex items-center justify-center">
+        <div className="relative z-20 min-h-hero text-white font-sans flex items-center justify-center">
           <div className="text-center px-4 max-w-4xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -135,21 +136,24 @@ export default function HomePage() {
               {/* No `priority`: this decorative mark was preloading at high
                   priority and competing with the hero poster (the real LCP
                   image) for bandwidth. */}
+              {/* Mobile sizes trimmed (h-20 buffalo, tighter margins) so the
+                  primary "Get a Callback" button clears the first viewport on
+                  a ~844px phone instead of sitting at/below the fold. */}
               <Image
                 src="/assets/buffalo.png"
                 alt=""
                 aria-hidden
                 width={256}
                 height={256}
-                className="h-32 w-auto mx-auto mb-2 opacity-90 drop-shadow-lg"
+                className="h-20 md:h-32 w-auto mx-auto mb-2 opacity-90 drop-shadow-lg"
               />
-              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-4 tracking-tight drop-shadow-2xl">
+              <h1 className="text-5xl md:text-7xl font-extrabold leading-tight mb-3 md:mb-4 tracking-tight drop-shadow-2xl">
                 Run with the Buffalo
               </h1>
-              <p className="text-2xl md:text-3xl mb-4 text-white/90 font-semibold drop-shadow-lg">
+              <p className="text-2xl md:text-3xl mb-3 md:mb-4 text-white/90 font-semibold drop-shadow-lg">
                 Driver Founded. Driver Focused.
               </p>
-              <p className="text-lg md:text-xl mb-10 text-white/85 max-w-2xl mx-auto drop-shadow-md">
+              <p className="text-lg md:text-xl mb-6 md:mb-10 text-white/85 max-w-2xl mx-auto drop-shadow-md">
                 Flatbed driving jobs built around real pay, modern equipment, and home weekends.
               </p>
 
@@ -169,7 +173,8 @@ export default function HomePage() {
 
               <a
                 href={`tel:${RECRUITING_PHONE_TEL}`}
-                className="mt-6 inline-flex items-center justify-center gap-2 text-white/90 hover:text-white text-base font-medium underline-offset-4 hover:underline"
+                onClick={() => track("call_tap", { placement: "home_hero" })}
+                className="mt-4 md:mt-6 py-2 inline-flex items-center justify-center gap-2 text-white/90 hover:text-white text-base font-medium underline-offset-4 hover:underline"
               >
                 <Phone aria-hidden className="w-4 h-4" /> Call Recruiting · {RECRUITING_PHONE_DISPLAY}
               </a>

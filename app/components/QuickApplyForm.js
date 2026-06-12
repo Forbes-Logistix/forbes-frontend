@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Phone } from "lucide-react";
+import { track } from "@vercel/analytics";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
 const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
@@ -157,6 +158,7 @@ export default function QuickApplyForm({
         throw new Error(serverMsg || "Submission failed.");
       }
       setStatus("ok");
+      track("lead_submitted", { variant });
       setForm({ name: "", phone: "", years: "" });
       setApplicantCert(false);
       setSmsConsent(false);

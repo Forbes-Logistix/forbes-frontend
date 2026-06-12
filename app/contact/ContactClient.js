@@ -160,7 +160,7 @@ export default function ContactClient() {
   return (
     <div className="bg-white text-black">
       {/* ---------- HERO: RECRUITING-FIRST ---------- */}
-      <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+      <section className="relative min-h-hero-80 flex items-center justify-center overflow-hidden">
         <Image
           src="/assets/photos/terminal.jpg"
           alt="Forbes Logistix terminal in Jackson, Mississippi with company tractor parked outside"
