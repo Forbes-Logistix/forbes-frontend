@@ -41,10 +41,22 @@ export const HIRING_ORGANIZATION = {
   sameAs: SITE_URL,
 };
 
-// jobLocation block reused across both job postings.
+// jobLocation block reused across both flatbed job postings (Jackson terminal).
 export const JOB_LOCATION = {
   "@type": "Place",
   address: POSTAL_ADDRESS,
+};
+
+// Dallas reefer division — city-level location (no street address published;
+// the division is new and domiciled out of Dallas).
+export const DALLAS_JOB_LOCATION = {
+  "@type": "Place",
+  address: {
+    "@type": "PostalAddress",
+    addressLocality: "Dallas",
+    addressRegion: "TX",
+    addressCountry: "US",
+  },
 };
 
 // The date the postings actually went live on the site. Google guidance:
@@ -54,6 +66,10 @@ export const JOB_LOCATION = {
 // 2026-06-11: bumped — baseSalary ($2,500/wk current earnings) added to the
 // company-driver posting and the OO settlement framing was rewritten.
 export const JOB_DATE_POSTED = "2026-06-11";
+
+// Dallas reefer posting went live 2026-07-13 (new division, comp TBD —
+// no baseSalary until the owner sets the package).
+export const REEFER_DATE_POSTED = "2026-07-13";
 
 // JobPosting.validThrough — rolling 90-day window from now. The careers page
 // exports `revalidate`, so ISR re-evaluates this daily and the window keeps

@@ -25,6 +25,10 @@ export default function QuickApplyForm({
   subhead = "Three fields. We'll call you.",
   className = "",
   id,
+  // Optional hiring-campaign tag (whitelisted server-side). e.g. the Dallas
+  // reefer page passes "reefer-dallas" so its leads sort separately in the
+  // recruiting inbox and in analytics.
+  position,
 }) {
   const [form, setForm] = useState({ name: "", phone: "", years: "" });
   const [honeypot, setHoneypot] = useState(""); // bots will fill this
@@ -149,6 +153,7 @@ export default function QuickApplyForm({
           applicantCert,
           smsConsent,
           honeypot,
+          ...(position ? { position } : {}),
           ...(TURNSTILE_SITE_KEY ? { turnstileToken } : {}),
         }),
       });
@@ -158,7 +163,7 @@ export default function QuickApplyForm({
         throw new Error(serverMsg || "Submission failed.");
       }
       setStatus("ok");
-      track("lead_submitted", { variant });
+      track("lead_submitted", position ? { variant, position } : { variant });
       setForm({ name: "", phone: "", years: "" });
       setApplicantCert(false);
       setSmsConsent(false);
