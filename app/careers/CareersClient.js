@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   Phone,
@@ -224,7 +225,12 @@ export default function CareersClient() {
                     <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                   </summary>
                   <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                    Our freight runs east of the Mississippi River. We&apos;re currently hiring drivers based in the Southeast.
+                    Our flatbed freight runs east of the Mississippi River, with drivers based in
+                    the Southeast. Our new dedicated{" "}
+                    <Link href="/reefer" className="underline underline-offset-2 font-semibold">
+                      reefer division
+                    </Link>{" "}
+                    runs outbound from Dallas, TX.
                   </div>
                 </details>
               </li>
@@ -382,6 +388,24 @@ export default function CareersClient() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* ---------- NEW DIVISION: REEFER TEASER ---------- */}
+      <section className="bg-white border-t border-black/5 py-14 px-4">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="uppercase tracking-widest text-gray-500 text-sm font-bold mb-3">
+            New Division
+          </p>
+          <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-4">
+            Dedicated reefer out of Dallas &mdash; now hiring founding drivers.
+          </h2>
+          <Link
+            href="/reefer"
+            className="inline-block bg-black text-white px-8 py-4 text-lg font-bold rounded-2xl border border-black hover:bg-white hover:text-black transition-all duration-300 hover:scale-105"
+          >
+            See the reefer seats &rarr;
+          </Link>
         </div>
       </section>
 

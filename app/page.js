@@ -224,6 +224,13 @@ export default function HomePage() {
               targetId="owner-operators"
             />
           </div>
+          <p className="text-center text-gray-600 mt-8 text-base md:text-lg">
+            New division:{" "}
+            <Link href="/reefer" className="underline underline-offset-4 font-semibold text-black hover:opacity-80">
+              dedicated reefer out of Dallas
+            </Link>{" "}
+            &mdash; now hiring founding drivers.
+          </p>
         </div>
       </section>
 

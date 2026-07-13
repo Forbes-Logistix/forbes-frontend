@@ -12,6 +12,7 @@ const SITE = "https://www.forbeslogistix.com";
 const MODIFIED = {
   home: "2026-06-11", // recruiting content pass: pay story, hero CTA, proof bar
   careers: "2026-06-11", // $2,500/wk + baseSalary + OO framing
+  reefer: "2026-07-13", // Dallas reefer division launched
   about: "2026-06-11", // recruiting CTA strip added
   operations: "2026-06-11", // pay line + recruiting CTA strip
   contact: "2026-06-10", // form validation + accessibility pass
@@ -23,6 +24,7 @@ export default function sitemap() {
   return [
     { url: `${SITE}/`,           lastModified: MODIFIED.home,       changeFrequency: "weekly",  priority: 1.0 },
     { url: `${SITE}/careers`,    lastModified: MODIFIED.careers,    changeFrequency: "weekly",  priority: 0.9 },
+    { url: `${SITE}/reefer`,     lastModified: MODIFIED.reefer,     changeFrequency: "weekly",  priority: 0.8 },
     { url: `${SITE}/about`,      lastModified: MODIFIED.about,      changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/operations`, lastModified: MODIFIED.operations, changeFrequency: "monthly", priority: 0.7 },
     { url: `${SITE}/contact`,    lastModified: MODIFIED.contact,    changeFrequency: "monthly", priority: 0.6 },
