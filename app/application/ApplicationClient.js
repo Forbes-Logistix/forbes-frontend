@@ -15,6 +15,9 @@ const DRAFT_KEY = "fl-dot-application-draft-v2";
 const POSITIONS = [
   { value: "flatbed-southeast", label: "Company Flatbed Driver — Southeast" },
   { value: "reefer-dallas", label: "Company Reefer Driver — Dedicated Dallas Outbound" },
+  // Same 391.21 application — leased O/Os are driver-qualified like company
+  // drivers; the equipment lease (Part 376) is separate onboarding paperwork.
+  { value: "owner-operator-flatbed", label: "Owner-Operator — Flatbed (Southeast)" },
 ];
 
 const EQUIPMENT_TYPES = [
@@ -951,6 +954,12 @@ export default function ApplicationClient() {
                 Most recent first. Cover the past 3 years, plus any CDL-driving jobs in the 7 years
                 before that (DOT requires 10 years for CDL positions).
               </p>
+              {app.position === "owner-operator-flatbed" && (
+                <p className="text-sm text-gray-600">
+                  Owner-operators: list your own operation as an employer for the time you ran under
+                  your own authority (use your business name and address).
+                </p>
+              )}
               {errors.employment && <p className={errCls}>{errors.employment}</p>}
               {app.employment.map((x, i) => (
                 <div key={i} className="border border-black/10 rounded-xl p-4 space-y-3">
