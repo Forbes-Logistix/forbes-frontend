@@ -7,7 +7,7 @@ import ApplicationClient from "./ApplicationClient";
 export const metadata = {
   title: "Driver Application | Forbes Logistix",
   description:
-    "Full DOT driver qualification application for Forbes Logistix. Complete on your phone in about 15 minutes.",
+    "Full DOT driver qualification application for Forbes Logistix. Complete on your phone in about 20 minutes.",
   robots: { index: false, follow: false },
   alternates: { canonical: null },
 };
