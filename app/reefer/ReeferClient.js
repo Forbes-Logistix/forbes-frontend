@@ -48,8 +48,7 @@ export default function ReeferClient() {
               Reefer out of Dallas.
             </h1>
             <p className="text-lg md:text-2xl text-white/85 max-w-2xl mx-auto mb-8">
-              Dedicated outbound lanes. W-2 company driver seats. First trucks roll in the
-              next two weeks.
+              Dedicated outbound lanes. W-2 company driver seats. Hiring now.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -95,7 +94,7 @@ export default function ReeferClient() {
               <Fact icon={Truck}>Dedicated reefer freight</Fact>
               <Fact icon={MapPinned}>Dallas outbound lanes</Fact>
               <Fact icon={CalendarDays}>
-                Seats start in the <span className="font-bold">next two weeks</span>
+                Seats are <span className="font-bold">open now</span>
               </Fact>
               <Fact icon={Handshake}>
                 Hiring now &mdash; apply today, we&apos;ll talk this week
@@ -197,7 +196,7 @@ export default function ReeferClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  The first trucks roll in the next two weeks. If you apply today, we&apos;re
+                  Right away &mdash; we&apos;re hiring now. If you apply today, we&apos;re
                   talking this week.
                 </div>
               </details>
