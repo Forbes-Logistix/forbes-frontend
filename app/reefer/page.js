@@ -11,7 +11,7 @@ export const revalidate = 86400;
 
 const TITLE = "Reefer Driving Jobs in Dallas, TX — Now Hiring | Forbes Logistix";
 const DESCRIPTION =
-  "New dedicated reefer division running outbound from Dallas. W-2 company driver seats starting in the next two weeks — founding drivers help shape the package.";
+  "New dedicated reefer division running outbound from Dallas. Hiring now — W-2 company driver seats starting in the next two weeks. Call recruiting to talk real numbers.";
 
 export const metadata = {
   title: TITLE,
@@ -25,8 +25,8 @@ export const metadata = {
   },
 };
 
-// Deliberately honest posting: the division is new and comp is being
-// finalized with the founding drivers, so there is NO baseSalary here —
+// Deliberately honest posting: the division is new and comp is still being
+// finalized, so there is NO baseSalary here —
 // it gets added the day the owner sets the package. Everything stated is
 // owner-confirmed (2026-07-13): company drivers, dedicated reefer, Dallas
 // outbound, seats starting within ~two weeks.
@@ -36,7 +36,7 @@ const REEFER_DESCRIPTION = `
 <ul>
   <li>Dedicated reefer freight, Dallas outbound lanes</li>
   <li>Seats start in the next two weeks</li>
-  <li>Compensation is being finalized with the founding drivers &mdash; call recruiting to talk real numbers</li>
+  <li>Compensation is being finalized &mdash; call recruiting to talk real numbers</li>
   <li>Valid Class A CDL required</li>
 </ul>
 <p>Forbes Logistix is a Marine Corps veteran-owned, driver-founded carrier. Our flatbed fleet publishes exact pay; this division will too, the day the package is set.</p>

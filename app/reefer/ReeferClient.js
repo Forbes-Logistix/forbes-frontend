@@ -56,7 +56,7 @@ export default function ReeferClient() {
                 href="#quick-apply"
                 className="bg-white text-black px-8 py-4 text-lg font-bold rounded-2xl border border-white hover:bg-black hover:text-white transition-all duration-300 hover:scale-105"
               >
-                Claim a Founding Seat
+                Apply Now
               </a>
               <a
                 href={`tel:${RECRUITING_PHONE_TEL}`}
@@ -97,7 +97,9 @@ export default function ReeferClient() {
               <Fact icon={CalendarDays}>
                 Seats start in the <span className="font-bold">next two weeks</span>
               </Fact>
-              <Fact icon={Handshake}>Founding drivers help shape the package</Fact>
+              <Fact icon={Handshake}>
+                Hiring now &mdash; apply today, we&apos;ll talk this week
+              </Fact>
               <Fact icon={Phone}>Direct line to the owner &mdash; no recruiting maze</Fact>
             </ul>
           </motion.div>
@@ -118,16 +120,15 @@ export default function ReeferClient() {
             </h2>
             <div className="space-y-4 text-lg md:text-xl text-white/85 max-w-3xl">
               <p>
-                Being finalized right now &mdash; with the first drivers in it. We publish
-                exact pay for our{" "}
+                Being finalized right now. We publish exact pay for our{" "}
                 <Link href="/careers" className="underline underline-offset-4 hover:text-white">
                   flatbed fleet
                 </Link>
                 , and we&apos;ll do the same here the day the reefer package is set.
               </p>
               <p className="font-semibold text-white">
-                Until then: call. We&apos;ll talk real numbers for your situation &mdash; and
-                the drivers who get in first have a say in what this division pays.
+                Until then: call. We&apos;re hiring now, and we&apos;ll talk real numbers for
+                your situation.
               </p>
             </div>
             <a
@@ -148,7 +149,7 @@ export default function ReeferClient() {
             id="quick-apply-form"
             variant="dark"
             position="reefer-dallas"
-            heading="Claim a founding seat"
+            heading="Apply now"
             subhead="Three fields. We'll call you."
           />
         </div>
@@ -181,12 +182,11 @@ export default function ReeferClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  The package is being finalized with the founding drivers &mdash; we&apos;d rather
-                  set it with you than at you. Call{" "}
+                  The package is being finalized now. Call{" "}
                   <a href={`tel:${RECRUITING_PHONE_TEL}`} className="underline underline-offset-2 font-semibold">
                     {RECRUITING_PHONE_DISPLAY}
                   </a>{" "}
-                  and we&apos;ll talk real numbers.
+                  and we&apos;ll talk real numbers for your situation.
                 </div>
               </details>
             </li>

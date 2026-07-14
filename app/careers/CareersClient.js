@@ -398,7 +398,7 @@ export default function CareersClient() {
             New Division
           </p>
           <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-4">
-            Dedicated reefer out of Dallas &mdash; now hiring founding drivers.
+            Dedicated reefer out of Dallas &mdash; hiring now.
           </h2>
           <Link
             href="/reefer"
