@@ -10,7 +10,7 @@ const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
 
 // Bump when the draft shape changes so stale localStorage drafts are discarded.
-const DRAFT_KEY = "fl-dot-application-draft-v2";
+const DRAFT_KEY = "fl-dot-application-draft-v3";
 
 const POSITIONS = [
   { value: "flatbed-southeast", label: "Company Flatbed Driver — Southeast" },
@@ -19,6 +19,81 @@ const POSITIONS = [
   // drivers; the equipment lease (Part 376) is separate onboarding paperwork.
   { value: "owner-operator-flatbed", label: "Owner-Operator — Flatbed (Southeast)" },
 ];
+
+// ---------------------------------------------------------------------------
+// Background-check disclosure & consent texts. These must stay in sync with
+// the copies the backend prints into the PDF (utils/pdfGenerator.js). Layout
+// rules that shape the steps below:
+//  - The FCRA disclosure must be a standalone document (15 U.S.C.
+//    1681b(b)(2)(A)) — its card contains the disclosure and nothing else.
+//  - The PSP form is FMCSA-mandated verbatim (psp.fmcsa.dot.gov, LAST UPDATED
+//    2/11/2016) and "may NOT be included with other consent forms or any
+//    other language" — it gets its own step with nothing else on it.
+//  - The Clearinghouse full-query consent can only be granted INSIDE the
+//    Clearinghouse portal (49 CFR 382.703) — this form only acknowledges.
+// CRA named 2026-07-14 per owner: Data Facts, Inc. (details verified against
+// datafacts.com privacy policy + applicant-assistance page). If the vendor
+// ever changes, update the name/address/phone/website here AND in the
+// backend's pdfGenerator.js (naming is required for California applicants).
+const FCRA_DISCLOSURE =
+  "Forbes Logistix LLC (“Forbes Logistix”) may obtain one or more consumer reports about you for employment purposes, including deciding whether to hire or engage you as a driver and, if you are hired or engaged, for decisions about your continued employment or engagement to the extent permitted by law. The reports may include information about your criminal record history, your driving and motor vehicle records, and verification of your prior employment. The reports will be obtained from the following consumer reporting agency: Data Facts, Inc., 8000 Centerview Parkway, Suite 400, Cordova, TN 38018, toll-free (800) 264-4110, www.datafacts.com.";
+
+const FCRA_INVESTIGATIVE =
+  "Forbes Logistix LLC may also request an “investigative consumer report” about you — a background report that includes information about your character, general reputation, personal characteristics, or mode of living, obtained through personal interviews (for example, interviews with your previous employers about your safety performance history). You have the right to request, in writing within a reasonable time, additional disclosure about the nature and scope of any such investigation. A written summary of your rights under the Fair Credit Reporting Act is provided with this disclosure:";
+
+const CFPB_SUMMARY_URL =
+  "https://files.consumerfinance.gov/f/documents/bcfp_consumer-rights-summary_2018-09.pdf";
+
+const FCRA_AUTHORIZATION =
+  "I acknowledge that I have received and read the Disclosure Regarding Background Reports and the Investigative Consumer Report Disclosure from Forbes Logistix LLC. I authorize Forbes Logistix LLC to obtain consumer reports and investigative consumer reports about me from Data Facts, Inc. in connection with my application and, to the extent permitted by applicable law, at any time during my employment or contract with Forbes Logistix LLC. I authorize state motor vehicle agencies, courts, my previous employers, and other information sources to furnish information about me to Data Facts, Inc. and Forbes Logistix LLC for these reports. I understand that typing my full legal name constitutes my electronic signature.";
+
+const FCRA_FREE_COPY_LABEL =
+  "Check this box to receive a free copy of any consumer report or investigative consumer report obtained about you. (California, Minnesota, and Oklahoma applicants have this right by law; Forbes Logistix extends it to all applicants. California applicants: a copy will be sent within 3 business days of Forbes Logistix receiving the report.)";
+
+const PSP_BANNER =
+  "THE BELOW DISCLOSURE AND AUTHORIZATION LANGUAGE IS FOR MANDATORY USE BY ALL ACCOUNT HOLDERS";
+
+const PSP_DISCLOSURE_PARAGRAPHS = [
+  "In connection with your application for employment with Forbes Logistix LLC (“Prospective Employer”), Prospective Employer, its employees, agents or contractors may obtain one or more reports regarding your driving, and safety inspection history from the Federal Motor Carrier Safety Administration (FMCSA).",
+  "When the application for employment is submitted in person, if the Prospective Employer uses any information it obtains from FMCSA in a decision to not hire you or to make any other adverse employment decision regarding you, the Prospective Employer will provide you with a copy of the report upon which its decision was based and a written summary of your rights under the Fair Credit Reporting Act before taking any final adverse action. If any final adverse action is taken against you based upon your driving history or safety report, the Prospective Employer will notify you that the action has been taken and that the action was based in part or in whole on this report.",
+  "When the application for employment is submitted by mail, telephone, computer, or other similar means, if the Prospective Employer uses any information it obtains from FMCSA in a decision to not hire you or to make any other adverse employment decision regarding you, the Prospective Employer must provide you within three business days of taking adverse action oral, written or electronic notification: that adverse action has been taken based in whole or in part on information obtained from FMCSA; the name, address, and the toll free telephone number of FMCSA; that the FMCSA did not make the decision to take the adverse action and is unable to provide you the specific reasons why the adverse action was taken; and that you may, upon providing proper identification, request a free copy of the report and may dispute with the FMCSA the accuracy or completeness of any information or report. If you request a copy of a driver record from the Prospective Employer who procured the report, then, within 3 business days of receiving your request, together with proper identification, the Prospective Employer must send or provide to you a copy of your report and a summary of your rights under the Fair Credit Reporting Act.",
+  "Neither the Prospective Employer nor the FMCSA contractor supplying the crash and safety information has the capability to correct any safety data that appears to be incorrect. You may challenge the accuracy of the data by submitting a request to https://dataqs.fmcsa.dot.gov. If you challenge crash or inspection information reported by a State, FMCSA cannot change or correct this data. Your request will be forwarded by the DataQs system to the appropriate State for adjudication.",
+  "Any crash or inspection in which you were involved will display on your PSP report. Since the PSP report does not report, or assign, or imply fault, it will include all Commercial Motor Vehicle (CMV) crashes where you were a driver or co-driver and where those crashes were reported to FMCSA, regardless of fault. Similarly, all inspections, with or without violations, appear on the PSP report. State citations associated with Federal Motor Carrier Safety Regulations (FMCSR) violations that have been adjudicated by a court of law will also appear, and remain, on a PSP report.",
+  "The Prospective Employer cannot obtain background reports from FMCSA without your authorization.",
+];
+
+const PSP_AUTH_LEAD =
+  "If you agree that the Prospective Employer may obtain such background reports, please read the following and sign below:";
+
+const PSP_AUTH_PARAGRAPHS = [
+  "I authorize Forbes Logistix LLC (“Prospective Employer”) to access the FMCSA Pre-Employment Screening Program (PSP) system to seek information regarding my commercial driving safety record and information regarding my safety inspection history. I understand that I am authorizing the release of safety performance information including crash data from the previous five (5) years and inspection history from the previous three (3) years. I understand and acknowledge that this release of information may assist the Prospective Employer to make a determination regarding my suitability as an employee.",
+  "I further understand that neither the Prospective Employer nor the FMCSA contractor supplying the crash and safety information has the capability to correct any safety data that appears to be incorrect. I understand I may challenge the accuracy of the data by submitting a request to https://dataqs.fmcsa.dot.gov. If I challenge crash or inspection information reported by a State, FMCSA cannot change or correct this data. I understand my request will be forwarded by the DataQs system to the appropriate State for adjudication.",
+  "I understand that any crash or inspection in which I was involved will display on my PSP report. Since the PSP report does not report, or assign, or imply fault, I acknowledge it will include all CMV crashes where I was a driver or co-driver and where those crashes were reported to FMCSA, regardless of fault. Similarly, I understand all inspections, with or without violations, will appear on my PSP report, and State citations associated with FMCSR violations that have been adjudicated by a court of law will also appear, and remain, on my PSP report.",
+  "I have read the above Disclosure Regarding Background Reports provided to me by Prospective Employer and I understand that if I sign this Disclosure and Authorization, Prospective Employer may obtain a report of my crash and inspection history. I hereby authorize Prospective Employer and its employees, authorized agents, and/or affiliates to obtain the information authorized above.",
+];
+
+const PSP_NOTICES = [
+  "NOTICE: This form is made available to monthly account holders by NIC on behalf of the U.S. Department of Transportation, Federal Motor Carrier Safety Administration (FMCSA). Account holders are required by federal law to obtain an Applicant’s written or electronic consent prior to accessing the Applicant’s PSP report. Further, account holders are required by FMCSA to use the language contained in this Disclosure and Authorization form to obtain an Applicant’s consent. The language must be used in whole, exactly as provided. Further, the language on this form must exist as one stand-alone document. The language may NOT be included with other consent forms or any other language.",
+  "NOTICE: The prospective employment concept referenced in this form contemplates the definition of “employee” contained at 49 C.F.R. 383.5.",
+];
+
+const DA_RELEASE =
+  "I authorize each previous employer identified in the Employment History section of this application that employed me in a safety-sensitive function subject to DOT drug and alcohol testing during the three (3) years before the date of this application to release directly to Forbes Logistix LLC (USDOT 4361817, 3180 Utica Ave, Jackson, MS 39209), and I authorize Forbes Logistix LLC to obtain, the following information from my DOT drug and alcohol testing records: (1) alcohol test results of 0.04 or greater; (2) verified positive controlled substances test results; (3) refusals to be tested, including verified adulterated or substituted test results; (4) any other violations of DOT drug and alcohol testing regulations, including whether I violated the prohibitions of 49 CFR part 382 or failed to undertake or complete a rehabilitation program prescribed by a substance abuse professional; and (5) documentation of my completion of DOT return-to-duty requirements, including follow-up tests and any follow-up testing plan. This is a specific consent under 49 CFR 40.321(b), limited to the employers identified in this application, the information listed above, and Forbes Logistix LLC as recipient; it is effective as of the date of my electronic signature and expires when the hiring decision on this application is made. I understand that if I do not provide this consent, federal regulations prohibit Forbes Logistix LLC from permitting me to operate a commercial motor vehicle for Forbes Logistix LLC (49 CFR 40.25(a); 391.23(f)(1)).";
+
+const CLEARINGHOUSE_PARAGRAPHS = [
+  "Federal regulations (49 CFR 382.701(a)) require Forbes Logistix LLC to conduct a full pre-employment query of the FMCSA Drug and Alcohol Clearinghouse before you may perform safety-sensitive functions, including driving a commercial motor vehicle.",
+  "IMPORTANT: your consent to this full query cannot be given on this application. Federal rules require you to grant it electronically inside the Clearinghouse itself (49 CFR 382.703). After you submit this application, Forbes Logistix LLC will send a consent request to your Clearinghouse account. To see and approve it, you must be registered in the Clearinghouse. If you are not registered, create your free account at clearinghouse.fmcsa.dot.gov — you will need your CDL number and state of issuance.",
+  "If you do not register and grant electronic consent in the Clearinghouse, federal regulations prohibit Forbes Logistix LLC from permitting you to operate a commercial motor vehicle (49 CFR 391.23(f)(2); 382.703(c)).",
+];
+
+const CLEARINGHOUSE_ACK =
+  "I understand that Forbes Logistix LLC will conduct a full query of my FMCSA Drug and Alcohol Clearinghouse record, and that I must be registered in the Clearinghouse and grant consent electronically within the Clearinghouse before I can be permitted to drive.";
+
+const LIMITED_QUERY_CONSENT =
+  "I consent to Forbes Logistix LLC (USDOT 4361817) conducting limited queries of the FMCSA Drug and Alcohol Clearinghouse to determine whether drug or alcohol violation information about me exists in the Clearinghouse. This consent covers all limited queries, including the annual query required by 49 CFR 382.701(b), conducted while I am employed by or under contract to Forbes Logistix LLC, and remains in effect for the duration of that relationship unless I withdraw it in writing. I understand that a limited query does not release the contents of my Clearinghouse record; that if a limited query shows information exists, I must provide specific consent electronically within the Clearinghouse so Forbes Logistix LLC can conduct a full query within 24 hours; and that if I do not provide that consent, I must be removed from safety-sensitive functions, including driving a commercial motor vehicle, until the full query is completed and confirms my record contains no prohibitions (49 CFR 382.701(b); 382.703(c)).";
+
+const ESIGN_RECORDS_CONSENT =
+  "I agree to complete, sign, and receive this driver qualification application and related hiring documents electronically, and I confirm I can access documents on this device (a phone or computer with a current web browser and PDF viewing capability). I may request a free paper copy of any document, or withdraw this consent, by contacting Forbes Logistix LLC at (601) 300-5529 or recruiting@forbeslogistix.com; withdrawing consent will not affect documents already signed, but future documents would then be provided on paper. My typed full legal name serves as my legal signature.";
 
 const EQUIPMENT_TYPES = [
   "Reefer (tractor-trailer)",
@@ -75,6 +150,13 @@ const EMPTY = {
     },
   ],
   gapsExplanation: "",
+  consents: {
+    electronicRecords: false,
+    fcra: { authorized: false, signature: "", freeCopy: false },
+    psp: { signature: "" },
+    drugAlcohol: { signature: "", selfReport: null, selfReportExplanation: "", limitedQuery: false },
+    clearinghouseAck: false,
+  },
   certification: { signature: "", esignConsent: false },
 };
 
@@ -84,6 +166,9 @@ const STEPS = [
   "Driving Experience",
   "Accidents & Violations",
   "Employment History",
+  "Background Check Authorization",
+  "PSP Authorization",
+  "Drug & Alcohol History",
   "Review & Sign",
 ];
 
@@ -158,7 +243,9 @@ export default function ApplicationClient() {
   const [restored, setRestored] = useState(false);
   const headingRef = useRef(null);
   const successRef = useRef(null);
-  const { widgetRef, token, reset: resetTurnstile, enabled: turnstileEnabled } = useTurnstile(step === 5);
+  const { widgetRef, token, reset: resetTurnstile, enabled: turnstileEnabled } = useTurnstile(
+    step === STEPS.length - 1
+  );
 
   // ---- draft persistence: a driver on a phone must survive interruptions ----
   useEffect(() => {
@@ -242,6 +329,7 @@ export default function ApplicationClient() {
   const validateStep = (s) => {
     const e = {};
     if (s === 0) {
+      if (!app.consents.electronicRecords) e.electronicRecords = "Required to continue electronically";
       if (!app.position) e.position = "Select the position you're applying for";
       if (!app.personal.fullName.trim()) e.fullName = "Required";
       if (!US_PHONE(app.personal.phone)) e.phone = "Enter a valid US phone number";
@@ -297,6 +385,22 @@ export default function ApplicationClient() {
       });
     }
     if (s === 5) {
+      if (!app.consents.fcra.authorized)
+        e.fcraAuthorized = "Required — we can't order any background report without it";
+      if (!app.consents.fcra.signature.trim()) e.fcraSignature = "Type your full legal name";
+    }
+    if (s === 6) {
+      if (!app.consents.psp.signature.trim()) e.pspSignature = "Type your full legal name to sign";
+    }
+    if (s === 7) {
+      const da = app.consents.drugAlcohol;
+      if (da.selfReport !== true && da.selfReport !== false) e.selfReport = "Please answer yes or no";
+      if (da.selfReport === true && !da.selfReportExplanation.trim())
+        e.selfReportExplanation = "Please explain briefly";
+      if (!da.signature.trim()) e.daSignature = "Type your full legal name to sign";
+      if (!app.consents.clearinghouseAck) e.clearinghouseAck = "Required";
+    }
+    if (s === 8) {
       if (!app.certification.signature.trim()) e.signature = "Type your full legal name";
       if (!app.certification.esignConsent) e.esignConsent = "Required to sign electronically";
     }
@@ -310,7 +414,7 @@ export default function ApplicationClient() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = async () => {
-    if (!validateStep(5)) return;
+    if (!validateStep(STEPS.length - 1)) return;
     setStatus("sending");
     setServerMsg("");
     try {
@@ -328,6 +432,16 @@ export default function ApplicationClient() {
         violations: app.violations,
         employment: app.employment.map((x) => ({ ...x, to: x.current ? "Present" : x.to })),
         gapsExplanation: app.gapsExplanation,
+        consents: {
+          electronicRecords: app.consents.electronicRecords,
+          fcra: { ...app.consents.fcra, signature: app.consents.fcra.signature.trim() },
+          psp: { signature: app.consents.psp.signature.trim() },
+          drugAlcohol: {
+            ...app.consents.drugAlcohol,
+            signature: app.consents.drugAlcohol.signature.trim(),
+          },
+          clearinghouseAck: app.consents.clearinghouseAck,
+        },
         certification: { signature: app.certification.signature.trim(), esignConsent: true },
         honeypot,
         ...(turnstileEnabled ? { turnstileToken: token } : {}),
@@ -378,12 +492,29 @@ export default function ApplicationClient() {
             <span className="font-bold">{app.personal.phone}</span> from{" "}
             <span className="font-bold">{RECRUITING_PHONE_DISPLAY}</span>, so save the number.
           </p>
-          <p className="text-white/80 flex items-start gap-2">
+          <p className="text-white/80 flex items-start gap-2 mb-4">
             <ShieldCheck aria-hidden className="w-5 h-5 mt-1 shrink-0" />
-            Your Social Security Number is never collected online. We&apos;ll go over it with you
-            directly, and you&apos;ll write and initial it yourself on the printed application.
-            Never send it by email or text.
+            Your Social Security Number is never collected online. We&apos;ll collect it when we
+            call you, add it to your application, and you&apos;ll sign the completed application
+            before your first dispatch. Never send it by email or text.
           </p>
+          <div className="bg-white/10 rounded-xl p-4">
+            <p className="font-bold mb-1">One thing to do right now:</p>
+            <p className="text-white/90">
+              Register (or log in) at{" "}
+              <a
+                href="https://clearinghouse.fmcsa.dot.gov"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 font-bold"
+              >
+                clearinghouse.fmcsa.dot.gov
+              </a>{" "}
+              and approve the consent request from Forbes Logistix. Federal rules require your
+              electronic consent inside the Clearinghouse before you can drive — we can&apos;t
+              complete your hire without it. You&apos;ll need your CDL number and state.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -407,7 +538,7 @@ export default function ApplicationClient() {
           {STEPS[step]}
         </h1>
         <p className="text-gray-600 mb-2">
-          Step {step + 1} of {STEPS.length} · takes about 15 minutes · your progress saves on this
+          Step {step + 1} of {STEPS.length} · takes about 20 minutes · your progress saves on this
           device automatically
         </p>
         <div className="h-2 bg-gray-200 rounded-full mb-4" aria-hidden>
@@ -424,8 +555,9 @@ export default function ApplicationClient() {
         {step === 0 && (
           <p className="flex items-start gap-2 text-sm bg-gray-50 border border-black/10 rounded-xl p-4 mb-6 text-gray-700">
             <ShieldCheck aria-hidden className="w-5 h-5 mt-0.5 shrink-0" />
-            We will never ask for your Social Security Number online. You&apos;ll add it yourself,
-            in person, on the printed application — never over email or text.
+            We will never ask for your Social Security Number online. We&apos;ll collect it by
+            phone after you submit, and you&apos;ll sign the completed application before your
+            first dispatch — never send it by email or text.
           </p>
         )}
 
@@ -447,6 +579,21 @@ export default function ApplicationClient() {
           {/* ================= STEP 0: position + personal ================= */}
           {step === 0 && (
             <>
+              {/* 49 CFR 390.32(d) / 15 U.S.C. 7001(c): consent to electronic
+                  records & signatures — captured before anything is signed. */}
+              <div className="border border-black/10 bg-gray-50 rounded-xl p-4">
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.consents.electronicRecords}
+                    onChange={(e) => set("consents.electronicRecords", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                    aria-invalid={errors.electronicRecords ? true : undefined}
+                  />
+                  <span>{ESIGN_RECORDS_CONSENT}</span>
+                </label>
+                {errors.electronicRecords && <p className={errCls}>{errors.electronicRecords}</p>}
+              </div>
               <Field id="position" label="Position you're applying for" error={errors.position}>
                 <select
                   id="position"
@@ -941,13 +1088,22 @@ export default function ApplicationClient() {
                   printed into the PDF. Do not remove. */}
               <div className="bg-gray-50 border border-black/10 rounded-xl p-4 text-sm text-gray-700 leading-relaxed">
                 <p className="font-bold mb-1">Notice (required by federal rule 49 CFR 391.21(d)):</p>
+                <p className="mb-2">
+                  The employment history you provide may be used, and your previous DOT-regulated
+                  employers will be contacted, to investigate your safety performance history as
+                  required by 49 CFR 391.23(d) and (e) — including your accident history and your
+                  alcohol and controlled substances testing history.
+                </p>
                 <p>
-                  The employment information you provide may be used, and your previous employers
-                  will be contacted, to investigate your safety performance history as required by
-                  49 CFR 391.23(d) and (e). You have the right to review the information previous
-                  employers provide, to have errors corrected and the corrected information resent,
-                  and to attach a rebuttal statement if you and a previous employer cannot agree on
-                  its accuracy (49 CFR 391.23(i)).
+                  Your rights under 49 CFR 391.23(i): (1) you may review the information previous
+                  employers provide; (2) you may have errors corrected by the previous employer and
+                  the corrected information re-sent to us; (3) if you and a previous employer cannot
+                  agree on its accuracy, you may attach a rebuttal statement. To review the
+                  information, send us a written request any time from now until 30 days after
+                  you&apos;re employed or notified that employment was denied; we&apos;ll provide it
+                  within 5 business days of your request (or of receiving it from your previous
+                  employer). If you don&apos;t arrange to review the records within 30 days of us
+                  making them available, we may treat the request as waived.
                 </p>
               </div>
               <p className="text-sm text-gray-600">
@@ -1115,8 +1271,237 @@ export default function ApplicationClient() {
             </>
           )}
 
-          {/* ================= STEP 5: review & sign ================= */}
+          {/* ================= STEP 5: FCRA disclosures + authorization ================= */}
           {step === 5 && (
+            <>
+              <p className="text-sm text-gray-600">
+                Federal law requires these disclosures before we can order any background report
+                (criminal record, driving record, employment verification). Each box below is its
+                own document — please read each one.
+              </p>
+              {/* Standalone FCRA disclosure — this card must contain the
+                  disclosure and nothing else (15 U.S.C. 1681b(b)(2)(A)). */}
+              <div className="border border-black rounded-xl p-4 md:p-6">
+                <p className="font-bold text-center mb-3">DISCLOSURE REGARDING BACKGROUND REPORTS</p>
+                <p className="text-sm leading-relaxed">{FCRA_DISCLOSURE}</p>
+              </div>
+              <div className="border border-black rounded-xl p-4 md:p-6">
+                <p className="font-bold text-center mb-3">INVESTIGATIVE CONSUMER REPORT DISCLOSURE</p>
+                <p className="text-sm leading-relaxed">
+                  {FCRA_INVESTIGATIVE}{" "}
+                  <a
+                    href={CFPB_SUMMARY_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="underline underline-offset-2 font-semibold"
+                  >
+                    A Summary of Your Rights Under the Fair Credit Reporting Act (PDF)
+                  </a>
+                  .
+                </p>
+              </div>
+              <div className="border border-black rounded-xl p-4 md:p-6 space-y-4">
+                <p className="font-bold text-center">AUTHORIZATION OF BACKGROUND REPORTS</p>
+                <p className="text-sm leading-relaxed">{FCRA_AUTHORIZATION}</p>
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.consents.fcra.authorized}
+                    onChange={(e) => set("consents.fcra.authorized", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                    aria-invalid={errors.fcraAuthorized ? true : undefined}
+                  />
+                  <span>
+                    I have read both disclosures above and I authorize Forbes Logistix LLC to
+                    obtain background reports about me as described.
+                  </span>
+                </label>
+                {errors.fcraAuthorized && <p className={errCls}>{errors.fcraAuthorized}</p>}
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.consents.fcra.freeCopy}
+                    onChange={(e) => set("consents.fcra.freeCopy", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                  />
+                  <span>{FCRA_FREE_COPY_LABEL}</span>
+                </label>
+                <Field id="fcra-signature" label="Sign by typing your full legal name" error={errors.fcraSignature}>
+                  <TextInput
+                    id="fcra-signature"
+                    value={app.consents.fcra.signature}
+                    onChange={(e) => set("consents.fcra.signature", e.target.value)}
+                    error={errors.fcraSignature}
+                    maxLength={120}
+                    autoComplete="off"
+                  />
+                </Field>
+              </div>
+            </>
+          )}
+
+          {/* ================= STEP 6: PSP — FMCSA-mandated form, verbatim and
+              standalone. Nothing else may share this step. ================= */}
+          {step === 6 && (
+            <div className="border border-black rounded-xl p-4 md:p-6 space-y-3">
+              <p className="text-[11px] font-bold text-center text-gray-500">{PSP_BANNER}</p>
+              <p className="font-bold text-center text-lg leading-snug">
+                IMPORTANT DISCLOSURE
+                <br />
+                REGARDING BACKGROUND REPORTS FROM THE PSP Online Service
+              </p>
+              {PSP_DISCLOSURE_PARAGRAPHS.map((t, i) => (
+                <p key={i} className="text-sm leading-relaxed">
+                  {t}
+                </p>
+              ))}
+              <p className="font-bold text-center pt-2">AUTHORIZATION</p>
+              <p className="text-sm leading-relaxed">{PSP_AUTH_LEAD}</p>
+              {PSP_AUTH_PARAGRAPHS.map((t, i) => (
+                <p key={i} className="text-sm leading-relaxed">
+                  {t}
+                </p>
+              ))}
+              <Field id="psp-signature" label="Sign by typing your full legal name" error={errors.pspSignature}>
+                <TextInput
+                  id="psp-signature"
+                  value={app.consents.psp.signature}
+                  onChange={(e) => set("consents.psp.signature", e.target.value)}
+                  error={errors.pspSignature}
+                  maxLength={120}
+                  autoComplete="off"
+                />
+              </Field>
+              <p className="text-sm text-gray-600">
+                The date is recorded automatically when you submit this application.
+              </p>
+              {PSP_NOTICES.map((t, i) => (
+                <p key={i} className="text-xs text-gray-500 leading-relaxed">
+                  {t}
+                </p>
+              ))}
+              <p className="text-xs text-gray-500">LAST UPDATED 2/11/2016</p>
+            </div>
+          )}
+
+          {/* ================= STEP 7: drug & alcohol history ================= */}
+          {step === 7 && (
+            <>
+              <div className="border border-black rounded-xl p-4 md:p-6 space-y-4">
+                <p className="font-bold text-center">
+                  AUTHORIZATION TO RELEASE DRUG AND ALCOHOL TESTING INFORMATION (49 CFR 40.25 /
+                  391.23(e))
+                </p>
+                <p className="text-sm leading-relaxed">{DA_RELEASE}</p>
+                <p className="text-xs text-gray-500 leading-relaxed">
+                  For previous employers regulated by FMCSA, drug and alcohol history is obtained
+                  through the FMCSA Drug &amp; Alcohol Clearinghouse (49 CFR 391.23(e)(4)); this
+                  release supports direct requests to employers regulated by other DOT agencies and
+                  retrieval of any follow-up testing plan.
+                </p>
+                <div>
+                  <p className="font-medium text-gray-800 mb-2">
+                    Self-report (49 CFR 40.25(j)): in the past three (3) years, have you tested
+                    positive, or refused to test, on any pre-employment drug or alcohol test given
+                    by an employer that did not hire you?
+                  </p>
+                  <div className="flex gap-6" role="radiogroup" aria-label="Self-report answer">
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="da-self-report"
+                        checked={app.consents.drugAlcohol.selfReport === true}
+                        onChange={() => set("consents.drugAlcohol.selfReport", true)}
+                        className="h-4 w-4 accent-black"
+                      />
+                      Yes
+                    </label>
+                    <label className="flex items-center gap-2 text-sm cursor-pointer">
+                      <input
+                        type="radio"
+                        name="da-self-report"
+                        checked={app.consents.drugAlcohol.selfReport === false}
+                        onChange={() => set("consents.drugAlcohol.selfReport", false)}
+                        className="h-4 w-4 accent-black"
+                      />
+                      No
+                    </label>
+                  </div>
+                  {errors.selfReport && <p className={errCls}>{errors.selfReport}</p>}
+                </div>
+                {app.consents.drugAlcohol.selfReport === true && (
+                  <Field
+                    id="da-self-report-explanation"
+                    label="Briefly explain (you'll be asked to document completion of DOT return-to-duty requirements)"
+                    error={errors.selfReportExplanation}
+                  >
+                    <textarea
+                      id="da-self-report-explanation"
+                      rows="2"
+                      value={app.consents.drugAlcohol.selfReportExplanation}
+                      onChange={(e) => set("consents.drugAlcohol.selfReportExplanation", e.target.value)}
+                      className={inputCls}
+                      maxLength={600}
+                    />
+                  </Field>
+                )}
+                <Field id="da-signature" label="Sign by typing your full legal name" error={errors.daSignature}>
+                  <TextInput
+                    id="da-signature"
+                    value={app.consents.drugAlcohol.signature}
+                    onChange={(e) => set("consents.drugAlcohol.signature", e.target.value)}
+                    error={errors.daSignature}
+                    maxLength={120}
+                    autoComplete="off"
+                  />
+                </Field>
+              </div>
+
+              <div className="border border-black rounded-xl p-4 md:p-6 space-y-3">
+                <p className="font-bold text-center">
+                  FMCSA DRUG &amp; ALCOHOL CLEARINGHOUSE — PRE-EMPLOYMENT QUERY NOTICE
+                </p>
+                {CLEARINGHOUSE_PARAGRAPHS.map((t, i) => (
+                  <p key={i} className="text-sm leading-relaxed">
+                    {t}
+                  </p>
+                ))}
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.consents.clearinghouseAck}
+                    onChange={(e) => set("consents.clearinghouseAck", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                    aria-invalid={errors.clearinghouseAck ? true : undefined}
+                  />
+                  <span>{CLEARINGHOUSE_ACK}</span>
+                </label>
+                {errors.clearinghouseAck && <p className={errCls}>{errors.clearinghouseAck}</p>}
+              </div>
+
+              <div className="border border-black/30 rounded-xl p-4 md:p-6 space-y-3">
+                <p className="font-bold text-center">
+                  OPTIONAL — GENERAL CONSENT FOR LIMITED QUERIES
+                </p>
+                <p className="text-sm leading-relaxed">{LIMITED_QUERY_CONSENT}</p>
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.consents.drugAlcohol.limitedQuery}
+                    onChange={(e) => set("consents.drugAlcohol.limitedQuery", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                  />
+                  <span>
+                    I give this optional consent, adopted by my signature above. (You can leave
+                    this unchecked and still apply.)
+                  </span>
+                </label>
+              </div>
+            </>
+          )}
+
+          {/* ================= STEP 8: review & sign ================= */}
+          {step === 8 && (
             <>
               <div className="border border-black/10 rounded-xl p-4 text-sm space-y-1 bg-gray-50">
                 <p>
