@@ -229,7 +229,7 @@ export default function HomePage() {
             <Link href="/reefer" className="underline underline-offset-4 font-semibold text-black hover:opacity-80">
               dedicated reefer out of Dallas
             </Link>{" "}
-            &mdash; now hiring founding drivers.
+            &mdash; hiring now.
           </p>
         </div>
       </section>
