@@ -18,7 +18,8 @@ const Footer = () => {
         <nav aria-label="Footer" className="flex flex-wrap justify-center gap-x-6 gap-y-3 text-sm">
           <Link href="/about" className={NAV_LINK}>About Us</Link>
           <Link href="/operations" className={NAV_LINK}>Operations</Link>
-          <Link href="/careers" className={NAV_LINK}>Driving Jobs</Link>
+          <Link href="/careers" className={NAV_LINK}>Flatbed Jobs</Link>
+          <Link href="/reefer" className={NAV_LINK}>Reefer Jobs — Dallas</Link>
           <Link href="/contact" className={NAV_LINK}>Contact</Link>
         </nav>
 
