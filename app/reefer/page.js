@@ -11,7 +11,7 @@ export const revalidate = 86400;
 
 const TITLE = "Reefer Driving Jobs in Dallas, TX — Now Hiring | Forbes Logistix";
 const DESCRIPTION =
-  "New dedicated reefer division running outbound from Dallas. Hiring now — W-2 company driver seats starting in the next two weeks. Call recruiting to talk real numbers.";
+  "New dedicated reefer division running outbound from Dallas. Hiring now — W-2 company driver seats open today. Call recruiting to talk real numbers.";
 
 export const metadata = {
   title: TITLE,
@@ -28,14 +28,15 @@ export const metadata = {
 // Deliberately honest posting: the division is new and comp is still being
 // finalized, so there is NO baseSalary here —
 // it gets added the day the owner sets the package. Everything stated is
-// owner-confirmed (2026-07-13): company drivers, dedicated reefer, Dallas
-// outbound, seats starting within ~two weeks.
+// owner-confirmed: company drivers, dedicated reefer, Dallas outbound,
+// hiring now (time-boxed "two weeks" copy removed 2026-07-14 per owner —
+// keep this page free of countdown claims that go stale).
 const REEFER_DESCRIPTION = `
 <p>Forbes Logistix is hiring W-2 company drivers for a new dedicated reefer division running outbound from Dallas, Texas.</p>
 <p><strong>What we can tell you today:</strong></p>
 <ul>
   <li>Dedicated reefer freight, Dallas outbound lanes</li>
-  <li>Seats start in the next two weeks</li>
+  <li>Hiring now &mdash; seats are open</li>
   <li>Compensation is being finalized &mdash; call recruiting to talk real numbers</li>
   <li>Valid Class A CDL required</li>
 </ul>
