@@ -14,7 +14,9 @@ const RECRUITING_PHONE_TEL = "+16013005529";
 // Apply button and inline CTAs are always visible.
 export default function MobileActionBar() {
   const pathname = usePathname();
-  if (pathname === "/apply") return null;
+  // Hidden on the two form-first pages where the bar would cover the
+  // submit area (/application is the hidden full DOT application).
+  if (pathname === "/apply" || pathname === "/application") return null;
 
   return (
     <>
