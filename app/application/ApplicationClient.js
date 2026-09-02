@@ -439,7 +439,9 @@ export default function ApplicationClient() {
         // entry would be silently dropped from gap detection.
         const fromIdx = monthIndex(x.from);
         const toIdx = monthIndex(x.to);
-        const datesOk = fromIdx !== null && (x.current || (toIdx !== null && toIdx >= fromIdx));
+        const toIsPresent = /^present$/i.test(String(x.to ?? "").trim());
+        const datesOk =
+          fromIdx !== null && (x.current || toIsPresent || (toIdx !== null && toIdx >= fromIdx));
         const baseOk =
           x.employer.trim() &&
           x.street.trim() &&
@@ -538,7 +540,11 @@ export default function ApplicationClient() {
         accidents: app.accidents,
         violations: app.violations,
         employment: app.employment.map((x) => {
-          const entry = { ...x, to: x.current ? "Present" : x.to };
+          const entry = {
+            ...x,
+            from: String(x.from ?? "").trim(),
+            to: x.current ? "Present" : String(x.to ?? "").trim(),
+          };
           delete entry.cityState; // legacy key — v4 sends city/state/zip instead
           return entry;
         }),
