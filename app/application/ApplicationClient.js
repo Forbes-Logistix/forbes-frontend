@@ -118,7 +118,6 @@ const US_PHONE = (raw) => {
   return d.length === 10 || (d.length === 11 && d.startsWith("1"));
 };
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MONTH_RE = /^\d{4}-\d{2}$/;
 
 const EMPTY_EXPERIENCE = { equipmentType: "", years: "", approxMiles: "" };
 
@@ -274,6 +273,15 @@ export default function ApplicationClient() {
           // Normalize pre-v4 drafts to the current shape (missing keys filled
           // from the templates, legacy cityState split) so restored entries
           // never feed undefined into controlled inputs or .trim().
+          // Detect legacy (pre-v4) drafts BEFORE normalization strips the
+          // markers: such drivers must re-walk the changed Experience (2) and
+          // Employment (4) steps, so their restored step is clamped to 2.
+          const isLegacyDraft =
+            (Array.isArray(draft.app.employment) &&
+              draft.app.employment.some(
+                (x) => x && typeof x === "object" && "cityState" in x
+              )) ||
+            typeof draft.app?.historyComplete !== "boolean";
           const merged = { ...EMPTY, ...draft.app };
           merged.experience = (Array.isArray(merged.experience) ? merged.experience : []).map(
             (x) => ({ ...EMPTY_EXPERIENCE, ...x })
@@ -300,7 +308,7 @@ export default function ApplicationClient() {
             merged.gapExplanations = {};
           delete merged.gapsExplanation;
           setApp(merged);
-          setStep(Math.min(draft.step ?? 0, STEPS.length - 1));
+          setStep(Math.min(draft.step ?? 0, isLegacyDraft ? 2 : STEPS.length - 1));
           setRestored(true);
         }
       }
@@ -426,23 +434,28 @@ export default function ApplicationClient() {
     if (s === 4) {
       if (!app.employment.length) e.employment = "Add at least one employer";
       app.employment.forEach((x, i) => {
-        const toOk = x.current || MONTH_RE.test(x.to);
-        if (
-          !x.employer.trim() ||
-          !x.street.trim() ||
-          !x.city.trim() ||
-          !x.state.trim() ||
-          !x.zip.trim() ||
-          !US_PHONE(x.phone) ||
-          !MONTH_RE.test(x.from) ||
-          !toOk ||
-          !x.reasonForLeaving.trim()
-        )
+        // Dates mirror mergeIntervals: from must parse, and either the entry
+        // is current or to parses and doesn't precede from — otherwise the
+        // entry would be silently dropped from gap detection.
+        const fromIdx = monthIndex(x.from);
+        const toIdx = monthIndex(x.to);
+        const datesOk = fromIdx !== null && (x.current || (toIdx !== null && toIdx >= fromIdx));
+        const baseOk =
+          x.employer.trim() &&
+          x.street.trim() &&
+          x.city.trim() &&
+          x.state.trim() &&
+          x.zip.trim() &&
+          US_PHONE(x.phone) &&
+          x.reasonForLeaving.trim();
+        if (!baseOk)
           e[`emp${i}`] =
             "Employer, street, city, state, ZIP, phone, from/to dates, and reason for leaving are required";
+        else if (!datesOk)
+          e[`emp${i}`] = "Dates must be real months, and From must come before To.";
         else if (x.selfEmployed && x.safetySensitive && !x.tpaName.trim())
           e[`emp${i}`] =
-            "Add the testing consortium/TPA for your self-employed period — or uncheck the boxes that don't apply";
+            "Add the testing consortium/TPA for your self-employed period — or, if this period wasn't actually subject to DOT drug & alcohol testing, uncheck that box.";
       });
       if (detectGaps(app.employment).some((g) => !String(app.gapExplanations[g.key] ?? "").trim()))
         e.empGaps = "Please explain the highlighted employment gap(s)";
@@ -455,11 +468,14 @@ export default function ApplicationClient() {
       const cov = coverageYears(app.employment);
       const maxYears = maxExperienceYears(app.experience);
       if (cov !== null && cov < 10 && maxYears !== null && maxYears > cov + 1) {
-        const earliestFrom = app.employment
-          .map((x) => x.from)
-          .filter((f) => monthIndex(f) !== null)
-          .sort()[0];
-        e.empCoverage = `Your Driving Experience lists ${maxYears} years, but your employment history only goes back to ${formatMonthYear(earliestFrom)}. Add the earlier driving jobs, or correct the years on the Driving Experience step.`;
+        // Earliest entry by parsed month index (not lexicographic sort of the
+        // raw strings, which mis-orders whitespace-padded input).
+        const earliestEntry = app.employment.reduce((best, x) => {
+          const idx = monthIndex(x.from);
+          if (idx === null) return best;
+          return best === null || idx < monthIndex(best.from) ? x : best;
+        }, null);
+        e.empCoverage = `Your Driving Experience lists ${maxYears} years, but your employment history only goes back to ${formatMonthYear(String(earliestEntry.from).trim())}. Add the earlier driving jobs, or correct the years on the Driving Experience step.`;
       }
     }
     if (s === 5) {
@@ -492,6 +508,17 @@ export default function ApplicationClient() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = async () => {
+    // Re-validate the Experience (2) and Employment (4) steps against CURRENT
+    // data before submitting: a restored draft may predate rule changes, and
+    // gap detection depends on the current month (a driver who paused over a
+    // month boundary could otherwise submit a stale, empty gap explanation).
+    // Runs before setStatus("sending"), so an early return leaves the form idle.
+    for (const s of [2, 4]) {
+      if (!validateStep(s)) {
+        setStep(s);
+        return;
+      }
+    }
     if (!validateStep(STEPS.length - 1)) return;
     setStatus("sending");
     setServerMsg("");
@@ -1393,25 +1420,37 @@ export default function ApplicationClient() {
                   label="Add employer"
                 />
               )}
-              {detectedGaps.map((g) => (
-                <div key={g.key} className="border border-amber-300 bg-amber-50 rounded-xl p-4 space-y-2">
-                  <p className="font-semibold">
-                    Gap: {formatMonthYear(g.from)} – {formatMonthYear(g.to)}
-                  </p>
-                  <TextInput
-                    id={`gap-${g.key}`}
-                    value={app.gapExplanations[g.key] || ""}
-                    onChange={(e) => set(`gapExplanations.${g.key}`, e.target.value)}
-                    placeholder="What were you doing during this period?"
-                    maxLength={300}
-                    aria-label={`Explanation for gap ${formatMonthYear(g.from)} to ${formatMonthYear(g.to)}`}
-                  />
-                  <p className="text-sm text-gray-500">
-                    A sentence is fine — e.g. &apos;Non-driving warehouse work&apos; or &apos;Home
-                    with family.&apos;
-                  </p>
-                </div>
-              ))}
+              {detectedGaps.map((g) => {
+                const gapError =
+                  errors.empGaps && !String(app.gapExplanations[g.key] ?? "").trim()
+                    ? "Required"
+                    : undefined;
+                return (
+                  <div key={g.key} className="border border-amber-300 bg-amber-50 rounded-xl p-4 space-y-2">
+                    <p className="font-semibold">
+                      Gap: {formatMonthYear(g.from)} – {formatMonthYear(g.to)}
+                    </p>
+                    <TextInput
+                      id={`gap-${g.key}`}
+                      value={app.gapExplanations[g.key] || ""}
+                      onChange={(e) => set(`gapExplanations.${g.key}`, e.target.value)}
+                      placeholder="What were you doing during this period?"
+                      maxLength={300}
+                      aria-label={`Explanation for gap ${formatMonthYear(g.from)} to ${formatMonthYear(g.to)}`}
+                      error={gapError}
+                    />
+                    {gapError && (
+                      <p id={`gap-${g.key}-error`} className={errCls}>
+                        {gapError}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-500">
+                      A sentence is fine — e.g. &apos;Non-driving warehouse work&apos; or &apos;Home
+                      with family.&apos;
+                    </p>
+                  </div>
+                );
+              })}
               {errors.empGaps && <p className={errCls}>{errors.empGaps}</p>}
               <div className="border border-black/10 bg-gray-50 rounded-xl p-4">
                 <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
@@ -1425,8 +1464,8 @@ export default function ApplicationClient() {
                   <span>
                     I certify I have listed all employers for the past 3 years (driving or not),
                     and every job where I operated a commercial motor vehicle in the past 10 years.
-                    I did not operate a commercial motor vehicle before the earliest date listed
-                    above.
+                    Other than the jobs listed above, I have not operated a commercial motor
+                    vehicle at any time in the past 10 years.
                   </span>
                 </label>
                 {errors.historyComplete && <p className={errCls}>{errors.historyComplete}</p>}

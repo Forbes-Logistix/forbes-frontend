@@ -33,7 +33,8 @@ export function formatMonthYear(ym) {
 }
 
 // Employment entries -> sorted merged month intervals [{start, end}].
-// current === true (or to === "Present"/"present") ends at the current month.
+// current === true (or to reading "present" in ANY casing, matching the
+// backend's isMonthStr grammar) ends at the current month.
 // Entries with unparseable months (or end before start) are ignored.
 // Overlapping or ADJACENT intervals merge — concurrent/back-to-back jobs are
 // not gaps (adjacent = next.start <= prev.end + 1).
@@ -43,7 +44,7 @@ export function mergeIntervals(entries, nowIdx = currentMonthIndex()) {
     const start = monthIndex(x?.from);
     if (start === null) continue;
     const to = String(x?.to ?? "").trim();
-    const isCurrent = x?.current === true || to === "Present" || to === "present";
+    const isCurrent = x?.current === true || /^present$/i.test(to);
     const end = isCurrent ? nowIdx : monthIndex(to);
     if (end === null || end < start) continue;
     intervals.push({ start, end });
@@ -105,11 +106,15 @@ export function coverageYears(entries, nowIdx = currentMonthIndex()) {
 }
 
 // Largest claimed years across experience entries, or null when none parse.
+// Mirrored in the backend — change both or neither.
 export function maxExperienceYears(experience) {
   let max = null;
   for (const x of experience ?? []) {
     const n = parseFloat(String(x?.years ?? "").replace(/[^0-9.]/g, ""));
-    if (!Number.isNaN(n) && (max === null || n > max)) max = n;
+    // > 60 is treated as unparseable (range/unit typos like "2019-2024"
+    // parse to absurd values).
+    if (Number.isNaN(n) || n > 60) continue;
+    if (max === null || n > max) max = n;
   }
   return max;
 }
