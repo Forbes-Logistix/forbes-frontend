@@ -35,10 +35,18 @@ export function currentMonthIndex() {
   return now.getFullYear() * 12 + now.getMonth();
 }
 
-function indexToYm(idx) {
+// Absolute month index -> "YYYY-MM". Exported since v6 for the
+// residence-history coverage lib (licenseAndAddress.js).
+export function indexToYm(idx) {
   const year = Math.floor(idx / 12);
   const month = (idx % 12) + 1;
   return `${year}-${String(month).padStart(2, "0")}`;
+}
+
+// v6: format an absolute month index directly ("September 2026") — used by
+// the employment-step guidance's computed 3-year/10-year dates.
+export function formatMonthIndex(idx) {
+  return formatMonthYear(indexToYm(idx));
 }
 
 // "2022-03" -> "March 2022"; unparseable input is returned as-is.
