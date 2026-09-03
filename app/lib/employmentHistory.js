@@ -1,9 +1,25 @@
-// Pure employment-history helpers for the DOT application (form v4): month
-// math, gap detection, and the experience-vs-history coverage cross-check.
+// Pure employment-history helpers for the DOT application (form v5): month
+// math, gap detection, human-readable date formatting, and the
+// experience-vs-history coverage cross-check.
 // Gap/coverage logic mirrored in forbesLogistix-backend/controllers/pdfController.js — change both or neither.
+// Month names are FULL English names (v5) — the backend's monthLabel/fmtMonth
+// must match, or the experience-vs-history sentence stops being byte-identical.
 
 const YM_RE = /^(\d{4})-(\d{2})$/;
-const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 // "YYYY-MM" -> absolute month index (year*12 + month-1), or null if unparseable.
 export function monthIndex(ym) {
@@ -25,11 +41,22 @@ function indexToYm(idx) {
   return `${year}-${String(month).padStart(2, "0")}`;
 }
 
-// "2022-03" -> "Mar 2022"; unparseable input is returned as-is.
+// "2022-03" -> "March 2022"; unparseable input is returned as-is.
 export function formatMonthYear(ym) {
   const idx = monthIndex(ym);
   if (idx === null) return String(ym ?? "");
   return `${MONTH_NAMES[idx % 12]} ${Math.floor(idx / 12)}`;
+}
+
+// "1988-03-04" -> "March 4, 1988"; anything that isn't a plain YYYY-MM-DD
+// (or has an impossible month/day) is returned as-is.
+export function formatFullDate(ymd) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(ymd ?? "").trim());
+  if (!m) return String(ymd ?? "");
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  if (month < 1 || month > 12 || day < 1 || day > 31) return String(ymd ?? "");
+  return `${MONTH_NAMES[month - 1]} ${day}, ${Number(m[1])}`;
 }
 
 // Employment entries -> sorted merged month intervals [{start, end}].
