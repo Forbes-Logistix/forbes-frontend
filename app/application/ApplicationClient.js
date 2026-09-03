@@ -9,8 +9,10 @@ import {
   coverageYears,
   maxExperienceYears,
   formatMonthYear,
+  formatFullDate,
   monthIndex,
 } from "../lib/employmentHistory";
+import { composeFullName, splitFullName } from "../lib/legalName";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
@@ -19,6 +21,8 @@ const RECRUITING_PHONE_TEL = "+16013005529";
 // Bump when the draft shape changes so stale localStorage drafts are discarded.
 // Form v4 deliberately did NOT bump: v3 drafts are normalized on restore (see
 // the draft-restore effect) so a driver mid-application keeps their progress.
+// Form v5 (structured legal name) also did NOT bump: a legacy free-text
+// fullName is best-effort split into first/middle/last on restore.
 const DRAFT_KEY = "fl-dot-application-draft-v3";
 
 const POSITIONS = [
@@ -143,7 +147,10 @@ const EMPTY_EMPLOYMENT = {
 const EMPTY = {
   position: "",
   personal: {
-    fullName: "",
+    firstName: "",
+    middleName: "",
+    lastName: "",
+    noMiddleName: false,
     phone: "",
     email: "",
     dob: "",
@@ -282,7 +289,37 @@ export default function ApplicationClient() {
                 (x) => x && typeof x === "object" && "cityState" in x
               )) ||
             typeof draft.app?.historyComplete !== "boolean";
+          // A pre-v5 draft still carries the free-text fullName and no
+          // structured firstName: the name fields changed on step 0, so such
+          // drivers re-walk from the start (clamp to 0, which also covers the
+          // pre-v4 re-walk of steps 2 and 4 on the way forward).
+          const draftPersonal =
+            draft.app.personal && typeof draft.app.personal === "object"
+              ? draft.app.personal
+              : {};
+          const isNameLegacyDraft =
+            typeof draftPersonal.fullName === "string" &&
+            !String(draftPersonal.firstName ?? "").trim();
           const merged = { ...EMPTY, ...draft.app };
+          // Fill missing personal keys from the template, then best-effort
+          // split a legacy fullName into the structured v5 fields. The
+          // legacy key never enters state.
+          merged.personal = { ...EMPTY.personal, ...draftPersonal };
+          if (
+            typeof merged.personal.fullName === "string" &&
+            !String(merged.personal.firstName ?? "").trim() &&
+            !String(merged.personal.lastName ?? "").trim()
+          ) {
+            const parts = splitFullName(merged.personal.fullName);
+            // Clamp to the 60-char field caps — the legacy fullName allowed
+            // 120, and programmatically-set values bypass input maxLength.
+            merged.personal.firstName = parts.firstName.slice(0, 60);
+            merged.personal.middleName = parts.middleName.slice(0, 60);
+            merged.personal.lastName = parts.lastName.slice(0, 60);
+          }
+          delete merged.personal.fullName;
+          if (typeof merged.personal.noMiddleName !== "boolean")
+            merged.personal.noMiddleName = false;
           merged.experience = (Array.isArray(merged.experience) ? merged.experience : []).map(
             (x) => ({ ...EMPTY_EXPERIENCE, ...x })
           );
@@ -308,7 +345,12 @@ export default function ApplicationClient() {
             merged.gapExplanations = {};
           delete merged.gapsExplanation;
           setApp(merged);
-          setStep(Math.min(draft.step ?? 0, isLegacyDraft ? 2 : STEPS.length - 1));
+          setStep(
+            Math.min(
+              draft.step ?? 0,
+              isNameLegacyDraft ? 0 : isLegacyDraft ? 2 : STEPS.length - 1
+            )
+          );
           setRestored(true);
         }
       }
@@ -384,7 +426,10 @@ export default function ApplicationClient() {
     if (s === 0) {
       if (!app.consents.electronicRecords) e.electronicRecords = "Required to continue electronically";
       if (!app.position) e.position = "Select the position you're applying for";
-      if (!app.personal.fullName.trim()) e.fullName = "Required";
+      if (!app.personal.firstName.trim()) e.firstName = "Required";
+      if (!app.personal.noMiddleName && !app.personal.middleName.trim())
+        e.middleName = "Middle name is required — or check 'I have no middle name'";
+      if (!app.personal.lastName.trim()) e.lastName = "Required";
       if (!US_PHONE(app.personal.phone)) e.phone = "Enter a valid US phone number";
       if (app.personal.email && !EMAIL_REGEX.test(app.personal.email.trim())) e.email = "Enter a valid email or leave blank";
       if (!app.personal.dob) e.dob = "Required";
@@ -510,12 +555,13 @@ export default function ApplicationClient() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = async () => {
-    // Re-validate the Experience (2) and Employment (4) steps against CURRENT
-    // data before submitting: a restored draft may predate rule changes, and
-    // gap detection depends on the current month (a driver who paused over a
+    // Re-validate the Personal (0), Experience (2) and Employment (4) steps
+    // against CURRENT data before submitting: a restored draft may predate
+    // rule changes (v5 added required name fields to step 0), and gap
+    // detection depends on the current month (a driver who paused over a
     // month boundary could otherwise submit a stale, empty gap explanation).
     // Runs before setStatus("sending"), so an early return leaves the form idle.
-    for (const s of [2, 4]) {
+    for (const s of [0, 2, 4]) {
       if (!validateStep(s)) {
         setStep(s);
         return;
@@ -527,11 +573,16 @@ export default function ApplicationClient() {
     try {
       const detectedGaps = detectGaps(app.employment);
       const payload = {
-        formVersion: 4,
+        formVersion: 5,
         position: app.position,
+        // v5 sends the structured name parts only — the backend derives the
+        // composed fullName from them. When noMiddleName is checked the
+        // middle name is sent empty.
         personal: {
           ...app.personal,
-          fullName: app.personal.fullName.trim(),
+          firstName: app.personal.firstName.trim(),
+          middleName: app.personal.noMiddleName ? "" : app.personal.middleName.trim(),
+          lastName: app.personal.lastName.trim(),
           email: app.personal.email.trim(),
         },
         license: app.license,
@@ -610,7 +661,7 @@ export default function ApplicationClient() {
             Application received.
           </h1>
           <p className="text-lg text-white/90 mb-4">
-            Thanks, {app.personal.fullName.split(" ")[0]}. Your application is in — we&apos;ll call you at{" "}
+            Thanks, {app.personal.firstName.trim()}. Your application is in — we&apos;ll call you at{" "}
             <span className="font-bold">{app.personal.phone}</span> from{" "}
             <span className="font-bold">{RECRUITING_PHONE_DISPLAY}</span>, so save the number.
           </p>
@@ -735,16 +786,69 @@ export default function ApplicationClient() {
                   ))}
                 </select>
               </Field>
-              <Field id="fullName" label="Full legal name" error={errors.fullName}>
+              {/* v5: structured legal name — the backend composes the full
+                  name from these parts for the PDF and email. */}
+              <Field id="firstName" label="First name" error={errors.firstName}>
                 <TextInput
-                  id="fullName"
-                  value={per.fullName}
-                  onChange={(e) => set("personal.fullName", e.target.value)}
-                  error={errors.fullName}
-                  autoComplete="name"
-                  maxLength={120}
+                  id="firstName"
+                  value={per.firstName}
+                  onChange={(e) => set("personal.firstName", e.target.value)}
+                  error={errors.firstName}
+                  autoComplete="given-name"
+                  maxLength={60}
                 />
               </Field>
+              <div className="grid grid-cols-2 gap-4">
+                <Field id="middleName" label="Middle name" error={errors.middleName}>
+                  <TextInput
+                    id="middleName"
+                    value={per.middleName}
+                    onChange={(e) => set("personal.middleName", e.target.value)}
+                    error={errors.middleName}
+                    autoComplete="additional-name"
+                    maxLength={60}
+                    disabled={per.noMiddleName}
+                    className={`${inputCls} disabled:bg-gray-100 disabled:text-gray-400`}
+                  />
+                </Field>
+                <Field id="lastName" label="Last name" error={errors.lastName}>
+                  <TextInput
+                    id="lastName"
+                    value={per.lastName}
+                    onChange={(e) => set("personal.lastName", e.target.value)}
+                    error={errors.lastName}
+                    autoComplete="family-name"
+                    maxLength={60}
+                  />
+                </Field>
+              </div>
+              <label className="flex items-center gap-3 text-sm text-gray-700 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={per.noMiddleName}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    // One atomic update: checking the box also clears the
+                    // middle name (it must be sent empty in that case).
+                    setApp((prev) => ({
+                      ...prev,
+                      personal: {
+                        ...prev.personal,
+                        noMiddleName: checked,
+                        middleName: checked ? "" : prev.personal.middleName,
+                      },
+                    }));
+                    if (checked)
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.middleName;
+                        return next;
+                      });
+                  }}
+                  className="h-4 w-4 accent-black"
+                />
+                I have no middle name
+              </label>
               <Field id="phone" label="Phone number" error={errors.phone}>
                 <TextInput
                   id="phone"
@@ -1722,12 +1826,12 @@ export default function ApplicationClient() {
                   {POSITIONS.find((x) => x.value === app.position)?.label || "—"}
                 </p>
                 <p>
-                  <span className="font-semibold">Name:</span> {per.fullName} ·{" "}
+                  <span className="font-semibold">Name:</span> {composeFullName(per)} ·{" "}
                   <span className="font-semibold">Phone:</span> {per.phone}
                 </p>
                 <p>
                   <span className="font-semibold">CDL:</span> {lic.state} · Class {lic.class} · exp{" "}
-                  {lic.expiration || "—"}
+                  {formatFullDate(lic.expiration) || "—"}
                 </p>
                 <p>
                   <span className="font-semibold">Experience:</span> {app.experience.length} equipment
