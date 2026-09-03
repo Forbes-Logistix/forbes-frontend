@@ -67,6 +67,9 @@ export default function useTurnstile(active = true) {
         }
         widgetIdRef.current = null;
       }
+      // A removed widget's token is unusable — clear it so a re-mounted step
+      // disables Submit until the fresh widget issues a new token.
+      setToken("");
     };
   }, [enabled, active]);
 

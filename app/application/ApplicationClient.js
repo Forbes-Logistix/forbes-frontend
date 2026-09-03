@@ -4,12 +4,21 @@ import { useState, useEffect, useRef } from "react";
 import { Phone, Plus, Trash2, ShieldCheck } from "lucide-react";
 import { track } from "@vercel/analytics";
 import useTurnstile from "../lib/useTurnstile";
+import {
+  detectGaps,
+  coverageYears,
+  maxExperienceYears,
+  formatMonthYear,
+  monthIndex,
+} from "../lib/employmentHistory";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
 const RECRUITING_PHONE_TEL = "+16013005529";
 
 // Bump when the draft shape changes so stale localStorage drafts are discarded.
+// Form v4 deliberately did NOT bump: v3 drafts are normalized on restore (see
+// the draft-restore effect) so a driver mid-application keeps their progress.
 const DRAFT_KEY = "fl-dot-application-draft-v3";
 
 const POSITIONS = [
@@ -109,7 +118,27 @@ const US_PHONE = (raw) => {
   return d.length === 10 || (d.length === 11 && d.startsWith("1"));
 };
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MONTH_RE = /^\d{4}-\d{2}$/;
+
+const EMPTY_EXPERIENCE = { equipmentType: "", years: "", approxMiles: "" };
+
+const EMPTY_EMPLOYMENT = {
+  employer: "",
+  street: "",
+  phone: "",
+  city: "",
+  state: "",
+  zip: "",
+  position: "",
+  from: "",
+  to: "",
+  current: false,
+  reasonForLeaving: "",
+  fmcsrSubject: true,
+  safetySensitive: true,
+  selfEmployed: false,
+  tpaName: "",
+  usdotNumber: "",
+};
 
 const EMPTY = {
   position: "",
@@ -131,25 +160,12 @@ const EMPTY = {
     deniedExplanation: "",
   },
   additionalLicenses: [],
-  experience: [{ equipmentType: "", years: "", approxMiles: "" }],
+  experience: [{ ...EMPTY_EXPERIENCE }],
   accidents: [],
   violations: [],
-  employment: [
-    {
-      employer: "",
-      street: "",
-      phone: "",
-      cityState: "",
-      position: "",
-      from: "",
-      to: "",
-      current: false,
-      reasonForLeaving: "",
-      fmcsrSubject: true,
-      safetySensitive: true,
-    },
-  ],
-  gapsExplanation: "",
+  employment: [{ ...EMPTY_EMPLOYMENT }],
+  gapExplanations: {},
+  historyComplete: false,
   consents: {
     electronicRecords: false,
     fcra: { authorized: false, signature: "", freeCopy: false },
@@ -254,8 +270,45 @@ export default function ApplicationClient() {
       if (raw) {
         const draft = JSON.parse(raw);
         if (draft && draft.app) {
-          setApp({ ...EMPTY, ...draft.app });
-          setStep(Math.min(draft.step ?? 0, STEPS.length - 1));
+          // Normalize pre-v4 drafts to the current shape (missing keys filled
+          // from the templates, legacy cityState split) so restored entries
+          // never feed undefined into controlled inputs or .trim().
+          // Detect legacy (pre-v4) drafts BEFORE normalization strips the
+          // markers: such drivers must re-walk the changed Experience (2) and
+          // Employment (4) steps, so their restored step is clamped to 2.
+          const isLegacyDraft =
+            (Array.isArray(draft.app.employment) &&
+              draft.app.employment.some(
+                (x) => x && typeof x === "object" && "cityState" in x
+              )) ||
+            typeof draft.app?.historyComplete !== "boolean";
+          const merged = { ...EMPTY, ...draft.app };
+          merged.experience = (Array.isArray(merged.experience) ? merged.experience : []).map(
+            (x) => ({ ...EMPTY_EXPERIENCE, ...x })
+          );
+          merged.employment = (Array.isArray(merged.employment) ? merged.employment : []).map(
+            (x) => {
+              const entry = { ...EMPTY_EMPLOYMENT, ...x };
+              if (
+                !entry.city &&
+                !entry.state &&
+                typeof entry.cityState === "string" &&
+                entry.cityState.trim()
+              ) {
+                const comma = entry.cityState.lastIndexOf(",");
+                entry.city = (comma > -1 ? entry.cityState.slice(0, comma) : entry.cityState).trim();
+                entry.state = comma > -1 ? entry.cityState.slice(comma + 1).trim() : "";
+              }
+              delete entry.cityState;
+              return entry;
+            }
+          );
+          if (typeof merged.historyComplete !== "boolean") merged.historyComplete = false;
+          if (!merged.gapExplanations || typeof merged.gapExplanations !== "object")
+            merged.gapExplanations = {};
+          delete merged.gapsExplanation;
+          setApp(merged);
+          setStep(Math.min(draft.step ?? 0, isLegacyDraft ? 2 : STEPS.length - 1));
           setRestored(true);
         }
       }
@@ -359,7 +412,15 @@ export default function ApplicationClient() {
     if (s === 2) {
       if (!app.experience.length) e.experience = "Add at least one entry";
       app.experience.forEach((x, i) => {
-        if (!x.equipmentType || !String(x.years).trim()) e[`exp${i}`] = "Equipment type and years are required";
+        // Miles rule mirrors the backend: strip commas, all digits, > 0.
+        const rawMiles = String(x.approxMiles ?? "").trim();
+        const milesDigits = rawMiles.replace(/,/g, "");
+        const milesOk =
+          rawMiles.length <= 12 && /^\d+$/.test(milesDigits) && parseInt(milesDigits, 10) > 0;
+        if (!x.equipmentType || !String(x.years).trim() || !rawMiles)
+          e[`exp${i}`] = "Equipment type, years, and approximate miles are required";
+        else if (!milesOk)
+          e[`exp${i}`] = "Approximate miles must be a number greater than zero — e.g. 400,000";
       });
     }
     if (s === 3) {
@@ -373,16 +434,51 @@ export default function ApplicationClient() {
     if (s === 4) {
       if (!app.employment.length) e.employment = "Add at least one employer";
       app.employment.forEach((x, i) => {
-        const toOk = x.current || MONTH_RE.test(x.to);
-        if (
-          !x.employer.trim() ||
-          !x.street.trim() ||
-          !MONTH_RE.test(x.from) ||
-          !toOk ||
-          !x.reasonForLeaving.trim()
-        )
-          e[`emp${i}`] = "Employer, street address, from/to dates, and reason for leaving are required";
+        // Dates mirror mergeIntervals: from must parse, and either the entry
+        // is current or to parses and doesn't precede from — otherwise the
+        // entry would be silently dropped from gap detection.
+        const fromIdx = monthIndex(x.from);
+        const toIdx = monthIndex(x.to);
+        const toIsPresent = /^present$/i.test(String(x.to ?? "").trim());
+        const datesOk =
+          fromIdx !== null && (x.current || toIsPresent || (toIdx !== null && toIdx >= fromIdx));
+        const baseOk =
+          x.employer.trim() &&
+          x.street.trim() &&
+          x.city.trim() &&
+          x.state.trim() &&
+          x.zip.trim() &&
+          US_PHONE(x.phone) &&
+          x.reasonForLeaving.trim();
+        if (!baseOk)
+          e[`emp${i}`] =
+            "Employer, street, city, state, ZIP, phone, from/to dates, and reason for leaving are required";
+        else if (!datesOk)
+          e[`emp${i}`] = "Dates must be real months, and From must come before To.";
+        else if (x.selfEmployed && x.safetySensitive && !x.tpaName.trim())
+          e[`emp${i}`] =
+            "Add the testing consortium/TPA for your self-employed period — or, if this period wasn't actually subject to DOT drug & alcohol testing, uncheck that box.";
       });
+      if (detectGaps(app.employment).some((g) => !String(app.gapExplanations[g.key] ?? "").trim()))
+        e.empGaps = "Please explain the highlighted employment gap(s)";
+      if (!app.historyComplete)
+        e.historyComplete =
+          "Please confirm your employment history is complete — or add the missing employers";
+      // Experience-vs-history cross-check (mirrored in the backend): claimed
+      // driving years can't meaningfully exceed the history's coverage unless
+      // the full 10 years are already covered.
+      const cov = coverageYears(app.employment);
+      const maxYears = maxExperienceYears(app.experience);
+      if (cov !== null && cov < 10 && maxYears !== null && maxYears > cov + 1) {
+        // Earliest entry by parsed month index (not lexicographic sort of the
+        // raw strings, which mis-orders whitespace-padded input).
+        const earliestEntry = app.employment.reduce((best, x) => {
+          const idx = monthIndex(x.from);
+          if (idx === null) return best;
+          return best === null || idx < monthIndex(best.from) ? x : best;
+        }, null);
+        e.empCoverage = `Your Driving Experience lists ${maxYears} years, but your employment history only goes back to ${formatMonthYear(String(earliestEntry.from).trim())}. Add the earlier driving jobs, or correct the years on the Driving Experience step.`;
+      }
     }
     if (s === 5) {
       if (!app.consents.fcra.authorized)
@@ -414,11 +510,24 @@ export default function ApplicationClient() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = async () => {
+    // Re-validate the Experience (2) and Employment (4) steps against CURRENT
+    // data before submitting: a restored draft may predate rule changes, and
+    // gap detection depends on the current month (a driver who paused over a
+    // month boundary could otherwise submit a stale, empty gap explanation).
+    // Runs before setStatus("sending"), so an early return leaves the form idle.
+    for (const s of [2, 4]) {
+      if (!validateStep(s)) {
+        setStep(s);
+        return;
+      }
+    }
     if (!validateStep(STEPS.length - 1)) return;
     setStatus("sending");
     setServerMsg("");
     try {
+      const detectedGaps = detectGaps(app.employment);
       const payload = {
+        formVersion: 4,
         position: app.position,
         personal: {
           ...app.personal,
@@ -430,8 +539,21 @@ export default function ApplicationClient() {
         experience: app.experience,
         accidents: app.accidents,
         violations: app.violations,
-        employment: app.employment.map((x) => ({ ...x, to: x.current ? "Present" : x.to })),
-        gapsExplanation: app.gapsExplanation,
+        employment: app.employment.map((x) => {
+          const entry = {
+            ...x,
+            from: String(x.from ?? "").trim(),
+            to: x.current ? "Present" : String(x.to ?? "").trim(),
+          };
+          delete entry.cityState; // legacy key — v4 sends city/state/zip instead
+          return entry;
+        }),
+        employmentGaps: detectedGaps.map((g) => ({
+          from: g.from,
+          to: g.to,
+          explanation: String(app.gapExplanations[g.key] ?? "").trim(),
+        })),
+        historyComplete: app.historyComplete,
         consents: {
           electronicRecords: app.consents.electronicRecords,
           fcra: { ...app.consents.fcra, signature: app.consents.fcra.signature.trim() },
@@ -522,6 +644,9 @@ export default function ApplicationClient() {
 
   const per = app.personal;
   const lic = app.license;
+  // Derived from the employer date ranges — each detected gap gets its own
+  // required explanation, keyed "from|to" so entries survive re-detection.
+  const detectedGaps = detectGaps(app.employment);
 
   return (
     <div className="bg-white text-black">
@@ -946,23 +1071,30 @@ export default function ApplicationClient() {
                       maxLength={10}
                       aria-label="Years of experience"
                     />
-                    <TextInput
-                      id={`exp-miles-${i}`}
-                      inputMode="numeric"
-                      value={x.approxMiles}
-                      onChange={(e) => setListItem("experience", i, "approxMiles", e.target.value)}
-                      placeholder="Approx. miles"
-                      maxLength={12}
-                      aria-label="Approximate miles"
-                    />
+                    <div>
+                      <TextInput
+                        id={`exp-miles-${i}`}
+                        inputMode="numeric"
+                        value={x.approxMiles}
+                        onChange={(e) => setListItem("experience", i, "approxMiles", e.target.value)}
+                        placeholder="Approx. miles"
+                        maxLength={12}
+                        aria-label="Approximate miles"
+                      />
+                      <p className="mt-1 text-sm text-gray-500">
+                        Best estimate is fine — e.g. 400,000.
+                      </p>
+                    </div>
                   </div>
                   {errors[`exp${i}`] && <p className={errCls}>{errors[`exp${i}`]}</p>}
                 </div>
               ))}
-              <AddButton
-                onClick={() => addListItem("experience", { equipmentType: "", years: "", approxMiles: "" })}
-                label="Add equipment type"
-              />
+              {app.experience.length < 8 && (
+                <AddButton
+                  onClick={() => addListItem("experience", { ...EMPTY_EXPERIENCE })}
+                  label="Add equipment type"
+                />
+              )}
             </>
           )}
 
@@ -1107,13 +1239,15 @@ export default function ApplicationClient() {
                 </p>
               </div>
               <p className="text-sm text-gray-600">
-                Most recent first. Cover the past 3 years, plus any CDL-driving jobs in the 7 years
-                before that (DOT requires 10 years for CDL positions).
+                Most recent first. List every job — driving or not — for the past 3 years, plus
+                every CMV-driving job in the 7 years before that. DOT applications for CDL
+                positions must cover the last 10 years.
               </p>
               {app.position === "owner-operator-flatbed" && (
                 <p className="text-sm text-gray-600">
                   Owner-operators: list your own operation as an employer for the time you ran under
-                  your own authority (use your business name and address).
+                  your own authority (use your business name and address). Check &quot;my own
+                  company&quot; on that entry.
                 </p>
               )}
               {errors.employment && <p className={errCls}>{errors.employment}</p>}
@@ -1141,24 +1275,41 @@ export default function ApplicationClient() {
                     maxLength={200}
                     aria-label="Employer street address"
                   />
-                  <div className="grid grid-cols-2 gap-3">
+                  <TextInput
+                    id={`emp-phone-${i}`}
+                    type="tel"
+                    inputMode="tel"
+                    value={x.phone}
+                    onChange={(e) => setListItem("employment", i, "phone", e.target.value)}
+                    placeholder="Company phone"
+                    maxLength={32}
+                    aria-label="Employer phone"
+                  />
+                  <div className="grid grid-cols-3 gap-3">
                     <TextInput
-                      id={`emp-phone-${i}`}
-                      type="tel"
-                      inputMode="tel"
-                      value={x.phone}
-                      onChange={(e) => setListItem("employment", i, "phone", e.target.value)}
-                      placeholder="Phone (for verification)"
-                      maxLength={32}
-                      aria-label="Employer phone"
+                      id={`emp-city-${i}`}
+                      value={x.city}
+                      onChange={(e) => setListItem("employment", i, "city", e.target.value)}
+                      placeholder="City"
+                      maxLength={100}
+                      aria-label="Employer city"
                     />
                     <TextInput
-                      id={`emp-loc-${i}`}
-                      value={x.cityState}
-                      onChange={(e) => setListItem("employment", i, "cityState", e.target.value)}
-                      placeholder="City, State"
-                      maxLength={100}
-                      aria-label="Employer city and state"
+                      id={`emp-state-${i}`}
+                      value={x.state}
+                      onChange={(e) => setListItem("employment", i, "state", e.target.value)}
+                      placeholder="State"
+                      maxLength={40}
+                      aria-label="Employer state"
+                    />
+                    <TextInput
+                      id={`emp-zip-${i}`}
+                      inputMode="numeric"
+                      value={x.zip}
+                      onChange={(e) => setListItem("employment", i, "zip", e.target.value)}
+                      placeholder="ZIP"
+                      maxLength={12}
+                      aria-label="Employer ZIP"
                     />
                   </div>
                   <TextInput
@@ -1232,42 +1383,104 @@ export default function ApplicationClient() {
                       />
                       This job was safety-sensitive with DOT drug &amp; alcohol testing
                     </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={x.selfEmployed}
+                        onChange={(e) => setListItem("employment", i, "selfEmployed", e.target.checked)}
+                        className="h-4 w-4 accent-black"
+                      />
+                      This was my own company (self-employed / own authority)
+                    </label>
                   </div>
+                  {x.selfEmployed && (
+                    <div className="space-y-3">
+                      <Field
+                        id={`emp-tpa-${i}`}
+                        label="Random-pool consortium / TPA (for this self-employed period)"
+                        hint="The consortium (C/TPA) that ran your DOT random drug & alcohol testing pool while you drove for your own company."
+                      >
+                        <TextInput
+                          id={`emp-tpa-${i}`}
+                          value={x.tpaName}
+                          onChange={(e) => setListItem("employment", i, "tpaName", e.target.value)}
+                          maxLength={150}
+                        />
+                      </Field>
+                      <Field id={`emp-usdot-${i}`} label="Your company's USDOT number (optional)">
+                        <TextInput
+                          id={`emp-usdot-${i}`}
+                          value={x.usdotNumber}
+                          onChange={(e) => setListItem("employment", i, "usdotNumber", e.target.value)}
+                          maxLength={20}
+                        />
+                      </Field>
+                    </div>
+                  )}
                   {errors[`emp${i}`] && <p className={errCls}>{errors[`emp${i}`]}</p>}
                 </div>
               ))}
-              <AddButton
-                onClick={() =>
-                  addListItem("employment", {
-                    employer: "",
-                    street: "",
-                    phone: "",
-                    cityState: "",
-                    position: "",
-                    from: "",
-                    to: "",
-                    current: false,
-                    reasonForLeaving: "",
-                    fmcsrSubject: true,
-                    safetySensitive: true,
-                  })
-                }
-                label="Add employer"
-              />
-              <Field
-                id="gaps"
-                label="Any gaps in employment? (optional)"
-                hint="A sentence is fine — e.g. 'Home with family Jan–Mar 2024.'"
-              >
-                <textarea
-                  id="gaps"
-                  rows="2"
-                  value={app.gapsExplanation}
-                  onChange={(e) => set("gapsExplanation", e.target.value)}
-                  className={inputCls}
-                  maxLength={600}
+              {app.employment.length < 15 && (
+                <AddButton
+                  onClick={() => addListItem("employment", { ...EMPTY_EMPLOYMENT })}
+                  label="Add employer"
                 />
-              </Field>
+              )}
+              {detectedGaps.map((g) => {
+                const gapError =
+                  errors.empGaps && !String(app.gapExplanations[g.key] ?? "").trim()
+                    ? "Required"
+                    : undefined;
+                return (
+                  <div key={g.key} className="border border-amber-300 bg-amber-50 rounded-xl p-4 space-y-2">
+                    <p className="font-semibold">
+                      Gap: {formatMonthYear(g.from)} – {formatMonthYear(g.to)}
+                    </p>
+                    <TextInput
+                      id={`gap-${g.key}`}
+                      value={app.gapExplanations[g.key] || ""}
+                      onChange={(e) => set(`gapExplanations.${g.key}`, e.target.value)}
+                      placeholder="What were you doing during this period?"
+                      maxLength={300}
+                      aria-label={`Explanation for gap ${formatMonthYear(g.from)} to ${formatMonthYear(g.to)}`}
+                      error={gapError}
+                    />
+                    {gapError && (
+                      <p id={`gap-${g.key}-error`} className={errCls}>
+                        {gapError}
+                      </p>
+                    )}
+                    <p className="text-sm text-gray-500">
+                      A sentence is fine — e.g. &apos;Non-driving warehouse work&apos; or &apos;Home
+                      with family.&apos;
+                    </p>
+                  </div>
+                );
+              })}
+              {errors.empGaps && <p className={errCls}>{errors.empGaps}</p>}
+              <div className="border border-black/10 bg-gray-50 rounded-xl p-4">
+                <label className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={app.historyComplete}
+                    onChange={(e) => set("historyComplete", e.target.checked)}
+                    className="mt-1 h-4 w-4 accent-black"
+                    aria-invalid={errors.historyComplete ? true : undefined}
+                  />
+                  <span>
+                    I certify I have listed all employers for the past 3 years (driving or not),
+                    and every job where I operated a commercial motor vehicle in the past 10 years.
+                    Other than the jobs listed above, I have not operated a commercial motor
+                    vehicle at any time in the past 10 years.
+                  </span>
+                </label>
+                {errors.historyComplete && <p className={errCls}>{errors.historyComplete}</p>}
+              </div>
+              {errors.empCoverage && (
+                <p role="alert" className={errCls}>
+                  {errors.empCoverage}
+                </p>
+              )}
             </>
           )}
 
