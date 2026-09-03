@@ -324,6 +324,8 @@ export default function ApplicationClient() {
   const [app, setApp] = useState(EMPTY);
   const [step, setStep] = useState(0);
   const [errors, setErrors] = useState({});
+  // Steps the driver has attempted (Next/submit); their flags update live.
+  const [attempted, setAttempted] = useState(() => new Set());
   const [status, setStatus] = useState("idle"); // idle | sending | ok | err
   const [serverMsg, setServerMsg] = useState("");
   const [honeypot, setHoneypot] = useState("");
@@ -727,6 +729,8 @@ export default function ApplicationClient() {
   const validateStep = (s) => {
     const e = collectStepErrors(s);
     setErrors(e);
+    // Once a step has been validated, keep flagging it live (effect below).
+    setAttempted((prev) => (prev.has(s) ? prev : new Set(prev).add(s)));
     return Object.keys(e).length === 0;
   };
 
@@ -735,15 +739,25 @@ export default function ApplicationClient() {
   };
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
+  // Live flagging: once a step has been attempted, re-run its pure collector
+  // on every change while the driver is on it — missing-field flags clear as
+  // they type and reappear immediately if a required value is blanked, with
+  // no second press of Next needed to see what's still missing.
+  useEffect(() => {
+    if (attempted.has(step)) setErrors(collectStepErrors(step));
+    // collectStepErrors is re-created each render from current state; app and
+    // step are the real inputs.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [app, step, attempted]);
+
   const submit = async () => {
-    // Re-validate the Personal (0), CDL (1), Experience (2) and Employment
-    // (4) steps against CURRENT data before submitting: a restored draft may
-    // predate rule changes (v6 added endorsements/restrictions to step 1 and
-    // residence coverage to step 0), and gap detection depends on the current
-    // month (a driver who paused over a month boundary could otherwise submit
-    // a stale, empty gap explanation).
+    // Re-validate EVERY earlier step against CURRENT data before submitting:
+    // a restored draft may predate rule changes (v6 added endorsements to
+    // step 1 and residence coverage to step 0), and gap detection depends on
+    // the current month (a driver who paused over a month boundary could
+    // otherwise submit a stale, empty gap explanation).
     // Runs before setStatus("sending"), so an early return leaves the form idle.
-    for (const s of [0, 1, 2, 4]) {
+    for (const s of [0, 1, 2, 3, 4, 5, 6, 7]) {
       if (!validateStep(s)) {
         setStep(s);
         return;
@@ -890,7 +904,7 @@ export default function ApplicationClient() {
   // against current state. The signature/submit UI stays hidden until empty.
   const reviewIssues =
     step === STEPS.length - 1
-      ? [0, 1, 2, 4].flatMap((s) =>
+      ? [0, 1, 2, 3, 4, 5, 6, 7].flatMap((s) =>
           Object.entries(collectStepErrors(s)).map(([key, message]) => ({
             step: s,
             key,
