@@ -311,9 +311,11 @@ export default function ApplicationClient() {
             !String(merged.personal.lastName ?? "").trim()
           ) {
             const parts = splitFullName(merged.personal.fullName);
-            merged.personal.firstName = parts.firstName;
-            merged.personal.middleName = parts.middleName;
-            merged.personal.lastName = parts.lastName;
+            // Clamp to the 60-char field caps — the legacy fullName allowed
+            // 120, and programmatically-set values bypass input maxLength.
+            merged.personal.firstName = parts.firstName.slice(0, 60);
+            merged.personal.middleName = parts.middleName.slice(0, 60);
+            merged.personal.lastName = parts.lastName.slice(0, 60);
           }
           delete merged.personal.fullName;
           if (typeof merged.personal.noMiddleName !== "boolean")
@@ -836,6 +838,12 @@ export default function ApplicationClient() {
                         middleName: checked ? "" : prev.personal.middleName,
                       },
                     }));
+                    if (checked)
+                      setErrors((prev) => {
+                        const next = { ...prev };
+                        delete next.middleName;
+                        return next;
+                      });
                   }}
                   className="h-4 w-4 accent-black"
                 />
