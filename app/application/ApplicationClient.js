@@ -10,9 +10,24 @@ import {
   maxExperienceYears,
   formatMonthYear,
   formatFullDate,
+  formatMonthIndex,
   monthIndex,
+  currentMonthIndex,
 } from "../lib/employmentHistory";
 import { composeFullName, splitFullName } from "../lib/legalName";
+import {
+  US_STATES,
+  OTHER_STATE,
+  USDOT_RE,
+  zipOk,
+  normalizeStateValue,
+  ENDORSEMENTS,
+  NONE_CODE,
+  toggleEndorsement,
+  parseLegacyEndorsements,
+  firstResidenceGap,
+  residenceCoverageError,
+} from "../lib/licenseAndAddress";
 
 const BACKEND_URL = "https://forbes-logistix-backend.vercel.app";
 const RECRUITING_PHONE_DISPLAY = "(601) 300-5529";
@@ -23,6 +38,9 @@ const RECRUITING_PHONE_TEL = "+16013005529";
 // the draft-restore effect) so a driver mid-application keeps their progress.
 // Form v5 (structured legal name) also did NOT bump: a legacy free-text
 // fullName is best-effort split into first/middle/last on restore.
+// Form v6 also did NOT bump: endorsements/state/residence values are
+// normalized on restore, and a pre-v6 draft (no license.endorsementCodes)
+// re-walks from step 0.
 const DRAFT_KEY = "fl-dot-application-draft-v3";
 
 const POSITIONS = [
@@ -141,8 +159,14 @@ const EMPTY_EMPLOYMENT = {
   safetySensitive: true,
   selfEmployed: false,
   tpaName: "",
+  tpaPhone: "",
   usdotNumber: "",
+  mcNumber: "",
+  authorityStatus: "",
+  leasedDuringPeriod: null,
 };
+
+const EMPTY_PREV_ADDRESS = { street: "", city: "", state: "", zip: "", from: "", to: "" };
 
 const EMPTY = {
   position: "",
@@ -154,7 +178,7 @@ const EMPTY = {
     phone: "",
     email: "",
     dob: "",
-    currentAddress: { street: "", city: "", state: "", zip: "", sinceYear: "" },
+    currentAddress: { street: "", city: "", state: "", zip: "", since: "" },
     previousAddresses: [],
   },
   license: {
@@ -162,7 +186,8 @@ const EMPTY = {
     number: "",
     class: "A",
     expiration: "",
-    endorsements: "",
+    endorsementCodes: [],
+    restrictions: "",
     everDeniedRevokedSuspended: false,
     deniedExplanation: "",
   },
@@ -256,6 +281,43 @@ function AddButton({ onClick, label }) {
   );
 }
 
+// Display-only labels for the "Ready to sign?" checklist — maps validation
+// error keys to the field they belong to. No rules live here; messages whose
+// text already stands alone map to "".
+const ISSUE_LABELS = [
+  [/^electronicRecords$/, "Electronic records consent"],
+  [/^position$/, "Position"],
+  [/^firstName$/, "First name"],
+  [/^middleName$/, "Middle name"],
+  [/^lastName$/, "Last name"],
+  [/^phone$/, "Phone number"],
+  [/^email$/, "Email"],
+  [/^dob$/, "Date of birth"],
+  [/^street$/, "Street address"],
+  [/^city$/, "City"],
+  [/^state$/, "State"],
+  [/^zip$/, "ZIP"],
+  [/^addrSince$/, "Living at current address since"],
+  [/^prevAddr(\d+)$/, (m) => `Previous address ${Number(m[1]) + 1}`],
+  [/^licState$/, "CDL issuing state"],
+  [/^licNumber$/, "CDL number"],
+  [/^licExp$/, "CDL expiration"],
+  [/^endorsements$/, "Endorsements"],
+  [/^restrictions$/, "Restrictions"],
+  [/^deniedExplanation$/, "License denial/suspension explanation"],
+  [/^addlLic(\d+)$/, (m) => `Other license/permit ${Number(m[1]) + 1}`],
+  [/^exp(\d+)$/, (m) => `Equipment ${Number(m[1]) + 1}`],
+  [/^emp(\d+)$/, (m) => `Employer ${Number(m[1]) + 1}`],
+];
+
+function issueLabel(key) {
+  for (const [re, label] of ISSUE_LABELS) {
+    const m = re.exec(key);
+    if (m) return typeof label === "function" ? label(m) : label;
+  }
+  return "";
+}
+
 export default function ApplicationClient() {
   const [app, setApp] = useState(EMPTY);
   const [step, setStep] = useState(0);
@@ -300,6 +362,12 @@ export default function ApplicationClient() {
           const isNameLegacyDraft =
             typeof draftPersonal.fullName === "string" &&
             !String(draftPersonal.firstName ?? "").trim();
+          // A draft lacking license.endorsementCodes is a pre-v6 draft: the
+          // CDL, address, and employment steps all changed, so the restored
+          // step is clamped to 0 and the driver re-walks them.
+          const draftLicense =
+            draft.app.license && typeof draft.app.license === "object" ? draft.app.license : {};
+          const isPreV6Draft = !Array.isArray(draftLicense.endorsementCodes);
           const merged = { ...EMPTY, ...draft.app };
           // Fill missing personal keys from the template, then best-effort
           // split a legacy fullName into the structured v5 fields. The
@@ -320,6 +388,41 @@ export default function ApplicationClient() {
           delete merged.personal.fullName;
           if (typeof merged.personal.noMiddleName !== "boolean")
             merged.personal.noMiddleName = false;
+          // v6 residence shape: month-precision "since" replaces the year-only
+          // sinceYear. Never fabricate a month from a bare year — the driver
+          // re-enters it on the re-walked step 0.
+          const rawCa =
+            merged.personal.currentAddress && typeof merged.personal.currentAddress === "object"
+              ? merged.personal.currentAddress
+              : {};
+          merged.personal.currentAddress = { ...EMPTY.personal.currentAddress, ...rawCa };
+          if (typeof merged.personal.currentAddress.since !== "string")
+            merged.personal.currentAddress.since = "";
+          delete merged.personal.currentAddress.sinceYear;
+          merged.personal.previousAddresses = (
+            Array.isArray(merged.personal.previousAddresses)
+              ? merged.personal.previousAddresses
+              : []
+          ).map((a) => {
+            const o = a && typeof a === "object" ? a : {};
+            const entry = { ...EMPTY_PREV_ADDRESS };
+            for (const k of Object.keys(EMPTY_PREV_ADDRESS)) {
+              if (typeof o[k] === "string") entry[k] = o[k];
+            }
+            return entry;
+          });
+          // v6 license shape: endorsementCodes[] + restrictions replace the
+          // free-text endorsements. A legacy value is parsed for standalone
+          // H/N/T/P/S/X letters; "none"/empty/unrecognized restores to []
+          // (not ["NONE"]) so the driver consciously picks None.
+          merged.license = { ...EMPTY.license, ...draftLicense };
+          merged.license.endorsementCodes = isPreV6Draft
+            ? parseLegacyEndorsements(draftLicense.endorsements)
+            : draftLicense.endorsementCodes.filter(
+                (c) => c === NONE_CODE || ENDORSEMENTS.some((x) => x.code === c)
+              );
+          delete merged.license.endorsements;
+          if (typeof merged.license.restrictions !== "string") merged.license.restrictions = "";
           merged.experience = (Array.isArray(merged.experience) ? merged.experience : []).map(
             (x) => ({ ...EMPTY_EXPERIENCE, ...x })
           );
@@ -337,6 +440,13 @@ export default function ApplicationClient() {
                 entry.state = comma > -1 ? entry.cityState.slice(comma + 1).trim() : "";
               }
               delete entry.cityState;
+              // v6: the state select stores a 2-letter code (or the Other
+              // (non-US) literal) — legacy free-text values are mapped when
+              // possible, else cleared for re-entry.
+              entry.state = normalizeStateValue(entry.state);
+              if (typeof entry.leasedDuringPeriod !== "boolean") entry.leasedDuringPeriod = null;
+              if (!["active", "inactive", "revoked"].includes(entry.authorityStatus))
+                entry.authorityStatus = "";
               return entry;
             }
           );
@@ -348,7 +458,7 @@ export default function ApplicationClient() {
           setStep(
             Math.min(
               draft.step ?? 0,
-              isNameLegacyDraft ? 0 : isLegacyDraft ? 2 : STEPS.length - 1
+              isNameLegacyDraft || isPreV6Draft ? 0 : isLegacyDraft ? 2 : STEPS.length - 1
             )
           );
           setRestored(true);
@@ -421,7 +531,11 @@ export default function ApplicationClient() {
   };
 
   // ---- per-step validation (mirrors the backend) ----
-  const validateStep = (s) => {
+  // Pure issue collector: returns the errors object for a step WITHOUT
+  // touching state, so the Review step's "Ready to sign?" checklist can run
+  // the same rules against current data. validateStep wraps it with setErrors
+  // — the rules live in exactly one place.
+  const collectStepErrors = (s) => {
     const e = {};
     if (s === 0) {
       if (!app.consents.electronicRecords) e.electronicRecords = "Required to continue electronically";
@@ -438,15 +552,29 @@ export default function ApplicationClient() {
       if (!ca.city.trim()) e.city = "Required";
       if (!ca.state.trim()) e.state = "Required";
       if (!ca.zip.trim()) e.zip = "Required";
+      if (monthIndex(ca.since) === null) e.addrSince = "Required";
       app.personal.previousAddresses.forEach((a, i) => {
+        const fromIdx = monthIndex(a.from);
+        const toIdx = monthIndex(a.to);
         if (!a.street.trim() || !a.city.trim() || !a.state.trim() || !a.zip.trim())
           e[`prevAddr${i}`] = "Complete this address or remove it";
+        else if (fromIdx === null || toIdx === null || toIdx < fromIdx)
+          e[`prevAddr${i}`] = "Dates must be real months, and From must come before To.";
       });
+      // v6 coverage rule (mirrored in the backend): merged address intervals
+      // must cover the last 36 months — no per-gap explanations, just the
+      // blocking sentence for the first uncovered range.
+      const resGap = firstResidenceGap(ca, app.personal.previousAddresses);
+      if (resGap) e.addrCoverage = residenceCoverageError(resGap);
     }
     if (s === 1) {
       if (!app.license.state.trim()) e.licState = "Required";
       if (!app.license.number.trim()) e.licNumber = "Required";
       if (!app.license.expiration) e.licExp = "Required";
+      if (!app.license.endorsementCodes.length)
+        e.endorsements = "Select your endorsement(s) — or check 'None'";
+      if (!app.license.restrictions.trim())
+        e.restrictions = "Required — enter 'None' if your CDL shows none";
       if (app.license.everDeniedRevokedSuspended && !app.license.deniedExplanation.trim())
         e.deniedExplanation = "Please explain";
       app.additionalLicenses.forEach((l, i) => {
@@ -487,6 +615,7 @@ export default function ApplicationClient() {
         const toIsPresent = /^present$/i.test(String(x.to ?? "").trim());
         const datesOk =
           fromIdx !== null && (x.current || toIsPresent || (toIdx !== null && toIdx >= fromIdx));
+        // v6: position is required and reason for leaving needs substance.
         const baseOk =
           x.employer.trim() &&
           x.street.trim() &&
@@ -494,15 +623,39 @@ export default function ApplicationClient() {
           x.state.trim() &&
           x.zip.trim() &&
           US_PHONE(x.phone) &&
+          x.position.trim() &&
           x.reasonForLeaving.trim();
+        const usdot = String(x.usdotNumber ?? "").trim();
         if (!baseOk)
           e[`emp${i}`] =
-            "Employer, street, city, state, ZIP, phone, from/to dates, and reason for leaving are required";
+            "Employer, street, city, state, ZIP, phone, position, from/to dates, and reason for leaving are required";
         else if (!datesOk)
           e[`emp${i}`] = "Dates must be real months, and From must come before To.";
+        else if (x.reasonForLeaving.trim().length < 3)
+          e[`emp${i}`] = "Reason for leaving must be at least 3 characters.";
+        else if (!zipOk(x.zip, x.state))
+          e[`emp${i}`] = "ZIP must be 5 digits (or ZIP+4, like 39209-1234).";
+        else if (x.selfEmployed && !USDOT_RE.test(usdot))
+          e[`emp${i}`] = "Your company's USDOT number is required — digits only.";
+        else if (!x.selfEmployed && usdot && !USDOT_RE.test(usdot))
+          e[`emp${i}`] = "USDOT number must be digits only.";
+        else if (
+          x.selfEmployed &&
+          !["active", "inactive", "revoked"].includes(x.authorityStatus)
+        )
+          e[`emp${i}`] = "Select your authority status for this period.";
+        else if (
+          x.selfEmployed &&
+          x.leasedDuringPeriod !== true &&
+          x.leasedDuringPeriod !== false
+        )
+          e[`emp${i}`] =
+            "Answer whether you were leased to another motor carrier during this period.";
         else if (x.selfEmployed && x.safetySensitive && !x.tpaName.trim())
           e[`emp${i}`] =
             "Add the testing consortium/TPA for your self-employed period — or, if this period wasn't actually subject to DOT drug & alcohol testing, uncheck that box.";
+        else if (x.selfEmployed && x.safetySensitive && !US_PHONE(x.tpaPhone))
+          e[`emp${i}`] = "Add a valid US phone number for the consortium/TPA.";
       });
       if (detectGaps(app.employment).some((g) => !String(app.gapExplanations[g.key] ?? "").trim()))
         e.empGaps = "Please explain the highlighted employment gap(s)";
@@ -545,6 +698,11 @@ export default function ApplicationClient() {
       if (!app.certification.signature.trim()) e.signature = "Type your full legal name";
       if (!app.certification.esignConsent) e.esignConsent = "Required to sign electronically";
     }
+    return e;
+  };
+
+  const validateStep = (s) => {
+    const e = collectStepErrors(s);
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -555,13 +713,14 @@ export default function ApplicationClient() {
   const back = () => setStep((s) => Math.max(s - 1, 0));
 
   const submit = async () => {
-    // Re-validate the Personal (0), Experience (2) and Employment (4) steps
-    // against CURRENT data before submitting: a restored draft may predate
-    // rule changes (v5 added required name fields to step 0), and gap
-    // detection depends on the current month (a driver who paused over a
-    // month boundary could otherwise submit a stale, empty gap explanation).
+    // Re-validate the Personal (0), CDL (1), Experience (2) and Employment
+    // (4) steps against CURRENT data before submitting: a restored draft may
+    // predate rule changes (v6 added endorsements/restrictions to step 1 and
+    // residence coverage to step 0), and gap detection depends on the current
+    // month (a driver who paused over a month boundary could otherwise submit
+    // a stale, empty gap explanation).
     // Runs before setStatus("sending"), so an early return leaves the form idle.
-    for (const s of [0, 2, 4]) {
+    for (const s of [0, 1, 2, 4]) {
       if (!validateStep(s)) {
         setStep(s);
         return;
@@ -573,7 +732,7 @@ export default function ApplicationClient() {
     try {
       const detectedGaps = detectGaps(app.employment);
       const payload = {
-        formVersion: 5,
+        formVersion: 6,
         position: app.position,
         // v5 sends the structured name parts only — the backend derives the
         // composed fullName from them. When noMiddleName is checked the
@@ -585,7 +744,9 @@ export default function ApplicationClient() {
           lastName: app.personal.lastName.trim(),
           email: app.personal.email.trim(),
         },
-        license: app.license,
+        // v6 sends endorsementCodes[] + restrictions (no free-text
+        // endorsements key exists in state anymore).
+        license: { ...app.license, restrictions: app.license.restrictions.trim() },
         additionalLicenses: app.additionalLicenses,
         experience: app.experience,
         accidents: app.accidents,
@@ -595,6 +756,8 @@ export default function ApplicationClient() {
             ...x,
             from: String(x.from ?? "").trim(),
             to: x.current ? "Present" : String(x.to ?? "").trim(),
+            usdotNumber: String(x.usdotNumber ?? "").trim(),
+            mcNumber: String(x.mcNumber ?? "").trim(),
           };
           delete entry.cityState; // legacy key — v4 sends city/state/zip instead
           return entry;
@@ -698,6 +861,20 @@ export default function ApplicationClient() {
   // Derived from the employer date ranges — each detected gap gets its own
   // required explanation, keyed "from|to" so entries survive re-detection.
   const detectedGaps = detectGaps(app.employment);
+  // v6: computed guidance dates for the employment step, at render time.
+  const nowMi = currentMonthIndex();
+  // v6 "Ready to sign?" checklist: run the pure collectors for the data steps
+  // against current state. The signature/submit UI stays hidden until empty.
+  const reviewIssues =
+    step === STEPS.length - 1
+      ? [0, 1, 2, 4].flatMap((s) =>
+          Object.entries(collectStepErrors(s)).map(([key, message]) => ({
+            step: s,
+            key,
+            message,
+          }))
+        )
+      : [];
 
   return (
     <div className="bg-white text-black">
@@ -927,14 +1104,14 @@ export default function ApplicationClient() {
                     maxLength={12}
                   />
                 </Field>
-                <Field id="sinceYear" label="Living here since (year)">
+                <Field id="addrSince" label="Living here since (month)" error={errors.addrSince}>
                   <TextInput
-                    id="sinceYear"
-                    inputMode="numeric"
-                    value={per.currentAddress.sinceYear}
-                    onChange={(e) => set("personal.currentAddress.sinceYear", e.target.value)}
-                    maxLength={4}
-                    placeholder="e.g. 2023"
+                    id="addrSince"
+                    type="month"
+                    value={per.currentAddress.since}
+                    onChange={(e) => set("personal.currentAddress.since", e.target.value)}
+                    error={errors.addrSince}
+                    placeholder="YYYY-MM"
                   />
                 </Field>
               </div>
@@ -979,15 +1156,44 @@ export default function ApplicationClient() {
                       maxLength={12}
                     />
                   </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label htmlFor={`pa-from-${i}`} className="block text-sm text-gray-600 mb-1">
+                        Lived here from
+                      </label>
+                      <TextInput
+                        id={`pa-from-${i}`}
+                        type="month"
+                        value={a.from}
+                        onChange={(e) => setListItem("personal.previousAddresses", i, "from", e.target.value)}
+                        placeholder="YYYY-MM"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`pa-to-${i}`} className="block text-sm text-gray-600 mb-1">
+                        To
+                      </label>
+                      <TextInput
+                        id={`pa-to-${i}`}
+                        type="month"
+                        value={a.to}
+                        onChange={(e) => setListItem("personal.previousAddresses", i, "to", e.target.value)}
+                        placeholder="YYYY-MM"
+                      />
+                    </div>
+                  </div>
                   {errors[`prevAddr${i}`] && <p className={errCls}>{errors[`prevAddr${i}`]}</p>}
                 </div>
               ))}
               <AddButton
-                onClick={() =>
-                  addListItem("personal.previousAddresses", { street: "", city: "", state: "", zip: "" })
-                }
+                onClick={() => addListItem("personal.previousAddresses", { ...EMPTY_PREV_ADDRESS })}
                 label="Add previous address"
               />
+              {errors.addrCoverage && (
+                <p role="alert" className={errCls}>
+                  {errors.addrCoverage}
+                </p>
+              )}
             </>
           )}
 
@@ -1035,12 +1241,69 @@ export default function ApplicationClient() {
                   error={errors.licExp}
                 />
               </Field>
-              <Field id="endorsements" label="Endorsements (optional)" hint="e.g. Tanker (N), Hazmat (H)">
+              {/* v6: endorsement checkboxes — "None" is mutually exclusive
+                  with the letter codes (handled by toggleEndorsement). */}
+              <fieldset>
+                <legend className={labelCls}>Endorsements (as shown on your CDL)</legend>
+                <div className="flex flex-wrap gap-2">
+                  {ENDORSEMENTS.map((en) => (
+                    <label
+                      key={en.code}
+                      className={`flex items-center gap-2 text-sm border rounded-lg px-3 py-2 cursor-pointer ${
+                        lic.endorsementCodes.includes(en.code)
+                          ? "border-black bg-gray-50"
+                          : "border-gray-300"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={lic.endorsementCodes.includes(en.code)}
+                        onChange={() =>
+                          set(
+                            "license.endorsementCodes",
+                            toggleEndorsement(lic.endorsementCodes, en.code)
+                          )
+                        }
+                        className="h-4 w-4 accent-black"
+                      />
+                      {en.code} ({en.label})
+                    </label>
+                  ))}
+                  <label
+                    className={`flex items-center gap-2 text-sm border rounded-lg px-3 py-2 cursor-pointer ${
+                      lic.endorsementCodes.includes(NONE_CODE)
+                        ? "border-black bg-gray-50"
+                        : "border-gray-300"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={lic.endorsementCodes.includes(NONE_CODE)}
+                      onChange={() =>
+                        set(
+                          "license.endorsementCodes",
+                          toggleEndorsement(lic.endorsementCodes, NONE_CODE)
+                        )
+                      }
+                      className="h-4 w-4 accent-black"
+                      aria-invalid={errors.endorsements ? true : undefined}
+                    />
+                    None
+                  </label>
+                </div>
+                {errors.endorsements && <p className={errCls}>{errors.endorsements}</p>}
+              </fieldset>
+              <Field
+                id="restrictions"
+                label="Restrictions (as shown on your CDL — or 'None')"
+                error={errors.restrictions}
+              >
                 <TextInput
-                  id="endorsements"
-                  value={lic.endorsements}
-                  onChange={(e) => set("license.endorsements", e.target.value)}
-                  maxLength={120}
+                  id="restrictions"
+                  value={lic.restrictions}
+                  onChange={(e) => set("license.restrictions", e.target.value)}
+                  error={errors.restrictions}
+                  maxLength={80}
                 />
               </Field>
 
@@ -1342,10 +1605,11 @@ export default function ApplicationClient() {
                   making them available, we may treat the request as waived.
                 </p>
               </div>
+              {/* v6: guidance with computed dates, evaluated at render. */}
               <p className="text-sm text-gray-600">
-                Most recent first. List every job — driving or not — for the past 3 years, plus
-                every CMV-driving job in the 7 years before that. DOT applications for CDL
-                positions must cover the last 10 years.
+                List every employer for the last 3 years (since {formatMonthIndex(nowMi - 36)}).
+                Because this is a CDL position, also list every employer you drove a commercial
+                motor vehicle for in the 7 years before that (back to {formatMonthIndex(nowMi - 120)}).
               </p>
               {app.position === "owner-operator-flatbed" && (
                 <p className="text-sm text-gray-600">
@@ -1398,14 +1662,22 @@ export default function ApplicationClient() {
                       maxLength={100}
                       aria-label="Employer city"
                     />
-                    <TextInput
+                    {/* v6: select storing the 2-letter code (or the Other
+                        (non-US) literal, which relaxes the ZIP rule). */}
+                    <select
                       id={`emp-state-${i}`}
                       value={x.state}
                       onChange={(e) => setListItem("employment", i, "state", e.target.value)}
-                      placeholder="State"
-                      maxLength={40}
                       aria-label="Employer state"
-                    />
+                      className={inputCls}
+                    >
+                      <option value="">State…</option>
+                      {US_STATES.map((s) => (
+                        <option key={s.code} value={s.code}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
                     <TextInput
                       id={`emp-zip-${i}`}
                       inputMode="numeric"
@@ -1497,8 +1769,73 @@ export default function ApplicationClient() {
                       This was my own company (self-employed / own authority)
                     </label>
                   </div>
+                  {/* v6: optional company USDOT for FMCSR-regulated employers
+                      (the self-employed block below has its own required
+                      field on the same key). */}
+                  {x.fmcsrSubject && !x.selfEmployed && (
+                    <Field id={`emp-usdot-${i}`} label="Company USDOT number (optional)">
+                      <TextInput
+                        id={`emp-usdot-${i}`}
+                        inputMode="numeric"
+                        value={x.usdotNumber}
+                        onChange={(e) => setListItem("employment", i, "usdotNumber", e.target.value)}
+                        maxLength={12}
+                      />
+                    </Field>
+                  )}
                   {x.selfEmployed && (
                     <div className="space-y-3">
+                      <Field id={`emp-usdot-${i}`} label="Your company's USDOT number">
+                        <TextInput
+                          id={`emp-usdot-${i}`}
+                          inputMode="numeric"
+                          value={x.usdotNumber}
+                          onChange={(e) => setListItem("employment", i, "usdotNumber", e.target.value)}
+                          maxLength={12}
+                        />
+                      </Field>
+                      <Field
+                        id={`emp-mc-${i}`}
+                        label="MC number (optional)"
+                        hint="if you had for-hire authority"
+                      >
+                        <TextInput
+                          id={`emp-mc-${i}`}
+                          value={x.mcNumber}
+                          onChange={(e) => setListItem("employment", i, "mcNumber", e.target.value)}
+                          maxLength={12}
+                        />
+                      </Field>
+                      <fieldset>
+                        <legend className={labelCls}>Authority status today</legend>
+                        <div
+                          className="flex gap-6"
+                          role="radiogroup"
+                          aria-label="Authority status today"
+                        >
+                          {[
+                            { v: "active", label: "Active" },
+                            { v: "inactive", label: "Inactive" },
+                            { v: "revoked", label: "Revoked" },
+                          ].map((o) => (
+                            <label
+                              key={o.v}
+                              className="flex items-center gap-2 text-sm cursor-pointer"
+                            >
+                              <input
+                                type="radio"
+                                name={`emp-authority-${i}`}
+                                checked={x.authorityStatus === o.v}
+                                onChange={() =>
+                                  setListItem("employment", i, "authorityStatus", o.v)
+                                }
+                                className="h-4 w-4 accent-black"
+                              />
+                              {o.label}
+                            </label>
+                          ))}
+                        </div>
+                      </fieldset>
                       <Field
                         id={`emp-tpa-${i}`}
                         label="Random-pool consortium / TPA (for this self-employed period)"
@@ -1511,14 +1848,53 @@ export default function ApplicationClient() {
                           maxLength={150}
                         />
                       </Field>
-                      <Field id={`emp-usdot-${i}`} label="Your company's USDOT number (optional)">
+                      <Field id={`emp-tpa-phone-${i}`} label="Consortium/TPA phone">
                         <TextInput
-                          id={`emp-usdot-${i}`}
-                          value={x.usdotNumber}
-                          onChange={(e) => setListItem("employment", i, "usdotNumber", e.target.value)}
-                          maxLength={20}
+                          id={`emp-tpa-phone-${i}`}
+                          type="tel"
+                          inputMode="tel"
+                          value={x.tpaPhone}
+                          onChange={(e) => setListItem("employment", i, "tpaPhone", e.target.value)}
+                          maxLength={32}
                         />
                       </Field>
+                      <fieldset>
+                        <legend className={labelCls}>
+                          During this period, were you ever leased to another motor carrier?
+                        </legend>
+                        <div
+                          className="flex gap-6"
+                          role="radiogroup"
+                          aria-label="Leased to another motor carrier during this period"
+                        >
+                          {[
+                            { v: true, label: "Yes" },
+                            { v: false, label: "No" },
+                          ].map((o) => (
+                            <label
+                              key={String(o.v)}
+                              className="flex items-center gap-2 text-sm cursor-pointer"
+                            >
+                              <input
+                                type="radio"
+                                name={`emp-leased-${i}`}
+                                checked={x.leasedDuringPeriod === o.v}
+                                onChange={() =>
+                                  setListItem("employment", i, "leasedDuringPeriod", o.v)
+                                }
+                                className="h-4 w-4 accent-black"
+                              />
+                              {o.label}
+                            </label>
+                          ))}
+                        </div>
+                        {x.leasedDuringPeriod === true && (
+                          <p className="mt-2 text-sm text-gray-600">
+                            Leased periods: that carrier is a DOT-regulated previous employer —
+                            add it as its own employer entry with the dates you were leased.
+                          </p>
+                        )}
+                      </fieldset>
                     </div>
                   )}
                   {errors[`emp${i}`] && <p className={errCls}>{errors[`emp${i}`]}</p>}
@@ -1844,6 +2220,42 @@ export default function ApplicationClient() {
                 <p className="text-gray-600 pt-1">Use Back to correct anything before signing.</p>
               </div>
 
+              {/* v6 "Ready to sign?" checklist — the pure collectors run
+                  against current data; the signature/submit UI appears only
+                  when every earlier step passes. */}
+              {reviewIssues.length > 0 && (
+                <div className="border border-amber-300 bg-amber-50 rounded-xl p-4 space-y-3">
+                  <p className="font-bold">Ready to sign? Not yet — a few things need fixing:</p>
+                  <ul className="space-y-2">
+                    {reviewIssues.map((iss) => {
+                      const label = issueLabel(iss.key);
+                      return (
+                        <li
+                          key={`${iss.step}-${iss.key}`}
+                          className="flex items-start justify-between gap-3 text-sm"
+                        >
+                          <span>
+                            <span className="font-semibold">{STEPS[iss.step]}</span>
+                            {label ? ` · ${label}` : ""}: {iss.message}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => setStep(iss.step)}
+                            className="shrink-0 border border-black rounded-lg px-3 py-1 text-sm font-semibold hover:bg-black hover:text-white transition-colors"
+                          >
+                            Fix
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                  <p className="text-sm text-gray-600">
+                    The signature unlocks once everything above is resolved.
+                  </p>
+                </div>
+              )}
+
+              {reviewIssues.length === 0 && (
               <div className="border border-black rounded-xl p-4 md:p-6 space-y-4">
                 <p className="text-sm leading-relaxed">
                   This certifies that this application was completed by me, and that all entries on it
@@ -1878,8 +2290,9 @@ export default function ApplicationClient() {
                 </label>
                 {errors.esignConsent && <p className={errCls}>{errors.esignConsent}</p>}
               </div>
+              )}
 
-              {turnstileEnabled && (
+              {reviewIssues.length === 0 && turnstileEnabled && (
                 <div className="flex justify-center">
                   <div ref={widgetRef} />
                 </div>
@@ -1918,14 +2331,17 @@ export default function ApplicationClient() {
                 Next
               </button>
             ) : (
-              <button
-                type="button"
-                onClick={submit}
-                disabled={status === "sending" || (turnstileEnabled && !token)}
-                className="flex-1 bg-black text-white px-6 py-4 text-lg font-bold rounded-2xl border border-black disabled:opacity-60 disabled:cursor-not-allowed"
-              >
-                {status === "sending" ? "Submitting…" : "Submit Application"}
-              </button>
+              // Hidden while the "Ready to sign?" checklist has open items.
+              reviewIssues.length === 0 && (
+                <button
+                  type="button"
+                  onClick={submit}
+                  disabled={status === "sending" || (turnstileEnabled && !token)}
+                  className="flex-1 bg-black text-white px-6 py-4 text-lg font-bold rounded-2xl border border-black disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {status === "sending" ? "Submitting…" : "Submit Application"}
+                </button>
+              )
             )}
           </div>
           <p className="text-center text-sm text-gray-600">
