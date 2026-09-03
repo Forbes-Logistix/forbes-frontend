@@ -140,6 +140,33 @@ export function formatEndorsements(codes) {
     .join(", ");
 }
 
+// Draft-restore normalization for a stored v6 endorsementCodes array
+// (tampered/hand-edited drafts bypass toggleEndorsement): keep only known
+// codes (letters + NONE), dedupe, drop NONE when any letter code is present,
+// and return the letters in canonical H/N/T/P/S/X order.
+export function normalizeEndorsementCodes(codes) {
+  const list = Array.isArray(codes) ? codes : [];
+  const seen = new Set();
+  for (const c of list) {
+    if (c === NONE_CODE || ENDORSEMENT_ORDER.includes(c)) seen.add(c);
+  }
+  const letters = ENDORSEMENT_ORDER.filter((c) => seen.has(c));
+  if (letters.length) return letters;
+  return seen.has(NONE_CODE) ? [NONE_CODE] : [];
+}
+
+// Sanity check for an endorsementCodes selection, mirroring the backend's
+// acceptance rule: an array of known codes only, no duplicates, and NONE
+// mutually exclusive with the letter codes. Order-agnostic; an empty array
+// passes (the "select at least one" rule is separate).
+export function endorsementCodesValid(codes) {
+  if (!Array.isArray(codes)) return false;
+  if (codes.some((c) => c !== NONE_CODE && !ENDORSEMENT_ORDER.includes(c))) return false;
+  if (new Set(codes).size !== codes.length) return false;
+  if (codes.includes(NONE_CODE) && codes.length > 1) return false;
+  return true;
+}
+
 // Draft-restore parse of a pre-v6 free-text endorsements value: standalone
 // known letters (any casing, e.g. "Tanker (N), Hazmat (H)") become codes in
 // canonical order; "none"/empty/unrecognized -> [] — NOT ["NONE"], so the

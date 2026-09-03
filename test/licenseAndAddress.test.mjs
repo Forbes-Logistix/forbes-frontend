@@ -15,6 +15,8 @@ import {
   NONE_CODE,
   toggleEndorsement,
   formatEndorsements,
+  normalizeEndorsementCodes,
+  endorsementCodesValid,
   parseLegacyEndorsements,
   firstResidenceGap,
   residenceCoverageError,
@@ -104,6 +106,67 @@ test("formatEndorsements matches the PDF rendering", () => {
   assert.equal(formatEndorsements([NONE_CODE]), "None");
   assert.equal(formatEndorsements([]), "None");
   assert.equal(formatEndorsements(null), "None");
+});
+
+test("normalizeEndorsementCodes keeps known codes in canonical order", () => {
+  assert.deepEqual(normalizeEndorsementCodes(["X", "H"]), ["H", "X"]);
+  assert.deepEqual(normalizeEndorsementCodes(["H", "N", "T", "P", "S", "X"]), [
+    "H",
+    "N",
+    "T",
+    "P",
+    "S",
+    "X",
+  ]);
+  assert.deepEqual(normalizeEndorsementCodes([NONE_CODE]), [NONE_CODE]);
+  assert.deepEqual(normalizeEndorsementCodes([]), []);
+});
+
+test("normalizeEndorsementCodes drops unknown codes and dedupes", () => {
+  assert.deepEqual(normalizeEndorsementCodes(["H", "Z", "H", "banana"]), ["H"]);
+  assert.deepEqual(normalizeEndorsementCodes(["h", "x"]), []); // case-sensitive codes
+  assert.deepEqual(normalizeEndorsementCodes([NONE_CODE, NONE_CODE]), [NONE_CODE]);
+  assert.deepEqual(normalizeEndorsementCodes(["ZZ", 7, null]), []);
+});
+
+test("normalizeEndorsementCodes drops NONE when any letter code is present", () => {
+  assert.deepEqual(normalizeEndorsementCodes([NONE_CODE, "H"]), ["H"]);
+  assert.deepEqual(normalizeEndorsementCodes(["X", NONE_CODE, "N"]), ["N", "X"]);
+});
+
+test("normalizeEndorsementCodes handles non-array input defensively", () => {
+  assert.deepEqual(normalizeEndorsementCodes(null), []);
+  assert.deepEqual(normalizeEndorsementCodes("H,N"), []);
+  assert.deepEqual(normalizeEndorsementCodes(undefined), []);
+});
+
+test("endorsementCodesValid accepts known, deduped, None-exclusive selections", () => {
+  assert.ok(endorsementCodesValid(["H", "X"]));
+  assert.ok(endorsementCodesValid(["X", "H"])); // order-agnostic
+  assert.ok(endorsementCodesValid([NONE_CODE]));
+  assert.ok(endorsementCodesValid([])); // emptiness is a separate rule
+});
+
+test("endorsementCodesValid rejects what the backend rejects", () => {
+  assert.ok(!endorsementCodesValid(["H", "Z"])); // unknown code
+  assert.ok(!endorsementCodesValid(["H", "H"])); // duplicate
+  assert.ok(!endorsementCodesValid([NONE_CODE, NONE_CODE])); // duplicate NONE
+  assert.ok(!endorsementCodesValid([NONE_CODE, "H"])); // None not exclusive
+  assert.ok(!endorsementCodesValid(["h"])); // codes are case-sensitive
+  assert.ok(!endorsementCodesValid("H")); // non-array
+});
+
+test("normalized endorsement codes always pass the validity rule", () => {
+  const inputs = [
+    ["X", "H", "H", NONE_CODE, "junk"],
+    [NONE_CODE, NONE_CODE],
+    ["h", "Z"],
+    null,
+    [],
+  ];
+  for (const input of inputs) {
+    assert.ok(endorsementCodesValid(normalizeEndorsementCodes(input)));
+  }
 });
 
 test("parseLegacyEndorsements extracts standalone known letters", () => {

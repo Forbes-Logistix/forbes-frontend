@@ -24,6 +24,8 @@ import {
   ENDORSEMENTS,
   NONE_CODE,
   toggleEndorsement,
+  normalizeEndorsementCodes,
+  endorsementCodesValid,
   parseLegacyEndorsements,
   firstResidenceGap,
   residenceCoverageError,
@@ -418,9 +420,7 @@ export default function ApplicationClient() {
           merged.license = { ...EMPTY.license, ...draftLicense };
           merged.license.endorsementCodes = isPreV6Draft
             ? parseLegacyEndorsements(draftLicense.endorsements)
-            : draftLicense.endorsementCodes.filter(
-                (c) => c === NONE_CODE || ENDORSEMENTS.some((x) => x.code === c)
-              );
+            : normalizeEndorsementCodes(draftLicense.endorsementCodes);
           delete merged.license.endorsements;
           if (typeof merged.license.restrictions !== "string") merged.license.restrictions = "";
           merged.experience = (Array.isArray(merged.experience) ? merged.experience : []).map(
@@ -444,6 +444,11 @@ export default function ApplicationClient() {
               // (non-US) literal) — legacy free-text values are mapped when
               // possible, else cleared for re-entry.
               entry.state = normalizeStateValue(entry.state);
+              // Tampered/hand-edited drafts bypass the inputs' maxLength —
+              // cap the stored identifiers the way the fields do (mirrors
+              // the backend's 12-char limits).
+              entry.usdotNumber = String(entry.usdotNumber ?? "").slice(0, 12);
+              entry.mcNumber = String(entry.mcNumber ?? "").slice(0, 12);
               if (typeof entry.leasedDuringPeriod !== "boolean") entry.leasedDuringPeriod = null;
               if (!["active", "inactive", "revoked"].includes(entry.authorityStatus))
                 entry.authorityStatus = "";
@@ -552,7 +557,13 @@ export default function ApplicationClient() {
       if (!ca.city.trim()) e.city = "Required";
       if (!ca.state.trim()) e.state = "Required";
       if (!ca.zip.trim()) e.zip = "Required";
-      if (monthIndex(ca.since) === null) e.addrSince = "Required";
+      // Address months can't be in the future — field-scoped, and checked
+      // BEFORE the coverage rule so a future date gets its own message
+      // (the sentence is byte-identical in the backend).
+      const nowIdx = currentMonthIndex();
+      const sinceIdx = monthIndex(ca.since);
+      if (sinceIdx === null) e.addrSince = "Required";
+      else if (sinceIdx > nowIdx) e.addrSince = "Address dates can't be in the future.";
       app.personal.previousAddresses.forEach((a, i) => {
         const fromIdx = monthIndex(a.from);
         const toIdx = monthIndex(a.to);
@@ -560,6 +571,8 @@ export default function ApplicationClient() {
           e[`prevAddr${i}`] = "Complete this address or remove it";
         else if (fromIdx === null || toIdx === null || toIdx < fromIdx)
           e[`prevAddr${i}`] = "Dates must be real months, and From must come before To.";
+        else if (fromIdx > nowIdx || toIdx > nowIdx)
+          e[`prevAddr${i}`] = "Address dates can't be in the future.";
       });
       // v6 coverage rule (mirrored in the backend): merged address intervals
       // must cover the last 36 months — no per-gap explanations, just the
@@ -573,6 +586,11 @@ export default function ApplicationClient() {
       if (!app.license.expiration) e.licExp = "Required";
       if (!app.license.endorsementCodes.length)
         e.endorsements = "Select your endorsement(s) — or check 'None'";
+      // Backend-mirrored sanity rule (known codes, no duplicates, 'None'
+      // exclusive) — only reachable via a tampered draft, but it keeps the
+      // Ready-to-sign checklist from passing a payload the backend rejects.
+      else if (!endorsementCodesValid(app.license.endorsementCodes))
+        e.endorsements = "Your endorsement selection is invalid — please re-select.";
       if (!app.license.restrictions.trim())
         e.restrictions = "Required — enter 'None' if your CDL shows none";
       if (app.license.everDeniedRevokedSuspended && !app.license.deniedExplanation.trim())
@@ -637,8 +655,13 @@ export default function ApplicationClient() {
           e[`emp${i}`] = "ZIP must be 5 digits (or ZIP+4, like 39209-1234).";
         else if (x.selfEmployed && !USDOT_RE.test(usdot))
           e[`emp${i}`] = "Your company's USDOT number is required — digits only.";
-        else if (!x.selfEmployed && usdot && !USDOT_RE.test(usdot))
+        // The optional company-USDOT field is only rendered for FMCSR-subject,
+        // non-self-employed entries — the format rule matches its visibility
+        // (a hidden value can't block the driver with no field to fix).
+        else if (x.fmcsrSubject && !x.selfEmployed && usdot && !USDOT_RE.test(usdot))
           e[`emp${i}`] = "USDOT number must be digits only.";
+        else if (String(x.mcNumber ?? "").trim().length > 12)
+          e[`emp${i}`] = "MC number must be 12 characters or fewer.";
         else if (
           x.selfEmployed &&
           !["active", "inactive", "revoked"].includes(x.authorityStatus)
@@ -1185,10 +1208,12 @@ export default function ApplicationClient() {
                   {errors[`prevAddr${i}`] && <p className={errCls}>{errors[`prevAddr${i}`]}</p>}
                 </div>
               ))}
-              <AddButton
-                onClick={() => addListItem("personal.previousAddresses", { ...EMPTY_PREV_ADDRESS })}
-                label="Add previous address"
-              />
+              {per.previousAddresses.length < 12 && (
+                <AddButton
+                  onClick={() => addListItem("personal.previousAddresses", { ...EMPTY_PREV_ADDRESS })}
+                  label="Add previous address"
+                />
+              )}
               {errors.addrCoverage && (
                 <p role="alert" className={errCls}>
                   {errors.addrCoverage}
@@ -1745,7 +1770,22 @@ export default function ApplicationClient() {
                       <input
                         type="checkbox"
                         checked={x.fmcsrSubject}
-                        onChange={(e) => setListItem("employment", i, "fmcsrSubject", e.target.checked)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          // One atomic update (same pattern as the
+                          // noMiddleName clear): unchecking FMCSR on a
+                          // non-self-employed entry hides the optional
+                          // company USDOT field, so its value is cleared
+                          // too — a hidden leftover could otherwise fail
+                          // validation with no visible field to fix.
+                          setApp((prev) => {
+                            const next = structuredClone(prev);
+                            const entry = next.employment[i];
+                            entry.fmcsrSubject = checked;
+                            if (!checked && !entry.selfEmployed) entry.usdotNumber = "";
+                            return next;
+                          });
+                        }}
                         className="h-4 w-4 accent-black"
                       />
                       This job was subject to federal motor carrier safety regulations (FMCSRs)
