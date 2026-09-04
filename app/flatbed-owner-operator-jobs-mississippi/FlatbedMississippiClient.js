@@ -98,8 +98,9 @@ export default function FlatbedMississippiClient() {
             Bring a tractor only, or a tractor and trailer. The freight is flatbed and
             open-deck, running the Southeast and Texas out of our Jackson, MS
             terminal. You need a valid Class A CDL and at least 1 year of verifiable OTR
-            experience. To apply, call {RECRUITING_PHONE_DISPLAY} or use the quick-apply
-            form on this page. Apply before 4 PM CT and we&apos;ll call you back today.
+            experience.{" "}
+            {`To apply, call ${RECRUITING_PHONE_DISPLAY} or use the quick-apply form on this page.`}{" "}
+            Apply before 4 PM CT and we&apos;ll call you back today.
           </p>
         </div>
       </section>
@@ -242,8 +243,8 @@ export default function FlatbedMississippiClient() {
             <div className="space-y-4 text-lg md:text-xl text-white/85 max-w-3xl">
               <p>
                 Forbes Logistix is a Marine Corps veteran-owned, driver-founded carrier
-                headquartered in Jackson, Mississippi. Founder Chase Forbes drove OTR for
-                8 years before starting the company.
+                headquartered in Jackson, Mississippi. Founder Chase Forbes spent 8 years
+                in trucking, two of them behind the wheel, before starting the company.
               </p>
               <p>
                 Look us up on the FMCSA carrier search before you call:{" "}

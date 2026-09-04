@@ -33,6 +33,7 @@ const NavLink = ({ href, label, pathname }) => {
 const JOB_LINKS = [
   { href: "/careers", label: "Flatbed (Southeast)" },
   { href: "/reefer", label: "Reefer (Dallas)", isNew: true },
+  { href: "/flatbed-owner-operator-jobs-mississippi", label: "Owner-Operators" },
 ];
 
 const Navbar = () => {
