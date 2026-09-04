@@ -202,7 +202,7 @@ export default function CareersClient() {
               Frequently asked questions
             </h2>
 
-            {/* Native <details>/<summary> for accessibility — keyboard-navigable
+            {/* Native <details>/<summary> for accessibility: keyboard-navigable
                 and screen-reader-friendly out of the box. The marker ::marker
                 pseudo is restyled per-item below to fit the brand. */}
             <ul className="space-y-3">
@@ -368,8 +368,21 @@ export default function CareersClient() {
                 </div>
               </div>
 
+              <p className="text-base md:text-lg text-white/75 mb-4 max-w-2xl">
+                Forbes Logistix contracts flatbed owner-operators based in Mississippi and
+                across the Southeast. Talk to recruiting about equipment standards and
+                onboarding.
+              </p>
+
               <p className="text-base md:text-lg text-white/75 mb-8 max-w-2xl">
-                Talk to recruiting about equipment standards and onboarding.
+                Based in Mississippi? See our{" "}
+                <Link
+                  href="/flatbed-owner-operator-jobs-mississippi"
+                  className="underline underline-offset-4 font-semibold hover:text-white"
+                >
+                  flatbed owner-operator page
+                </Link>
+                .
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4">

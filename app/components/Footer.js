@@ -20,6 +20,7 @@ const Footer = () => {
           <Link href="/operations" className={NAV_LINK}>Operations</Link>
           <Link href="/careers" className={NAV_LINK}>Flatbed Jobs</Link>
           <Link href="/reefer" className={NAV_LINK}>Reefer Jobs (Dallas)</Link>
+          <Link href="/flatbed-owner-operator-jobs-mississippi" className={NAV_LINK}>Owner-Operator Jobs (Mississippi)</Link>
           <Link href="/contact" className={NAV_LINK}>Contact</Link>
         </nav>
 
@@ -32,7 +33,7 @@ const Footer = () => {
           &copy; {new Date().getFullYear()} Forbes Logistix, LLC. All rights reserved.
         </p>
 
-        {/* Drivers vet carriers on FMCSA — publishing the numbers saves them
+        {/* Drivers vet carriers on FMCSA: publishing the numbers saves them
             the hunt and signals we have nothing to hide. Verified against
             SAFER 2026-06-11. */}
         <p className="text-xs text-gray-700 font-medium">
