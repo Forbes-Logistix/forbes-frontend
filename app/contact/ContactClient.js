@@ -178,7 +178,7 @@ export default function ContactClient() {
               Talk to the people running the trucks.
             </h1>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto">
-              Company drivers and owner-operators &mdash; reach Forbes Logistix recruiting directly.
+              Company drivers and owner-operators: reach Forbes Logistix recruiting directly.
             </p>
           </div>
 
@@ -365,7 +365,7 @@ export default function ContactClient() {
 
             {s === "ok" && (
               <p role="status" className="text-green-700 font-medium text-center">
-                Thanks &mdash; your message was sent.
+                Thanks. Your message was sent.
               </p>
             )}
             {s === "err" && (

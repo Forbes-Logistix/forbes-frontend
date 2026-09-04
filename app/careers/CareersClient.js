@@ -64,7 +64,7 @@ export default function CareersClient() {
             transition={{ duration: 0.8 }}
             className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4"
           >
-            Flatbed seats. Real pay. Real home time.
+            Flatbed seats with real pay and real home time.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -177,7 +177,7 @@ export default function CareersClient() {
             <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4">
               <Requirement icon={IdCard}>Valid Class A CDL, at least 23 years old</Requirement>
               <Requirement icon={BriefcaseBusiness}>At least 1 year of verifiable OTR experience</Requirement>
-              <Requirement icon={ShieldAlert}>Clean MVR &mdash; no major violations</Requirement>
+              <Requirement icon={ShieldAlert}>Clean MVR: no major violations</Requirement>
               <Requirement icon={TestTubeDiagonal}>Pass DOT physical and drug screen</Requirement>
               <Requirement icon={HeartPulse}>Current DOT medical card</Requirement>
               <Requirement icon={PackageCheck}>Comfortable with tarping and load securement</Requirement>
@@ -355,7 +355,7 @@ export default function CareersClient() {
                 <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
                   <h3 className="font-bold text-lg mb-2">You run the truck</h3>
                   <p className="text-white/75 leading-relaxed">
-                    Your tractor, your business — fuel, insurance, plates, and maintenance are yours.
+                    Your tractor, your business: fuel, insurance, plates, and maintenance are yours.
                     You keep 90% because you carry the iron.
                   </p>
                 </div>
@@ -363,7 +363,7 @@ export default function CareersClient() {
                   <h3 className="font-bold text-lg mb-2">We keep it loaded</h3>
                   <p className="text-white/75 leading-relaxed">
                     Load sourcing, billing, dispatch, and weekly settlements are on us.
-                    That&apos;s what the 10% buys — you drive, we handle the back office.
+                    That&apos;s what the 10% buys: you drive, we handle the back office.
                   </p>
                 </div>
               </div>
@@ -398,7 +398,7 @@ export default function CareersClient() {
             New Division
           </p>
           <h2 className="text-2xl md:text-4xl font-extrabold tracking-tight mb-4">
-            Dedicated reefer out of Dallas &mdash; hiring now.
+            Dedicated reefer out of Dallas, hiring now.
           </h2>
           <Link
             href="/reefer"

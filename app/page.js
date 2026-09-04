@@ -215,7 +215,7 @@ export default function HomePage() {
           <div className="grid md:grid-cols-2 gap-6 md:gap-8">
             <AudienceCard
               title="Company Drivers"
-              blurb="W-2 flatbed seat. Real pay, real home time, tarp pay, modern trucks."
+              blurb="W-2 flatbed seat. Real pay, home time, tarp pay, modern trucks."
               targetId="company-drivers"
             />
             <AudienceCard
@@ -225,11 +225,11 @@ export default function HomePage() {
             />
           </div>
           <p className="text-center text-gray-600 mt-8 text-base md:text-lg">
-            New division:{" "}
+            {"New division: "}
             <Link href="/reefer" className="underline underline-offset-4 font-semibold text-black hover:opacity-80">
               dedicated reefer out of Dallas
-            </Link>{" "}
-            &mdash; hiring now.
+            </Link>
+            {", hiring now."}
           </p>
         </div>
       </section>
@@ -264,7 +264,7 @@ export default function HomePage() {
                 <OfferBullet icon={HeartPulse}>Health insurance</OfferBullet>
                 <OfferBullet icon={ShieldCheck}>Annual safety bonuses</OfferBullet>
                 <OfferBullet icon={House}>Home weekends</OfferBullet>
-                <OfferBullet icon={Truck}>Small-company feel. Big-company professionalism.</OfferBullet>
+                <OfferBullet icon={Truck}>A small company that runs professionally.</OfferBullet>
               </ul>
 
               <div className="flex flex-col sm:flex-row gap-4">
@@ -406,14 +406,14 @@ export default function HomePage() {
             className="border-l-4 border-white pl-8 md:pl-12"
           >
             <p className="text-2xl md:text-4xl font-semibold leading-snug tracking-tight mb-6">
-              After 8 years in trucking, I started Forbes Logistix to create a better company &mdash;
+              After 8 years in trucking, I started Forbes Logistix to create a better company:
               one where drivers are paid fairly, respected, and never left in the dark.
             </p>
             <p className="text-3xl md:text-5xl font-extrabold tracking-tight mb-8">
               I&apos;ve been in your seat.
             </p>
             <footer className="text-base md:text-lg uppercase tracking-widest text-white/70 font-bold">
-              &mdash; Chase Forbes, Founder
+              Chase Forbes, Founder
             </footer>
           </motion.blockquote>
         </div>
@@ -422,7 +422,7 @@ export default function HomePage() {
       {/* ---------- RECRUITING CTA STRIP ---------- */}
       <section className="relative z-20 bg-white py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Ready to roll?</h2>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Apply today.</h2>
           <p className="text-lg text-gray-600 mb-10">Three ways to start the conversation.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

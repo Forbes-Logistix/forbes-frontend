@@ -46,7 +46,7 @@ const COMPANY_DRIVER_DESCRIPTION = `
 <ul>
   <li>Valid Class A CDL, at least 23 years old</li>
   <li>At least 1 year of verifiable OTR experience</li>
-  <li>Clean MVR &mdash; no major violations</li>
+  <li>Clean MVR: no major violations</li>
   <li>Pass DOT physical and drug screen</li>
   <li>Current DOT medical card</li>
   <li>Comfortable with tarping and load securement</li>
@@ -63,7 +63,7 @@ const OWNER_OPERATOR_DESCRIPTION = `
   <li>Real open-deck freight</li>
   <li>Direct communication with dispatch</li>
 </ul>
-<p>You run the truck and cover its costs — fuel, insurance, plates, maintenance. We keep it loaded: load sourcing, billing, dispatch, and weekly settlements are on us.</p>
+<p>You run the truck and cover its costs: fuel, insurance, plates, maintenance. We keep it loaded: load sourcing, billing, dispatch, and weekly settlements are on us.</p>
 <p>Talk to recruiting about equipment standards and onboarding.</p>
 <p>Forbes Logistix is a Marine Corps veteran-owned, driver-founded carrier headquartered in Jackson, Mississippi.</p>
 `.trim();

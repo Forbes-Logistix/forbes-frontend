@@ -56,8 +56,8 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold mt-10">3. Intellectual Property; Limited License</h2>
           <p>
-            All content on the Site &mdash; including text, graphics, logos, photographs, video, audio,
-            user interface designs, software, and the selection and arrangement thereof &mdash; is owned by
+            All content on the Site (including text, graphics, logos, photographs, video, audio,
+            user interface designs, software, and the selection and arrangement thereof) is owned by
             Forbes Logistix or its licensors and is protected by U.S. and international intellectual property
             laws. The names &ldquo;Forbes Logistix&rdquo; and the buffalo mark, together with any related
             logos, are trademarks of Forbes Logistix.
@@ -94,8 +94,8 @@ export default function TermsPage() {
 
           <h2 className="text-2xl font-bold mt-10">7. User Submissions</h2>
           <p>
-            If you submit information through any form on the Site &mdash; including the Quick Apply form, the
-            general contact form, or any inquiry tied to a recruiting or commercial conversation &mdash; you
+            If you submit information through any form on the Site (including the Quick Apply form, the
+            general contact form, or any inquiry tied to a recruiting or commercial conversation), you
             agree that the information you provide is, to your knowledge, truthful, current, and not
             misleading. You authorize Forbes Logistix to use that information to respond to your inquiry,
             evaluate recruiting interest, and otherwise as described in our{" "}

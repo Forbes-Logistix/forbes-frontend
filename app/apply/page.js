@@ -1,12 +1,12 @@
 import QuickApplyForm from "../components/QuickApplyForm";
 
 export const metadata = {
-  title: "Apply — Forbes Logistix",
+  title: "Apply | Forbes Logistix",
   description:
     "Quick three-field driver application. Apply before 4 PM CT and we'll call you back today. Full DOT application is sent after we talk.",
   alternates: { canonical: "https://www.forbeslogistix.com/apply" },
   openGraph: {
-    title: "Apply — Forbes Logistix",
+    title: "Apply | Forbes Logistix",
     description:
       "Quick three-field driver application. Apply before 4 PM CT and we'll call you back today.",
     url: "https://www.forbeslogistix.com/apply",

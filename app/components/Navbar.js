@@ -31,8 +31,8 @@ const NavLink = ({ href, label, pathname }) => {
 // dropdown + grouped mobile section). Single list so the two menus can't
 // drift apart.
 const JOB_LINKS = [
-  { href: "/careers", label: "Flatbed — Southeast" },
-  { href: "/reefer", label: "Reefer — Dallas", isNew: true },
+  { href: "/careers", label: "Flatbed (Southeast)" },
+  { href: "/reefer", label: "Reefer (Dallas)", isNew: true },
 ];
 
 const Navbar = () => {
@@ -73,7 +73,7 @@ const Navbar = () => {
   return (
     <header className="bg-white shadow-md h-28 relative z-50">
       <div className="max-w-screen-xl mx-auto px-6 flex items-center justify-between h-full">
-        <Link href="/" className="flex items-center h-full" aria-label="Forbes Logistix — home">
+        <Link href="/" className="flex items-center h-full" aria-label="Forbes Logistix home">
           {/* Logo asset is square (~800x800) on transparent background. Sizing
               via h-20 keeps it within the 112px-tall header with breathing
               room; w-auto preserves the asset's true aspect ratio so it

@@ -72,26 +72,26 @@ export default function PrivacyPage() {
           <p>We collect the following categories of information:</p>
           <ul className="list-disc ml-6 space-y-2">
             <li>
-              <span className="font-semibold">Contact information</span> &mdash; name, phone number, email
+              <span className="font-semibold">Contact information</span>: name, phone number, email
               address, and similar identifiers you provide when you fill out a form or otherwise contact us.
             </li>
             <li>
-              <span className="font-semibold">Inquiry and applicant information</span> &mdash; information
+              <span className="font-semibold">Inquiry and applicant information</span>: information
               you submit through the Quick Apply form, the general contact form, or any subsequent recruiting
               communication, including years of driving experience and the contents of your messages.
             </li>
             <li>
-              <span className="font-semibold">Device, browser, and usage data</span> &mdash; information
+              <span className="font-semibold">Device, browser, and usage data</span>: information
               automatically collected when you use the Site, such as IP address, browser type, device type,
               referring URL, pages viewed, and timestamps.
             </li>
             <li>
-              <span className="font-semibold">Cookies and analytics data</span> &mdash; we and our service
+              <span className="font-semibold">Cookies and analytics data</span>: we and our service
               providers may use cookies, similar technologies, and analytics tools to understand how the Site
               is used and to improve it.
             </li>
             <li>
-              <span className="font-semibold">Communications data</span> &mdash; records of phone calls,
+              <span className="font-semibold">Communications data</span>: records of phone calls,
               text messages, and emails between you and our recruiting or operations teams, including consent
               and opt-out preferences you give us.
             </li>
@@ -119,21 +119,21 @@ export default function PrivacyPage() {
           <p>We may disclose information in the following categories of circumstances:</p>
           <ul className="list-disc ml-6 space-y-2">
             <li>
-              <span className="font-semibold">Service providers</span> &mdash; hosting providers, email and
+              <span className="font-semibold">Service providers</span>: hosting providers, email and
               communications platforms, analytics tools, and other vendors that process information on our
               behalf, in each case subject to appropriate confidentiality obligations.
             </li>
             <li>
-              <span className="font-semibold">Professional advisors</span> &mdash; lawyers, accountants,
+              <span className="font-semibold">Professional advisors</span>: lawyers, accountants,
               auditors, and similar advisors when reasonably necessary.
             </li>
             <li>
-              <span className="font-semibold">Legal and compliance</span> &mdash; when we reasonably believe
+              <span className="font-semibold">Legal and compliance</span>: when we reasonably believe
               disclosure is required to comply with law, respond to lawful requests, enforce our agreements,
               protect rights, or address security or fraud concerns.
             </li>
             <li>
-              <span className="font-semibold">Business transfers</span> &mdash; in connection with a merger,
+              <span className="font-semibold">Business transfers</span>: in connection with a merger,
               acquisition, reorganization, financing, or sale of assets, subject to applicable law.
             </li>
           </ul>

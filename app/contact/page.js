@@ -32,7 +32,7 @@ export const metadata = {
 const LOCAL_BUSINESS_SCHEMA = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  name: "Forbes Logistix — Jackson Terminal",
+  name: "Forbes Logistix Jackson Terminal",
   image: `${SITE_URL}/assets/photos/terminal.jpg`,
   address: POSTAL_ADDRESS,
   telephone: TELEPHONE,

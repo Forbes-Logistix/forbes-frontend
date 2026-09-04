@@ -24,13 +24,13 @@ const sections = [
     title: "Open-deck freight",
     Icon: Truck,
     body:
-      "We run flatbeds and step-decks on open-deck loads across the Southeast. Real freight, real lanes, customers who expect drivers who know how to secure a load.",
+      "We run flatbeds and step-decks on open-deck loads across the Southeast. Real freight and real lanes, for customers who expect drivers who know how to secure a load.",
   },
   {
     title: "Home weekends",
     Icon: House,
     body:
-      "Our lanes are built so company drivers can be home weekends. We do not sell flexible scheduling — we plan dispatch around real home time.",
+      "Our lanes are built so company drivers can be home weekends. We do not sell flexible scheduling. We plan dispatch around real home time.",
   },
   {
     title: "Dispatch that picks up the phone",
@@ -124,7 +124,7 @@ export default function OperationsClient() {
               Built around the driver experience.
             </h2>
             <p className="text-lg md:text-xl text-white/85 max-w-2xl">
-              Veteran-owned, asset-based, headquartered in Jackson. Real freight. Real people. Real seats.
+              Veteran-owned, asset-based, headquartered in Jackson, with real freight and open seats.
             </p>
           </div>
         </div>
@@ -136,7 +136,7 @@ export default function OperationsClient() {
           Apply links to /apply since the form isn't embedded here. */}
       <section className="bg-white text-black py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Want this seat?</h2>
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">Take this seat.</h2>
           <p className="text-lg text-gray-600 mb-10">Three ways to reach recruiting.</p>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

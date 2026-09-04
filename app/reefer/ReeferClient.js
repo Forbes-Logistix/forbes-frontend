@@ -85,21 +85,21 @@ export default function ReeferClient() {
               What we can tell you today.
             </h2>
             <p className="text-lg md:text-xl text-gray-700 max-w-2xl mb-10">
-              This division is brand new. Here is everything we can say for certain &mdash;
+              This division is brand new. Here is everything we can say for certain,
               and nothing we can&apos;t.
             </p>
 
             <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4">
-              <Fact icon={IdCard}>W-2 company driver seats &mdash; valid Class A CDL required</Fact>
+              <Fact icon={IdCard}>W-2 company driver seats (valid Class A CDL required)</Fact>
               <Fact icon={Truck}>Dedicated reefer freight</Fact>
               <Fact icon={MapPinned}>Dallas outbound lanes</Fact>
               <Fact icon={CalendarDays}>
                 Seats are <span className="font-bold">open now</span>
               </Fact>
               <Fact icon={Handshake}>
-                Hiring now &mdash; apply today, we&apos;ll talk this week
+                Hiring now: apply today and we&apos;ll talk this week
               </Fact>
-              <Fact icon={Phone}>Direct line to the owner &mdash; no recruiting maze</Fact>
+              <Fact icon={Phone}>Direct line to the owner, no recruiting maze</Fact>
             </ul>
           </motion.div>
         </div>
@@ -168,7 +168,7 @@ export default function ReeferClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  No &mdash; our flatbed fleet runs east of the Mississippi out of Jackson, MS.
+                  No. Our flatbed fleet runs east of the Mississippi out of Jackson, MS.
                   This is a new, separate reefer division running dedicated outbound lanes from
                   Dallas, TX.
                 </div>
@@ -196,7 +196,7 @@ export default function ReeferClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  Right away &mdash; we&apos;re hiring now. If you apply today, we&apos;re
+                  Right away. We&apos;re hiring now. If you apply today, we&apos;re
                   talking this week.
                 </div>
               </details>
