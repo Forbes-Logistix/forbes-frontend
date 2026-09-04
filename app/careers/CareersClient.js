@@ -370,9 +370,10 @@ export default function CareersClient() {
               </div>
 
               <p className="text-base md:text-lg text-white/75 mb-4 max-w-2xl">
-                Forbes Logistix contracts flatbed and open-deck owner-operators based in
-                Mississippi, running the Southeast and Texas. Talk to recruiting about
-                equipment standards and onboarding.
+                Forbes Logistix contracts flatbed and open-deck owner-operators across
+                the Southeast, running Southeast and Texas freight out of Jackson,
+                Mississippi. Talk to recruiting about equipment standards and
+                onboarding.
               </p>
 
               <p className="text-base md:text-lg text-white/75 mb-8 max-w-2xl">

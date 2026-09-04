@@ -61,10 +61,10 @@ export default function FlatbedMississippiClient() {
               Flatbed Owner-Operator Jobs in Mississippi
             </h1>
             <p className="text-lg md:text-2xl text-white/85 max-w-3xl mx-auto mb-8">
-              Forbes Logistix contracts flatbed owner-operators in Mississippi who keep
-              90% of total billed revenue. We are a veteran-owned carrier headquartered
-              in Jackson, we settle every week, and the freight is real open-deck work
-              across the Southeast and Texas.
+              Forbes Logistix contracts flatbed owner-operators in Mississippi and
+              across the Southeast who keep 90% of total billed revenue. We are a
+              veteran-owned carrier headquartered in Jackson, we settle every week, and
+              the freight is real open-deck work across the Southeast and Texas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -359,6 +359,19 @@ export default function FlatbedMississippiClient() {
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
                   No. Come on with just your tractor pulling our trailers, or bring your
                   own tractor and trailer.
+                </div>
+              </details>
+            </li>
+            <li>
+              <details className="group rounded-xl border border-black/10 bg-gray-50 open:bg-white open:shadow-md transition-shadow">
+                <summary className="cursor-pointer list-none flex items-center justify-between gap-4 px-6 py-5 font-semibold text-lg select-none">
+                  Do I have to live in Mississippi?
+                  <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-6 pb-5 text-gray-700 leading-relaxed">
+                  No. We contract flatbed owner-operators across the Southeast. Our
+                  headquarters and terminal are in Jackson, Mississippi, and the
+                  freight runs the Southeast and Texas.
                 </div>
               </details>
             </li>

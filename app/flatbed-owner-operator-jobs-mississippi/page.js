@@ -12,7 +12,7 @@ export const revalidate = 86400;
 // is server-rendered copy, not schema.
 const TITLE = "Flatbed Owner-Operator Jobs in Mississippi | Keep 90% | Forbes Logistix";
 const DESCRIPTION =
-  "Forbes Logistix contracts flatbed owner-operators in Mississippi. Keep 90% of total billed revenue with weekly settlements, running the Southeast and Texas out of our Jackson terminal. Hiring now.";
+  "Forbes Logistix contracts flatbed owner-operators in Mississippi and across the Southeast. Keep 90% of total billed revenue with weekly settlements, running the Southeast and Texas out of our Jackson terminal. Hiring now.";
 
 export const metadata = {
   title: TITLE,
