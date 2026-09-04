@@ -31,7 +31,7 @@ export const ORGANIZATION_SCHEMA = {
   address: POSTAL_ADDRESS,
   slogan: "Run with the Buffalo",
   founder: { "@type": "Person", name: "Chase Forbes" },
-  areaServed: "Southeastern United States",
+  areaServed: ["Southeastern United States", "Texas"],
 };
 
 // Reference to the Organization for use inside JobPosting.hiringOrganization.

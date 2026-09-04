@@ -1,0 +1,66 @@
+# Pings IndexNow (Bing, and every engine that shares the protocol) after each
+# push to main so new/updated URLs get recrawled quickly. Best effort by
+# design: the key is public by protocol (it must be readable at the
+# keyLocation URL anyway), and API hiccups must never fail CI, so every path
+# through this job exits 0.
+name: IndexNow
+
+on:
+  push:
+    branches: [main]
+
+permissions: {}
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # app/sitemap.js is dependency-free, so the URL list comes straight from
+      # the same source of truth the live sitemap.xml is generated from.
+      - name: Build payload from app/sitemap.js
+        run: |
+          node --input-type=module -e '
+            const { default: sitemap } = await import(new URL("./app/sitemap.js", `file://${process.cwd()}/`));
+            const fs = await import("node:fs");
+            const payload = {
+              host: "www.forbeslogistix.com",
+              key: "48b5bea329bdc10aff8cca4b9dad2d4b",
+              keyLocation: "https://www.forbeslogistix.com/48b5bea329bdc10aff8cca4b9dad2d4b.txt",
+              urlList: sitemap().map((entry) => entry.url),
+            };
+            fs.writeFileSync("indexnow-payload.json", JSON.stringify(payload));
+            console.log(JSON.stringify(payload, null, 2));
+          '
+
+      # The key file only goes live when the Vercel production deploy finishes,
+      # which races this workflow on the very first merge. Wait (bounded) for
+      # keyLocation to answer 200 before submitting; time out without failing.
+      - name: Wait for the key file to be live (bounded, never fails the build)
+        run: |
+          for i in $(seq 1 20); do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 \
+              https://www.forbeslogistix.com/48b5bea329bdc10aff8cca4b9dad2d4b.txt) || code="curl-error"
+            [ "${code}" = "200" ] && { echo "Key file live after ${i} checks."; exit 0; }
+            sleep 15
+          done
+          echo "Key file not reachable yet; submitting anyway (engines re-validate later)."
+          exit 0
+
+      - name: Submit to IndexNow (best effort, never fails the build)
+        run: |
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o /dev/null -w "%{http_code}" \
+              --max-time 30 \
+              -H "Content-Type: application/json; charset=utf-8" \
+              --data @indexnow-payload.json \
+              https://api.indexnow.org/indexnow) || code="curl-error"
+            echo "Attempt ${attempt}: HTTP ${code}"
+            case "${code}" in
+              200|202) exit 0 ;;
+            esac
+            [ "${attempt}" -lt 3 ] && sleep 15
+          done
+          echo "IndexNow did not accept the submission; continuing without failing CI."
+          exit 0

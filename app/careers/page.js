@@ -8,7 +8,7 @@ export const revalidate = 86400;
 
 const TITLE = "Flatbed Company Driver & Owner-Operator Jobs | Forbes Logistix";
 const DESCRIPTION =
-  "Company flatbed drivers are currently making over $2,500/week: 30% of line haul, $3,000 sign-on, $100 tarp pay, home weekends. Owner-operators keep 90% of total billed revenue.";
+  "Company flatbed drivers are currently making over $2,500/week: 30% of line haul, $3,000 sign-on, $100 tarp pay, home weekends. Owner-operators keep 90% of total billed revenue. Hiring out of Jackson, MS.";
 
 export const metadata = {
   title: TITLE,
@@ -24,7 +24,7 @@ export const metadata = {
 
 // JobPosting descriptions are HTML-formatted (Google for Jobs accepts HTML
 // in description and renders the structure). Content is paraphrased from
-// the on-page copy in CareersClient.js — see "For Company Drivers" and
+// the on-page copy in CareersClient.js: see "For Company Drivers" and
 // "For Owner-Operators" sections. Update both this file and the on-page
 // copy together to keep them in sync.
 const COMPANY_DRIVER_DESCRIPTION = `
@@ -55,7 +55,7 @@ const COMPANY_DRIVER_DESCRIPTION = `
 `.trim();
 
 const OWNER_OPERATOR_DESCRIPTION = `
-<p>Forbes Logistix contracts open-deck owner-operators across the Southeast.</p>
+<p>Forbes Logistix contracts flatbed and open-deck owner-operators based in Mississippi, running the Southeast and Texas.</p>
 <p><strong>What you earn:</strong></p>
 <ul>
   <li>90% of total billed revenue</li>
@@ -97,7 +97,9 @@ export default function CareersPage() {
   const ownerOperatorJob = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: "Owner-Operator (Open-Deck Flatbed)",
+    // Clean job title per Google Jobs guidelines: role only, no location
+    // stuffing. Mississippi lives in jobLocation and the description.
+    title: "Flatbed Owner-Operator",
     description: OWNER_OPERATOR_DESCRIPTION,
     datePosted,
     validThrough,
