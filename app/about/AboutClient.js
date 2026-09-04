@@ -54,8 +54,8 @@ export default function AboutClient() {
               operate in one of the most capacity-constrained freight markets in the country.
             </p>
             <p>
-              The company was founded by Chase Forbes, a former truck driver with eight years behind
-              the wheel and additional time in operations. Our leadership has sat behind the wheel and
+              The company was founded by Chase Forbes, who spent eight years in trucking,
+              two of them behind the wheel and the rest in operations. Our leadership has sat behind the wheel and
               understands what the road actually looks like, not what a spreadsheet says. That
               perspective shapes how we hire, dispatch, and pay.
             </p>
