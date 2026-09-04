@@ -225,8 +225,9 @@ export default function HomePage() {
             />
           </div>
           <p className="text-center text-gray-600 mt-8 text-base md:text-lg">
+            {"New division: "}
             <Link href="/reefer" className="underline underline-offset-4 font-semibold text-black hover:opacity-80">
-              Dedicated reefer out of Dallas
+              dedicated reefer out of Dallas
             </Link>
             {", hiring now."}
           </p>
