@@ -40,7 +40,7 @@ const LOCAL_BUSINESS_SCHEMA = {
   // 3180 Utica Ave, Jackson, MS 39209 (OpenStreetMap geocode). Helps maps
   // surfaces pin the terminal precisely.
   geo: { "@type": "GeoCoordinates", latitude: 32.2961322, longitude: -90.2350839 },
-  areaServed: "Southeastern United States",
+  areaServed: ["Southeastern United States", "Texas"],
 };
 
 export default function ContactPage() {

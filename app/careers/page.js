@@ -55,7 +55,7 @@ const COMPANY_DRIVER_DESCRIPTION = `
 `.trim();
 
 const OWNER_OPERATOR_DESCRIPTION = `
-<p>Forbes Logistix contracts flatbed and open-deck owner-operators based in Mississippi and across the Southeast.</p>
+<p>Forbes Logistix contracts flatbed and open-deck owner-operators based in Mississippi, running the Southeast and Texas.</p>
 <p><strong>What you earn:</strong></p>
 <ul>
   <li>90% of total billed revenue</li>

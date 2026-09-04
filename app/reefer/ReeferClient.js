@@ -168,7 +168,7 @@ export default function ReeferClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  No. Our flatbed fleet runs east of the Mississippi out of Jackson, MS.
+                  No. Our flatbed fleet runs the Southeast and Texas out of Jackson, MS.
                   This is a new, separate reefer division running dedicated outbound lanes from
                   Dallas, TX.
                 </div>

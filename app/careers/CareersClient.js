@@ -225,7 +225,8 @@ export default function CareersClient() {
                     <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                   </summary>
                   <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                    Our flatbed freight runs east of the Mississippi River, with drivers based in
+                    Our flatbed freight runs across Mississippi, Alabama, Georgia, Florida,
+                    Tennessee, the Carolinas, and Texas, with drivers based in
                     the Southeast. Our new dedicated{" "}
                     <Link href="/reefer" className="underline underline-offset-2 font-semibold">
                       reefer division
@@ -369,9 +370,9 @@ export default function CareersClient() {
               </div>
 
               <p className="text-base md:text-lg text-white/75 mb-4 max-w-2xl">
-                Forbes Logistix contracts flatbed owner-operators based in Mississippi and
-                across the Southeast. Talk to recruiting about equipment standards and
-                onboarding.
+                Forbes Logistix contracts flatbed and open-deck owner-operators based in
+                Mississippi, running the Southeast and Texas. Talk to recruiting about
+                equipment standards and onboarding.
               </p>
 
               <p className="text-base md:text-lg text-white/75 mb-8 max-w-2xl">

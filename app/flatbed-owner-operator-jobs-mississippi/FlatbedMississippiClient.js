@@ -23,8 +23,9 @@ const RECRUITING_PHONE_TEL = "+16013005529";
 // State-targeted landing page for Mississippi flatbed owner-operators.
 // Every claim here already exists on /careers, in the footer, or in the
 // owner-approved fact list (90% split, weekly settlements, cost split,
-// tractor-only or tractor+trailer, east-of-the-Mississippi lanes, Jackson
-// terminal facts, USDOT/MC, CDL-A + 1 year OTR, 4 PM CT callback promise).
+// tractor-only or tractor+trailer, Southeast + Texas lanes (owner-confirmed
+// 2026-09-04, Texas listed neutrally among the states), Jackson terminal
+// facts, USDOT/MC, CDL-A + 1 year OTR, 4 PM CT callback promise).
 // No dollar-figure earnings estimates for owner-operators: the 90% split
 // is the only pay claim this page is allowed to make.
 const Fact = ({ icon: Icon, children }) => (
@@ -63,7 +64,7 @@ export default function FlatbedMississippiClient() {
               Forbes Logistix contracts flatbed owner-operators in Mississippi who keep
               90% of total billed revenue. We are a veteran-owned carrier headquartered
               in Jackson, we settle every week, and the freight is real open-deck work
-              east of the Mississippi River.
+              across the Southeast and Texas.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <a
@@ -95,7 +96,7 @@ export default function FlatbedMississippiClient() {
             weekly settlements. You run the truck and cover fuel, insurance, plates, and
             maintenance. We handle load sourcing, billing, dispatch, and settlements.
             Bring a tractor only, or a tractor and trailer. The freight is flatbed and
-            open-deck, running east of the Mississippi River out of our Jackson, MS
+            open-deck, running the Southeast and Texas out of our Jackson, MS
             terminal. You need a valid Class A CDL and at least 1 year of verifiable OTR
             experience. To apply, call {RECRUITING_PHONE_DISPLAY} or use the quick-apply
             form on this page. Apply before 4 PM CT and we&apos;ll call you back today.
@@ -119,8 +120,8 @@ export default function FlatbedMississippiClient() {
               Keep 90% of total billed revenue.
             </h2>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl mb-6">
-              The split is simple and it does not move. You keep 90% of what the load
-              bills. The 10% pays for the work that keeps your truck earning: we source
+              The split is simple: you keep 90% of what the load bills. The 10% pays
+              for the work that keeps your truck earning: we source
               the loads, bill the customers, run dispatch, and cut your settlement every
               week. You never invoice anyone.
             </p>
@@ -181,8 +182,7 @@ export default function FlatbedMississippiClient() {
             </h2>
             <p className="text-lg md:text-xl text-white/85 max-w-3xl mb-4">
               We contract owner-operators two ways. Come on with just your tractor and
-              pull our trailers, or bring your own tractor and trailer. Either way the
-              split is the same.
+              pull our trailers, or bring your own tractor and trailer.
             </p>
             <p className="text-lg md:text-xl text-white/85 max-w-3xl">
               If you already run your own trailer, bring it. If you don&apos;t, that
@@ -209,17 +209,16 @@ export default function FlatbedMississippiClient() {
               Where you&apos;ll run.
             </h2>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl mb-10">
-              Our flatbed and open-deck freight runs east of the Mississippi River, with
-              drivers based in the Southeast. Home base is our terminal at 3180 Utica
-              Ave in Jackson, Mississippi: a 3-acre lot with a 25,000 sq ft warehouse.
+              We run flatbed and open-deck freight across Mississippi, Alabama, Georgia,
+              Florida, Tennessee, the Carolinas, and Texas, with drivers based in the
+              Southeast. Home base is our terminal at 3180 Utica Ave in Jackson,
+              Mississippi: a 3-acre lot with a 25,000 sq ft warehouse.
             </p>
             <ul className="grid md:grid-cols-2 gap-x-10 gap-y-4">
-              <Fact icon={MapPinned}>Freight east of the Mississippi River</Fact>
-              <Fact icon={Truck}>Flatbed and open-deck loads</Fact>
+              <Fact icon={MapPinned}>Southeast and Texas lanes out of Jackson</Fact>
               <Fact icon={Warehouse}>
                 Jackson, MS terminal: 3-acre lot, 25,000 sq ft warehouse
               </Fact>
-              <Fact icon={PhoneCall}>Direct communication with dispatch</Fact>
             </ul>
           </motion.div>
         </div>
@@ -282,8 +281,8 @@ export default function FlatbedMississippiClient() {
               <Fact icon={BriefcaseBusiness}>At least 1 year of verifiable OTR experience</Fact>
             </ul>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl mb-6">
-              That is the list. If you hold the CDL and have the year of verifiable OTR
-              experience, we want to hear from you.
+              If you hold the CDL and have the year of verifiable OTR experience, we
+              want to hear from you.
             </p>
             <p className="text-lg md:text-xl text-gray-700 max-w-3xl">
               Talk to recruiting about equipment standards and onboarding. Looking for a
@@ -370,9 +369,9 @@ export default function FlatbedMississippiClient() {
                   <span aria-hidden className="text-2xl leading-none transition-transform duration-200 group-open:rotate-45">+</span>
                 </summary>
                 <div className="px-6 pb-5 text-gray-700 leading-relaxed">
-                  Flatbed and open-deck freight east of the Mississippi River, with
-                  drivers based in the Southeast. Our terminal is in Jackson,
-                  Mississippi.
+                  Flatbed and open-deck freight across Mississippi, Alabama, Georgia,
+                  Florida, Tennessee, the Carolinas, and Texas, with drivers based in
+                  the Southeast. Our terminal is in Jackson, Mississippi.
                 </div>
               </details>
             </li>
