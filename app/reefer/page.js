@@ -9,9 +9,9 @@ import {
 // ISR keeps the JobPosting validThrough window rolling, same as /careers.
 export const revalidate = 86400;
 
-const TITLE = "Reefer Driving Jobs in Dallas, TX — Now Hiring | Forbes Logistix";
+const TITLE = "Now Hiring: Reefer Driving Jobs in Dallas, TX | Forbes Logistix";
 const DESCRIPTION =
-  "New dedicated reefer division running outbound from Dallas. Hiring now — W-2 company driver seats open today. Call recruiting to talk real numbers.";
+  "New dedicated reefer division running outbound from Dallas. Hiring now: W-2 company driver seats open today. Call recruiting to talk real numbers.";
 
 export const metadata = {
   title: TITLE,
@@ -36,8 +36,8 @@ const REEFER_DESCRIPTION = `
 <p><strong>What we can tell you today:</strong></p>
 <ul>
   <li>Dedicated reefer freight, Dallas outbound lanes</li>
-  <li>Hiring now &mdash; seats are open</li>
-  <li>Compensation is being finalized &mdash; call recruiting to talk real numbers</li>
+  <li>Hiring now: seats are open</li>
+  <li>Compensation is being finalized. Call recruiting to talk real numbers</li>
   <li>Valid Class A CDL required</li>
 </ul>
 <p>Forbes Logistix is a Marine Corps veteran-owned, driver-founded carrier. Our flatbed fleet publishes exact pay; this division will too, the day the package is set.</p>
@@ -47,7 +47,7 @@ export default function ReeferPage() {
   const reeferJob = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: "Company Reefer Driver — Dedicated Dallas Outbound",
+    title: "Company Reefer Driver (Dedicated Dallas Outbound)",
     description: REEFER_DESCRIPTION,
     datePosted: REEFER_DATE_POSTED,
     validThrough: validThroughISO(),

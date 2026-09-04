@@ -216,7 +216,7 @@ export function firstResidenceGap(
 // The blocking sentence for a residence coverage failure — byte-identical on
 // both sides.
 export function residenceCoverageError(gap) {
-  return `Your addresses need to cover the last 3 years — add the address you lived at during ${formatMonthYear(
+  return `Your addresses need to cover the last 3 years. Add the address you lived at during ${formatMonthYear(
     gap.from
   )} – ${formatMonthYear(gap.to)}.`;
 }

@@ -226,6 +226,6 @@ test("residence coverage: no parseable addresses -> whole window uncovered", () 
 test("residence coverage error sentence is exact (mirrored in the backend)", () => {
   assert.equal(
     residenceCoverageError({ from: "2023-09", to: "2026-07" }),
-    "Your addresses need to cover the last 3 years — add the address you lived at during September 2023 – July 2026."
+    "Your addresses need to cover the last 3 years. Add the address you lived at during September 2023 – July 2026."
   );
 });

@@ -19,7 +19,7 @@ const Footer = () => {
           <Link href="/about" className={NAV_LINK}>About Us</Link>
           <Link href="/operations" className={NAV_LINK}>Operations</Link>
           <Link href="/careers" className={NAV_LINK}>Flatbed Jobs</Link>
-          <Link href="/reefer" className={NAV_LINK}>Reefer Jobs — Dallas</Link>
+          <Link href="/reefer" className={NAV_LINK}>Reefer Jobs (Dallas)</Link>
           <Link href="/contact" className={NAV_LINK}>Contact</Link>
         </nav>
 

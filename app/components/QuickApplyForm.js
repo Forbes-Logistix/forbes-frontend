@@ -195,7 +195,7 @@ export default function QuickApplyForm({
     return (
       <div role="status" className={`${card} border rounded-2xl shadow-xl p-8 md:p-10 ${className}`} id={id}>
         <h3 ref={successRef} tabIndex={-1} className="text-2xl md:text-3xl font-extrabold tracking-tight mb-3 outline-none">
-          Thanks &mdash; we got it.
+          Thanks. We got it.
         </h3>
         <p className={`text-base md:text-lg leading-relaxed ${labelTone}`}>
           Recruiting will call you shortly. If it&apos;s urgent, call{" "}

@@ -46,11 +46,11 @@ const RECRUITING_PHONE_TEL = "+16013005529";
 const DRAFT_KEY = "fl-dot-application-draft-v3";
 
 const POSITIONS = [
-  { value: "flatbed-southeast", label: "Company Flatbed Driver — Southeast" },
-  { value: "reefer-dallas", label: "Company Reefer Driver — Dedicated Dallas Outbound" },
+  { value: "flatbed-southeast", label: "Company Flatbed Driver (Southeast)" },
+  { value: "reefer-dallas", label: "Company Reefer Driver (Dedicated Dallas Outbound)" },
   // Same 391.21 application — leased O/Os are driver-qualified like company
   // drivers; the equipment lease (Part 376) is separate onboarding paperwork.
-  { value: "owner-operator-flatbed", label: "Owner-Operator — Flatbed (Southeast)" },
+  { value: "owner-operator-flatbed", label: "Owner-Operator Flatbed (Southeast)" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -549,7 +549,7 @@ export default function ApplicationClient() {
       if (!app.position) e.position = "Select the position you're applying for";
       if (!app.personal.firstName.trim()) e.firstName = "Required";
       if (!app.personal.noMiddleName && !app.personal.middleName.trim())
-        e.middleName = "Middle name is required — or check 'I have no middle name'";
+        e.middleName = "Middle name is required unless you check 'I have no middle name'";
       if (!app.personal.lastName.trim()) e.lastName = "Required";
       if (!US_PHONE(app.personal.phone)) e.phone = "Enter a valid US phone number";
       if (app.personal.email && !EMAIL_REGEX.test(app.personal.email.trim())) e.email = "Enter a valid email or leave blank";
@@ -587,19 +587,19 @@ export default function ApplicationClient() {
       if (!app.license.number.trim()) e.licNumber = "Required";
       if (!app.license.expiration) e.licExp = "Required";
       if (!app.license.endorsementCodes.length)
-        e.endorsements = "Select your endorsement(s) — or check 'None'";
+        e.endorsements = "Select your endorsement(s), or check 'None'";
       // Backend-mirrored sanity rule (known codes, no duplicates, 'None'
       // exclusive) — only reachable via a tampered draft, but it keeps the
       // Ready-to-sign checklist from passing a payload the backend rejects.
       else if (!endorsementCodesValid(app.license.endorsementCodes))
-        e.endorsements = "Your endorsement selection is invalid — please re-select.";
+        e.endorsements = "Your endorsement selection is invalid. Please re-select.";
       if (!app.license.restrictions.trim())
-        e.restrictions = "Required — enter 'None' if your CDL shows none";
+        e.restrictions = "Required. Enter 'None' if your CDL shows none";
       if (app.license.everDeniedRevokedSuspended && !app.license.deniedExplanation.trim())
         e.deniedExplanation = "Please explain";
       app.additionalLicenses.forEach((l, i) => {
         if (!l.state.trim() || !l.number.trim() || !l.expiration)
-          e[`addlLic${i}`] = "State, number, and expiration required — or remove this entry";
+          e[`addlLic${i}`] = "State, number, and expiration required, or remove this entry";
       });
     }
     if (s === 2) {
@@ -613,15 +613,15 @@ export default function ApplicationClient() {
         if (!x.equipmentType || !String(x.years).trim() || !rawMiles)
           e[`exp${i}`] = "Equipment type, years, and approximate miles are required";
         else if (!milesOk)
-          e[`exp${i}`] = "Approximate miles must be a number greater than zero — e.g. 400,000";
+          e[`exp${i}`] = "Approximate miles must be a number greater than zero, e.g. 400,000";
       });
     }
     if (s === 3) {
       app.accidents.forEach((a, i) => {
-        if (!a.date || !a.description.trim()) e[`acc${i}`] = "Date and description required — or remove this entry";
+        if (!a.date || !a.description.trim()) e[`acc${i}`] = "Date and description required, or remove this entry";
       });
       app.violations.forEach((v, i) => {
-        if (!v.date || !v.offense.trim()) e[`vio${i}`] = "Date and offense required — or remove this entry";
+        if (!v.date || !v.offense.trim()) e[`vio${i}`] = "Date and offense required, or remove this entry";
       });
     }
     if (s === 4) {
@@ -656,7 +656,7 @@ export default function ApplicationClient() {
         else if (!zipOk(x.zip, x.state))
           e[`emp${i}`] = "ZIP must be 5 digits (or ZIP+4, like 39209-1234).";
         else if (x.selfEmployed && !USDOT_RE.test(usdot))
-          e[`emp${i}`] = "Your company's USDOT number is required — digits only.";
+          e[`emp${i}`] = "Your company's USDOT number is required (digits only).";
         // The optional company-USDOT field is only rendered for FMCSR-subject,
         // non-self-employed entries — the format rule matches its visibility
         // (a hidden value can't block the driver with no field to fix).
@@ -678,7 +678,7 @@ export default function ApplicationClient() {
             "Answer whether you were leased to another motor carrier during this period.";
         else if (x.selfEmployed && x.safetySensitive && !x.tpaName.trim())
           e[`emp${i}`] =
-            "Add the testing consortium/TPA for your self-employed period — or, if this period wasn't actually subject to DOT drug & alcohol testing, uncheck that box.";
+            "Add the testing consortium/TPA for your self-employed period. If this period wasn't actually subject to DOT drug & alcohol testing, uncheck that box instead.";
         else if (x.selfEmployed && x.safetySensitive && !US_PHONE(x.tpaPhone))
           e[`emp${i}`] = "Add a valid US phone number for the consortium/TPA.";
       });
@@ -686,7 +686,7 @@ export default function ApplicationClient() {
         e.empGaps = "Please explain the highlighted employment gap(s)";
       if (!app.historyComplete)
         e.historyComplete =
-          "Please confirm your employment history is complete — or add the missing employers";
+          "Please confirm your employment history is complete, or add the missing employers";
       // Experience-vs-history cross-check (mirrored in the backend): claimed
       // driving years can't meaningfully exceed the history's coverage unless
       // the full 10 years are already covered.
@@ -705,7 +705,7 @@ export default function ApplicationClient() {
     }
     if (s === 5) {
       if (!app.consents.fcra.authorized)
-        e.fcraAuthorized = "Required — we can't order any background report without it";
+        e.fcraAuthorized = "Required. We can't order any background report without it";
       if (!app.consents.fcra.signature.trim()) e.fcraSignature = "Type your full legal name";
     }
     if (s === 6) {
@@ -861,7 +861,7 @@ export default function ApplicationClient() {
             Application received.
           </h1>
           <p className="text-lg text-white/90 mb-4">
-            Thanks, {app.personal.firstName.trim()}. Your application is in — we&apos;ll call you at{" "}
+            Thanks, {app.personal.firstName.trim()}. Your application is in. We&apos;ll call you at{" "}
             <span className="font-bold">{app.personal.phone}</span> from{" "}
             <span className="font-bold">{RECRUITING_PHONE_DISPLAY}</span>, so save the number.
           </p>
@@ -884,7 +884,7 @@ export default function ApplicationClient() {
                 clearinghouse.fmcsa.dot.gov
               </a>{" "}
               and approve the consent request from Forbes Logistix. Federal rules require your
-              electronic consent inside the Clearinghouse before you can drive — we can&apos;t
+              electronic consent inside the Clearinghouse before you can drive. We can&apos;t
               complete your hire without it. You&apos;ll need your CDL number and state.
             </p>
           </div>
@@ -939,7 +939,7 @@ export default function ApplicationClient() {
         </div>
         {restored && step === 0 && (
           <p className="text-sm text-gray-600 mb-4" role="status">
-            Welcome back — we restored your saved draft.
+            Welcome back. We restored your saved draft.
           </p>
         )}
         {step === 0 && (
@@ -947,7 +947,7 @@ export default function ApplicationClient() {
             <ShieldCheck aria-hidden className="w-5 h-5 mt-0.5 shrink-0" />
             We will never ask for your Social Security Number online. We&apos;ll collect it by
             phone after you submit, and you&apos;ll sign the completed application before your
-            first dispatch — never send it by email or text.
+            first dispatch. Never send it by email or text.
           </p>
         )}
 
@@ -1334,7 +1334,7 @@ export default function ApplicationClient() {
               </fieldset>
               <Field
                 id="restrictions"
-                label="Restrictions (as shown on your CDL — or 'None')"
+                label="Restrictions (as shown on your CDL, or 'None')"
                 error={errors.restrictions}
               >
                 <TextInput
@@ -1488,7 +1488,7 @@ export default function ApplicationClient() {
                         aria-label="Approximate miles"
                       />
                       <p className="mt-1 text-sm text-gray-500">
-                        Best estimate is fine — e.g. 400,000.
+                        Best estimate is fine, e.g. 400,000.
                       </p>
                     </div>
                   </div>
@@ -1507,9 +1507,9 @@ export default function ApplicationClient() {
           {/* ================= STEP 3: accidents & violations ================= */}
           {step === 3 && (
             <>
-              <h2 className="text-xl font-bold">Accidents — past 3 years</h2>
+              <h2 className="text-xl font-bold">Accidents (past 3 years)</h2>
               <p className="text-sm text-gray-600">
-                None? Just leave this empty — the application will state that you reported none.
+                None? Just leave this empty. The application will state that you reported none.
               </p>
               {app.accidents.map((a, i) => (
                 <div key={i} className="border border-black/10 rounded-xl p-4 space-y-3">
@@ -1564,7 +1564,7 @@ export default function ApplicationClient() {
                 label="Add accident"
               />
 
-              <h2 className="text-xl font-bold pt-4">Traffic convictions — past 3 years</h2>
+              <h2 className="text-xl font-bold pt-4">Traffic convictions (past 3 years)</h2>
               <p className="text-sm text-gray-600">
                 Violations you were convicted of, or where you forfeited bond or collateral (parking
                 tickets don&apos;t count). None? Leave empty.
@@ -1944,8 +1944,8 @@ export default function ApplicationClient() {
                         </div>
                         {x.leasedDuringPeriod === true && (
                           <p className="mt-2 text-sm text-gray-600">
-                            Leased periods: that carrier is a DOT-regulated previous employer —
-                            add it as its own employer entry with the dates you were leased.
+                            Leased periods: that carrier is a DOT-regulated previous employer.
+                            Add it as its own employer entry with the dates you were leased.
                           </p>
                         )}
                       </fieldset>
@@ -1985,7 +1985,7 @@ export default function ApplicationClient() {
                       </p>
                     )}
                     <p className="text-sm text-gray-500">
-                      A sentence is fine — e.g. &apos;Non-driving warehouse work&apos; or &apos;Home
+                      A sentence is fine, e.g. &apos;Non-driving warehouse work&apos; or &apos;Home
                       with family.&apos;
                     </p>
                   </div>
@@ -2024,7 +2024,7 @@ export default function ApplicationClient() {
               <p className="text-sm text-gray-600">
                 Federal law requires these disclosures before we can order any background report
                 (criminal record, driving record, employment verification). Each box below is its
-                own document — please read each one.
+                own document. Please read each one.
               </p>
               {/* Standalone FCRA disclosure — this card must contain the
                   disclosure and nothing else (15 U.S.C. 1681b(b)(2)(A)). */}
@@ -2253,7 +2253,7 @@ export default function ApplicationClient() {
               <div className="border border-black/10 rounded-xl p-4 text-sm space-y-1 bg-gray-50">
                 <p>
                   <span className="font-semibold">Position:</span>{" "}
-                  {POSITIONS.find((x) => x.value === app.position)?.label || "—"}
+                  {POSITIONS.find((x) => x.value === app.position)?.label || "Not selected"}
                 </p>
                 <p>
                   <span className="font-semibold">Name:</span> {composeFullName(per)} ·{" "}
@@ -2261,7 +2261,7 @@ export default function ApplicationClient() {
                 </p>
                 <p>
                   <span className="font-semibold">CDL:</span> {lic.state} · Class {lic.class} · exp{" "}
-                  {formatFullDate(lic.expiration) || "—"}
+                  {formatFullDate(lic.expiration) || "Not provided"}
                 </p>
                 <p>
                   <span className="font-semibold">Experience:</span> {app.experience.length} equipment
@@ -2279,7 +2279,7 @@ export default function ApplicationClient() {
                   when every earlier step passes. */}
               {reviewIssues.length > 0 && (
                 <div className="border border-amber-300 bg-amber-50 rounded-xl p-4 space-y-3">
-                  <p className="font-bold">Ready to sign? Not yet — a few things need fixing:</p>
+                  <p className="font-bold">Ready to sign? Not yet. A few things need fixing:</p>
                   <ul className="space-y-2">
                     {reviewIssues.map((iss) => {
                       const label = issueLabel(iss.key);

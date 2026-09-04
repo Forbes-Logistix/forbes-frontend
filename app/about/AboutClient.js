@@ -44,7 +44,7 @@ export default function AboutClient() {
             About Forbes Logistix
           </p>
           <h1 className="text-3xl md:text-4xl font-extrabold mb-6 tracking-tight text-center drop-shadow-lg">
-            Built by people who understand trucking from behind the wheel, not just behind a desk.
+            Built by people who understand trucking from behind the wheel, not from behind a desk.
           </h1>
 
           <div className="space-y-5 text-base md:text-lg leading-relaxed text-white/90 drop-shadow-md">
@@ -56,7 +56,7 @@ export default function AboutClient() {
             <p>
               The company was founded by Chase Forbes, a former truck driver with eight years behind
               the wheel and additional time in operations. Our leadership has sat behind the wheel and
-              understands what the road actually looks like, not just what the spreadsheet says. That
+              understands what the road actually looks like, not what a spreadsheet says. That
               perspective shapes how we hire, dispatch, and pay.
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function AboutClient() {
             </h2>
             <p className="text-lg md:text-xl text-white/90 max-w-2xl drop-shadow-md">
               Our Jackson terminal sits on a 3-acre lot and includes a 25,000-square-foot warehouse,
-              giving us the infrastructure to support our fleet and partners with strength and scale.
+              giving us the infrastructure to support our fleet and partners.
             </p>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function AboutClient() {
       <section className="bg-white text-black py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-3">
-            Sound like your kind of company?
+            If this sounds like your kind of company, reach out.
           </h2>
           <p className="text-lg text-gray-600 mb-10">Three ways to reach recruiting.</p>
 
