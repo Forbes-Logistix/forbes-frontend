@@ -29,6 +29,7 @@ export default function ContactClient() {
   const [acceptError, setAcceptError] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [fieldErrors, setFieldErrors] = useState({});
+  const [honeypot, setHoneypot] = useState(""); // bots will fill this
   const widgetRef = useRef(null);
   const widgetIdRef = useRef(null);
 
@@ -126,6 +127,7 @@ export default function ContactClient() {
         // contactConsent — the required checkbox was previously never
         // transmitted, so the record had no proof of the acknowledgment.
         acceptTerms,
+        honeypot,
         ...(TURNSTILE_SITE_KEY ? { turnstileToken } : {}),
       };
       const r = await fetch(`${BACKEND_URL}/api/contact`, {
@@ -381,6 +383,26 @@ export default function ContactClient() {
               >
                 {s === "sending" ? "Sending..." : "Submit"}
               </button>
+            </div>
+            {/* Honeypot: visually hidden, autocomplete off. Bots fill anything
+                they see; the backend silently drops any submission where this
+                is non-empty. Same pattern as QuickApplyForm (qa_extra_field)
+                and the DOT application (app_extra_field). Deliberately NOT
+                named "website"/"url"/"company": browser autofill matches those
+                names and would trip real humans. Placed last so the form's
+                space-y margin lands on this absolutely-positioned block (no
+                layout effect) instead of pushing the first visible field down. */}
+            <div aria-hidden className="absolute left-[-9999px] top-auto w-px h-px overflow-hidden">
+              <label htmlFor="contact-extra-field">Leave this field empty</label>
+              <input
+                id="contact-extra-field"
+                name="contact_extra_field"
+                type="text"
+                tabIndex="-1"
+                autoComplete="off"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+              />
             </div>
           </form>
         </motion.div>
